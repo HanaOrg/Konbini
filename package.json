@@ -1,0 +1,27 @@
+{
+    "name": "konbini-cli",
+    "version": "0.0.1",
+    "module": "./src/index.ts",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "pretty": "prettier -w . && eslint --cache --fix --stats && tsc --noEmit",
+        "build": "bun build.ts",
+        "av": "bun guard/avs.ts"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "eslint": "^9.28.0",
+        "prettier": "^3.5.3"
+    },
+    "peerDependencies": {
+        "typescript": "^5.8.3"
+    },
+    "dependencies": {
+        "@zakahacecosas/number-utils": "npm:@jsr/zakahacecosas__number-utils",
+        "@zakahacecosas/string-utils": "npm:@jsr/zakahacecosas__string-utils",
+        "glob": "^11.0.2",
+        "openpgp": "^6.1.1",
+        "yaml": "^2.8.0"
+    }
+}

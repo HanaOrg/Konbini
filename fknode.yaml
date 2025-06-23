@@ -1,0 +1,10 @@
+destroy:
+    targets:
+        - "./guard/build/"
+    intensities:
+        - "*"
+prettyCmd: "pretty"
+flagless:
+    flaglessUpdate: true
+    flaglessDestroy: true
+    flaglessPretty: true
