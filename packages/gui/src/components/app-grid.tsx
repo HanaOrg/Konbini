@@ -87,7 +87,7 @@ export default function AppGrid({
                         </div>
                         <button
                             onClick={() => {
-                                window.location.pathname = "/" + app.id;
+                                window.location.pathname = "#" + app.id;
                                 setPage(app.id);
                             }}
                         >

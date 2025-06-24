@@ -8,7 +8,7 @@ export async function fetchAPI(url: string, method?: "GET"): Promise<Response> {
     const res = await fetch(url, {
         headers: useBearer
             ? {
-                  Authorization: bearer,
+                  Authorization: bearer!,
               }
             : undefined,
         method: method ?? undefined,

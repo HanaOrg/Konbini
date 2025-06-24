@@ -19,7 +19,7 @@ export type MANIFEST_WITH_ID = KONBINI_MANIFEST & { id: string };
 
 export function App() {
     const [apps, setApps] = useState<MANIFEST_WITH_ID[]>([]);
-    const [page, setPage] = useState<string>("/");
+    const [page, setPage] = useState<string>("#");
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -59,8 +59,8 @@ export function App() {
         fetchApps();
     }, []);
 
-    if (page !== "/" || window.location.pathname !== "/")
-        return <AppPage route={page == "/" ? window.location.pathname.replace("/", "") : page} />;
+    if (page !== "#" || window.location.pathname !== "#")
+        return <AppPage route={page == "#" ? window.location.pathname.replace("#", "") : page} />;
 
     return (
         <>
@@ -70,8 +70,8 @@ export function App() {
                     src="/konball.png"
                     alt="Konbini logo"
                     onClick={() => {
-                        setPage("/");
-                        window.location.pathname = "/";
+                        setPage("#");
+                        window.location.pathname = "#";
                     }}
                 />
                 <h2 style={{ textAlign: "center", color: "orange" }}>
