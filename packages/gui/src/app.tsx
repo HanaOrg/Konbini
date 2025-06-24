@@ -59,8 +59,8 @@ export function App() {
         fetchApps();
     }, []);
 
-    if (page !== "#" || window.location.pathname !== "#")
-        return <AppPage route={page == "#" ? window.location.pathname.replace("#", "") : page} />;
+    if (page !== "#" || window.location.pathname !== "/#")
+        return <AppPage route={page == "#" ? window.location.pathname.replace("/#", "") : page} />;
 
     return (
         <>
