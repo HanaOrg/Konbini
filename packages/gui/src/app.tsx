@@ -6,6 +6,7 @@ import { SRCSET } from "../../shared/constants";
 import type { KONBINI_MANIFEST } from "../../shared/types/manifest";
 import AppGrid from "./components/app-grid";
 import Footer from "./components/footer";
+import { validate } from "@zakahacecosas/string-utils";
 
 type tEntryPoint = {
     path: string;
@@ -18,6 +19,12 @@ type tEntryPoint = {
 export type MANIFEST_WITH_ID = KONBINI_MANIFEST & { id: string };
 
 export function App() {
+    // using # instead of / makes back and forward buttons in browsers not work
+    // this fixes it
+    window.addEventListener("hashchange", () => {
+        location.reload();
+    });
+
     const [apps, setApps] = useState<MANIFEST_WITH_ID[]>([]);
     const [page, setPage] = useState<string>("#");
     const [loading, setLoading] = useState<boolean>(true);
@@ -59,8 +66,8 @@ export function App() {
         fetchApps();
     }, []);
 
-    if (page !== "#" || window.location.pathname !== "/#")
-        return <AppPage route={page == "#" ? window.location.pathname.replace("/#", "") : page} />;
+    if (!["/", "", "#", "/#"].includes(page) || validate(window.location.hash))
+        return <AppPage route={page === "#" ? window.location.hash.replace("#", "") : page} />;
 
     return (
         <>
@@ -70,8 +77,9 @@ export function App() {
                     src="/konball.png"
                     alt="Konbini logo"
                     onClick={() => {
-                        setPage("#");
-                        window.location.pathname = "#";
+                        setPage("");
+                        window.location.hash = "";
+                        window.location.pathname = "/";
                     }}
                 />
                 <h2 style={{ textAlign: "center", color: "orange" }}>

@@ -41,7 +41,8 @@ export default function AppPage({ route }: { route: string }) {
                     src="/konball.png"
                     alt="Konbini logo"
                     onClick={() => {
-                        window.location.pathname = "/#";
+                        window.location.hash = "";
+                        window.location.pathname = "/";
                     }}
                 />
             </nav>
