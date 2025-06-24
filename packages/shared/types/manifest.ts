@@ -99,7 +99,14 @@ export interface KONBINI_MANIFEST {
     /** Package's logo, to be displayed in the Konbini UI. Only WEBP is supported. */
     icon?: `https://${string}.webp` | null;
     /** A list of persons who have contributed to the development of this package. */
-    maintainers?: { name: string; email?: string }[];
+    maintainers?: {
+        name: string;
+        email?: string;
+        /** One website (any) they want to link to. */
+        link?: `https://${string}`;
+        /** GitHub username. */
+        github?: string;
+    }[];
     /** Main website of the package, if any. */
     homepage?: `https://${string}`;
     /** Documentation website of the package, if any. */

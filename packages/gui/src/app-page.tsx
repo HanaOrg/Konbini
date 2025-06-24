@@ -3,6 +3,7 @@ import { getAgeRating, type KONBINI_MANIFEST } from "../../shared/types/manifest
 import { getPkgManifest } from "../../shared/api/core";
 import Markdown from "react-markdown";
 import { getDesktopPlatform } from "./ua";
+import PlatformSupport from "./components/platform-support";
 
 export default function AppPage({ route }: { route: string }) {
     const [app, setApp] = useState<KONBINI_MANIFEST>();
@@ -106,6 +107,11 @@ export default function AppPage({ route }: { route: string }) {
                                 ? "Inappropriate for kids"
                                 : "Inappropriate for young users"}
                     </div>
+                    {app.age_rating.telemetry ? (
+                        <div className="age high">Shares telemetry data</div>
+                    ) : (
+                        <></>
+                    )}
                     ·
                     {isSupported ? (
                         <div className="badge supported">Works on your device</div>
@@ -119,54 +125,15 @@ export default function AppPage({ route }: { route: string }) {
                         <div className="badge">{c}</div>
                     ))}
                 </div>
-                <Markdown>{app.desc}</Markdown>
-                <div className="platforms">
-                    <div className="platform">
-                        Linux 64
-                        {app.platforms.linux64 ? (
-                            <>
-                                <div className="badge supported">supported</div>
-                            </>
-                        ) : (
-                            <div className="badge unsupported">unsupported</div>
-                        )}
-                    </div>
-                    <div className="platform">
-                        Linux ARM
-                        {app.platforms.linuxARM ? (
-                            <div className="badge supported">supported</div>
-                        ) : (
-                            <div className="badge unsupported">unsupported</div>
-                        )}
-                    </div>
-                    <div className="platform">
-                        macOS Intel (64)
-                        {app.platforms.mac64 ? (
-                            <div className="badge supported">supported</div>
-                        ) : (
-                            <div className="badge unsupported">unsupported</div>
-                        )}
-                    </div>
-                    <div className="platform">
-                        macOS Apple Silicon (ARM)
-                        {app.platforms.macARM ? (
-                            <div className="badge supported">supported</div>
-                        ) : (
-                            <div className="badge unsupported">unsupported</div>
-                        )}
-                    </div>
-                    <div className="platform">
-                        Windows 64
-                        {app.platforms.win64 ? (
-                            <div className="badge supported">supported</div>
-                        ) : (
-                            <div className="badge unsupported">unsupported</div>
-                        )}
-                    </div>
-                </div>
                 <br />
                 <hr />
-                <br />
+                <div className="markdown">
+                    <Markdown>{app.desc.replaceAll("\\n", "\n")}</Markdown>
+                </div>
+                <hr />
+                <h2>Platform support</h2>
+                <PlatformSupport platforms={app.platforms} />
+                <h2>Details</h2>
                 <div className="details">
                     <div className="detail">
                         <svg
@@ -200,7 +167,10 @@ export default function AppPage({ route }: { route: string }) {
                         </svg>
                         {app.homepage ? (
                             <p>
-                                Learn more at <b>{app.homepage}</b>
+                                Learn more at{" "}
+                                <a href={app.homepage} target="_blank" rel="noopener noreferrer">
+                                    {app.homepage}
+                                </a>
                             </p>
                         ) : (
                             <p>
@@ -227,7 +197,10 @@ export default function AppPage({ route }: { route: string }) {
                         </svg>
                         {app.docs ? (
                             <p>
-                                Learn to use it at <b>{app.docs}</b>
+                                Learn to use it at{" "}
+                                <a href={app.docs} target="_blank" rel="noopener noreferrer">
+                                    {app.docs}
+                                </a>
                             </p>
                         ) : (
                             <p>
@@ -272,7 +245,7 @@ export default function AppPage({ route }: { route: string }) {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    <b>{app.repository}</b>
+                                    github.com/<b>{app.repository}</b>
                                 </a>
                             </p>
                         ) : (

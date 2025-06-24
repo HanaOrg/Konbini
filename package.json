@@ -22,7 +22,7 @@
         "av": "bun packages/guard/avs.ts"
     },
     "dependencies": {
-        "prettier": "^3.5.3",
-        "eslint": "^9.28.0"
+        "prettier": "^3.6.0",
+        "eslint": "^9.29.0"
     }
 }

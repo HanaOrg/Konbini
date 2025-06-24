@@ -49,6 +49,11 @@ h1 {
     color: #c23282;
 }
 
+.markdown h1 {
+    font-size: 2.2em;
+    color: #fff;
+}
+
 button {
     border-radius: 8px;
     padding: 0.6em 1.2em;
@@ -67,14 +72,16 @@ button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
 
-nav {
+nav,
+footer {
     padding: 20px;
     background: #111;
     display: grid;
     place-items: center;
 }
 
-nav img {
+nav img,
+footer img {
     max-height: 50px;
     object-fit: scale-down;
 }
@@ -103,6 +110,19 @@ nav img {
 .app-card p {
     margin-bottom: auto;
     font-style: italic;
+}
+
+.app-card .icons {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+    justify-content: end;
+}
+
+.app-card .icons svg {
+    width: 25px;
+    height: 25px;
 }
 
 .app-main-cont {
@@ -154,7 +174,7 @@ nav img {
 .platform {
     flex: 1;
     min-height: 100px;
-    padding: 0px 20px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -167,7 +187,13 @@ nav img {
     margin: 0;
 }
 
-.badge {
+.platform svg {
+    width: 60px;
+    height: 60px;
+}
+
+.badge,
+.age {
     padding: 2px 10px;
     border-radius: 20px;
     font-size: small;
@@ -179,6 +205,11 @@ nav img {
 .badge.supported {
     color: #b9fbc0;
     background-color: #1b4332;
+}
+
+.badge.aliased {
+    color: #b9c0fb;
+    background-color: #1b3243;
 }
 
 .badge.unsupported {
