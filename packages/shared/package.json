@@ -1,0 +1,10 @@
+{
+    "name": "shared",
+    "private": true,
+    "main": "index.ts",
+    "type": "module",
+    "module": "index.ts",
+    "dependencies": {
+        "@zakahacecosas/string-utils": "catalog:"
+    }
+}

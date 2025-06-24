@@ -1,0 +1,23 @@
+{
+    "name": "konbini-gui",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc -b && vite build && vercel --prod",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "preact": "^10.26.5",
+        "react-markdown": "^10.1.0",
+        "yaml": "catalog:",
+        "@zakahacecosas/string-utils": "catalog:"
+    },
+    "devDependencies": {
+        "@preact/preset-vite": "^2.10.1",
+        "@types/node": "^24.0.3",
+        "typescript": "catalog:",
+        "vite": "^6.3.5"
+    }
+}

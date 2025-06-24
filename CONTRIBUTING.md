@@ -2,6 +2,16 @@
 
 ## Developer overview
 
-Konbini is written almost-purely in **BunJS**, although we heavily rely on the NodeJS API for base functionalities like filesystem, path handling, and HTTP requests.
+Konbini is structured as a monorepo.
 
-There's minimal dependencies: `yaml`, `openpgp`, `@zakahacecosas/string-utils`, `glob`, TypeScript, ESLint, Prettier & `@types/bun`.
+| Project                          | Path (`packages/*`) |
+| :------------------------------- | :------------------ |
+| Konbini's Command Line Interface | `cli/`              |
+| Konbini's safety system          | `cli/guard/`        |
+| Konbini's Graphic User Interface | `gui/`              |
+| Code shared between the two      | `shared/`           |
+
+## Contributing guides
+
+- Make descriptive, brief commit names. We don't enforce rulesets like Conventional Commits but
+  TODO

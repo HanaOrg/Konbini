@@ -1,27 +1,28 @@
 {
-    "name": "konbini-cli",
-    "version": "0.0.1",
-    "module": "./src/index.ts",
-    "type": "module",
+    "name": "konbini",
     "private": true,
+    "workspaces": {
+        "packages": [
+            "packages/*"
+        ],
+        "catalog": {
+            "@zakahacecosas/number-utils": "npm:@jsr/zakahacecosas__number-utils",
+            "@zakahacecosas/string-utils": "npm:@jsr/zakahacecosas__string-utils",
+            "yaml": "^2.8.0",
+            "typescript": "~5.8.3",
+            "@types/bun": "latest"
+        }
+    },
     "scripts": {
-        "pretty": "prettier -w . && eslint --cache --fix --stats && tsc --noEmit",
-        "build": "bun build.ts",
-        "av": "bun guard/avs.ts"
-    },
-    "devDependencies": {
-        "@types/bun": "latest",
-        "eslint": "^9.28.0",
-        "prettier": "^3.5.3"
-    },
-    "peerDependencies": {
-        "typescript": "^5.8.3"
+        "pretty": "prettier --w . && eslint . --cache --fix && tsc --noEmit",
+        "run:cli": "bun packages/cli/src/index.ts",
+        "run:web": "cd packages/gui && bun run dev",
+        "bld:cli": "bun packages/cli/build.ts",
+        "bld:web": "cd packages/gui && bun run build",
+        "av": "bun packages/guard/avs.ts"
     },
     "dependencies": {
-        "@zakahacecosas/number-utils": "npm:@jsr/zakahacecosas__number-utils",
-        "@zakahacecosas/string-utils": "npm:@jsr/zakahacecosas__string-utils",
-        "glob": "^11.0.2",
-        "openpgp": "^6.1.1",
-        "yaml": "^2.8.0"
+        "prettier": "^3.5.3",
+        "eslint": "^9.28.0"
     }
 }

@@ -25,12 +25,16 @@ We also have a weekly running task that scans all downloadable projects with Cla
 
 ## Usage
 
+### Command Line Interface
+
 Run `kbi` once installed and you will be shown a list of available commands and a brief description of what do they do.
 
 Developers must compile (via `bun run build`) Konbini before execution - this is because Konbini relies on `sudo` in order to function, so `bun . <command>` usually won't work as it should.
 
+### Graphical User Interface
+
+Head to `https://konbini.vercel.app`. It requires the [CLI to be installed](#command-line-interface) anyway.
+
 ## Credits
 
 Konbini is brought to you by [@ZakaHaceCosas](https://github.com/ZakaHaceCosas) and published under the name of "Hana" (this GitHub organization and a yet-to-be-born company).
-
-Thanks to [@MrSerge01](https://github.com/MrSerge01) for helping with testing on other platforms.

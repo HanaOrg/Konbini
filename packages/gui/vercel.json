@@ -1,0 +1,5 @@
+{
+    "outputDirectory": "dist",
+    "builds": [],
+    "ignoreCommand": "echo 'skip build'"
+}
