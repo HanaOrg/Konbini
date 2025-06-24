@@ -7,6 +7,8 @@ import type { KONBINI_MANIFEST } from "../../shared/types/manifest";
 import AppGrid from "./components/app-grid";
 import Footer from "./components/footer";
 import { validate } from "@zakahacecosas/string-utils";
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 type tEntryPoint = {
     path: string;
@@ -90,6 +92,8 @@ export function App() {
             </nav>
             {loading ? <h1>Loading... Please wait</h1> : <AppGrid apps={apps} setPage={setPage} />}
             <Footer />
+            <Analytics />
+            <SpeedInsights />
         </>
     );
 }

@@ -27,5 +27,8 @@
     "dependencies": {
         "prettier": "^3.6.0",
         "eslint": "^9.29.0"
-    }
+    },
+    "trustedDependencies": [
+        "@vercel/speed-insights"
+    ]
 }
