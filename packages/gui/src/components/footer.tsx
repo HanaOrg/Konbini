@@ -5,6 +5,12 @@ export default function Footer() {
             Copyright &copy; The Hana Organization, 2025
             <hr />
             <a href="/safety">How we keep our apps safe.</a>
+            <hr />
+            <p style={{ textAlign: "center", margin: 0, color: "orange", fontWeight: 600 }}>
+                THIS IS NOT RELEASE SOFTWARE, it has been publicized for testing purposes.
+                <br />
+                IT IS NOT EXPECTED TO FEEL FINISHED OR BEHAVE PROPERLY.
+            </p>
         </footer>
     );
 }

@@ -49,6 +49,31 @@ export default function PackagePage() {
 
     const age = getAgeRating(app.age_rating);
 
+    const [slideIndex, setSlideIndex] = useState<number>(1);
+    showSlides(slideIndex);
+
+    function showSlides(n: number) {
+        let i;
+        let slides = document.getElementsByClassName("slides") as HTMLCollectionOf<HTMLElement>;
+        let dots = document.getElementsByClassName("dot");
+        if (n > slides.length) {
+            setSlideIndex(1);
+        }
+        if (n < 1) {
+            setSlideIndex(slides.length);
+        }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        if (slides[slideIndex - 1]) slides[slideIndex - 1].style.display = "block";
+        if (dots[slideIndex - 1]) dots[slideIndex - 1].className += " active";
+    }
+
+    console.debug(app);
+
     return (
         <>
             <Nav />
@@ -94,7 +119,17 @@ export default function PackagePage() {
             </dialog>
             <div className="app-main-cont">
                 <div className="flex">
-                    <h1 className="grad">{app.name}</h1>
+                    <div className="left">
+                        {app.icon && (
+                            <img className="app-icon" src={app.icon} alt={`${app.name}'s icon.`} />
+                        )}
+                        <div className="label">
+                            <h1 className="grad">{app.name}</h1>
+                            <p>
+                                By <b>{app.author_id}</b>
+                            </p>
+                        </div>
+                    </div>
                     <button
                         onClick={() => {
                             const m = document.querySelector("#install_dialog");
@@ -108,9 +143,6 @@ export default function PackagePage() {
                         Download
                     </button>
                 </div>
-                <p>
-                    By <b>{app.author_id}</b>
-                </p>
                 <h2>{app.slogan}</h2>
                 <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
                     <div className={`age ${age}`}>
@@ -145,6 +177,45 @@ export default function PackagePage() {
                 <div className="markdown">
                     <Markdown>{app.desc.replaceAll("\\n", "\n")}</Markdown>
                 </div>
+                {app.screenshot_urls && app.screenshot_urls.length > 0 ? (
+                    <>
+                        <hr />
+                        <h2>Screenshots</h2>
+                        <div className="slideshow-container">
+                            {app.screenshot_urls.map((s) => (
+                                <div className="slides">
+                                    <div className="numbertext">
+                                        {app.screenshot_urls!.indexOf(s) +
+                                            "/" +
+                                            app.screenshot_urls!.length}
+                                    </div>
+                                    <img src={s.link} alt={s.text} style={{ width: "100%" }} />
+                                    <div className="text">{s.text}</div>
+                                </div>
+                            ))}
+
+                            <a className="prev" onClick={() => setSlideIndex(slideIndex - 1)}>
+                                &#10094;
+                            </a>
+                            <a className="next" onClick={() => setSlideIndex(slideIndex + 1)}>
+                                &#10095;
+                            </a>
+                        </div>
+
+                        <div style={{ textAlign: "center" }}>
+                            {app.screenshot_urls.map((s) => (
+                                <span
+                                    className="dot"
+                                    onClick={() =>
+                                        setSlideIndex(app.screenshot_urls!.indexOf(s) + 1)
+                                    }
+                                ></span>
+                            ))}
+                        </div>
+                    </>
+                ) : (
+                    <></>
+                )}
                 <hr />
                 <h2>Platform support</h2>
                 <PlatformSupport platforms={app.platforms} />

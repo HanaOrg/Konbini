@@ -1,6 +1,8 @@
 {
     "name": "konbini",
+    "version": "0.0.1",
     "private": true,
+    "type": "module",
     "workspaces": {
         "packages": [
             "packages/*"
@@ -25,7 +27,7 @@
         "av": "bun packages/guard/avs.ts"
     },
     "dependencies": {
-        "prettier": "^3.6.0",
+        "prettier": "^3.6.1",
         "eslint": "^9.29.0"
     },
     "trustedDependencies": [

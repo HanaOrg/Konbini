@@ -142,7 +142,10 @@ export interface KONBINI_MANIFEST {
     /** Documentation website of the package, if any. */
     docs?: `https://${string}`;
     /** App screenshots to be displayed in the Konbini UI. Only WEBP is supported. */
-    screenshot_urls?: `https://${string}.webp`[];
+    screenshot_urls?: {
+        text: string;
+        link: `https://${string}.webp`;
+    }[];
     /**
      * A category that represents the type of tool or software the app is meant to be.
      * - `SYSTEM_UTIL`: Tools for system management (e.g., disk cleaner, sys info viewer).
@@ -239,7 +242,8 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const validScreenshots =
         m.screenshot_urls === undefined ||
-        (Array.isArray(m.screenshot_urls) && m.screenshot_urls.every(isWebpURL));
+        (Array.isArray(m.screenshot_urls) &&
+            m.screenshot_urls.every((i) => isWebpURL(i.link) && validate(i.text)));
 
     const validCategories = Array.isArray(m.categories) && m.categories.every(validate);
 

@@ -1,9 +1,7 @@
-// TODO - ask for maintainers
-// it's either ask for everything or ask JUST for the basics
-// so yeah pls review this
+// TODO - review this and remove optional stuff, to keep it brief
 import { cwd } from "node:process";
 import { konsole } from "../toolkit/konsole";
-import { kominator, StringArray, validate, validateAgainst } from "@zakahacecosas/string-utils";
+import { kominator, validate, validateAgainst } from "@zakahacecosas/string-utils";
 import { isBetween } from "@zakahacecosas/number-utils";
 import { stringify } from "yaml";
 import { writeFileSync } from "node:fs";
@@ -65,22 +63,6 @@ export async function generateManifest() {
         validate(icon)
             ? `This icon looks awesome for sure!`
             : "No icon? Well, we'll do without it...",
-    );
-
-    const screenshots = await prompt(
-        "Screenshot URLs? If any, they must all start with https://, point to a WEBP file, and be separated by commas (,). 1st URL will be shown bigger in the UI.\nLeave blank for no screenshots.",
-        (val) =>
-            !validate(val) ||
-            (validate(val) &&
-                kominator(val)
-                    .map((s) => s.startsWith("https://") && s.endsWith(".webp"))
-                    .every((v) => v == true)),
-        "Whoops, this doesn't look right. List all URLs using commas and be sure they're valid.",
-    );
-    konsole.suc(
-        validate(screenshots)
-            ? `These ${kominator(screenshots).length} screenshots sure look nice!`
-            : "No screenshots? That's okay too.",
     );
 
     const categories = await prompt(
@@ -164,9 +146,6 @@ export async function generateManifest() {
         slogan,
         desc,
         icon: validate(icon) ? (icon as `https://${string}.webp`) : null,
-        screenshot_urls: StringArray.fromKominator(screenshots)
-            .cleanup()
-            .arr() as `https://${string}.webp`[],
         categories: kominator(categories).map((s) => s.trim().toUpperCase()) as CATEGORY[],
         age_rating: {
             money,

@@ -119,7 +119,13 @@ export function Home() {
                 {loading ? (
                     <h1>Loading... Please wait</h1>
                 ) : (
-                    <AppGrid title="Editor's choice" apps={apps} />
+                    <>
+                        <p>
+                            Since the amount of packages is very low, for now we just place them all
+                            here. As we grow the amount we'll more specifically classify them.
+                        </p>
+                        <AppGrid title="All packages" apps={apps} />
+                    </>
                 )}
             </div>
             <Footer />
