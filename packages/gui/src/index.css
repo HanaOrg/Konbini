@@ -374,9 +374,7 @@ code {
     margin: auto;
 }
 
-/* Hide the images by default */
 .slides {
-    display: none;
     height: 300px;
 }
 
