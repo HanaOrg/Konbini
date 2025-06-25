@@ -4,7 +4,7 @@ import { bearer } from "../../gui/src/tkn";
 // whether we're on web or not, because the CLI cannot use the web cache API
 const isWeb = typeof window !== "undefined" && typeof document !== "undefined";
 
-// TODO - implement hand-made caching
+// TODO - implement hand-made caching for CLI
 const cacheAPI = isWeb
     ? caches
     : {
@@ -21,7 +21,7 @@ function isNotTooOld(match: Response): boolean {
     const cacheDate = new Date(match.headers.get("x-cache-date") || Date.now());
     const now = new Date();
 
-    const expired = now.getTime() - cacheDate.getTime() > (21 * 24 * 60 * 60 * 1000); // 21 days, or 3 weeks
+    const expired = now.getTime() - cacheDate.getTime() > 21 * 24 * 60 * 60 * 1000; // 21 days, or 3 weeks
 
     if (expired) return false;
 

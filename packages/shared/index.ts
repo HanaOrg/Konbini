@@ -6,11 +6,12 @@ export * from "./api/getters";
 export * from "./api/manifest";
 export * from "./api/network";
 // TYPES
-export type { KONBINI_HASHFILE, KONBINI_LOCKFILE } from "./types/files";
+export { type KONBINI_HASHFILE, type KONBINI_LOCKFILE, isStdLockfile } from "./types/files";
 export { type KONBINI_AUTHOR, type KONBINI_AUTHOR_ID, isOrganization } from "./types/author";
 export type { GRA_RELEASE } from "./types/github";
 export {
     isKps,
+    isStdScope,
     isValidManifest,
     LICENSES,
     CATEGORIES,
@@ -20,6 +21,7 @@ export {
     type CATEGORY,
     type KONBINI_PKG_SCOPE,
     type KONBINI_MANIFEST,
+    type PARSED_KPS,
 } from "./types/manifest";
 // SECURITY
 export * from "./security";

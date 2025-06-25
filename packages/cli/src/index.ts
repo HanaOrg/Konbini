@@ -38,10 +38,14 @@ async function main() {
                 "Enter a command to get started. Available commands:",
                 konsole.clr("lightgrey", "<parameters> are mandatory, [-flags] are optional."),
                 `> install <pkg>      ${konsole.clr("grey", "// installs a package")}`,
+                `> update [pkg]       ${konsole.clr("grey", "// updates a package, or all packages if none specified")}`,
                 `> remove <pkg>       ${konsole.clr("grey", "// removes a package")}`,
                 `> info <pkg | user>  ${konsole.clr("grey", "// shows info for a specific package or publisher")}`,
                 `> list [-v]          ${konsole.clr("grey", "// lists all installed packages")}`,
                 `> learn <item>       ${konsole.clr("grey", "// shows helpful info about something specific")}`,
+                `> where              ${konsole.clr("grey", "// shows where all program files are stored")}`,
+                `> about              ${konsole.clr("grey", "// shows some info about Konbini")}`,
+                `> -v, --version      ${konsole.clr("grey", "// shows current Konbini version")}`,
                 "",
                 `- "kbd" prefixed commands are for developers. ${konsole.clr("grey", "// KonBini Dev, KBD, get it?")}`,
                 "",
@@ -77,10 +81,13 @@ async function main() {
             await removePackage(subcommand);
             break;
         case "where":
-            konsole.dbg("The program is stored at", INSTALL_DIR);
-            konsole.dbg(
-                "Installed packages (that don't come from a scoped 3rd party pkg manager) are at the path above, too.",
+            konsole.suc("Sure, here's where we live on your PC:");
+            konsole.adv("Konbini is installed at and running from", import.meta.dir);
+            konsole.adv(
+                "Installed packages (that don't come from a scoped 3rd party pkg manager) are at",
+                INSTALL_DIR,
             );
+            konsole.adv("Launchpad shortcuts are at", LAUNCHPAD_DIR);
             break;
         case "info":
             if (!subcommand) throw "No package or user specified.";
@@ -118,7 +125,7 @@ async function main() {
             console.log(
                 "Written in BunJS, version",
                 Bun.version,
-                "(running ",
+                "(running",
                 process.version,
                 "of Node)",
             );

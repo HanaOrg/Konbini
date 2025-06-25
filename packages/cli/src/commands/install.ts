@@ -20,12 +20,14 @@ import {
     konbiniHash,
     assertIntegrityGPG,
     getUsrSignature,
+    isStdLockfile,
 } from "shared";
+import { isStdScope } from "shared/types/manifest";
 
 async function installSingleExecutable(params: {
     filePath: string;
     remote: { asset: string; version: string };
-}): Promise<Omit<Omit<Extract<KONBINI_LOCKFILE, { scope: "std" }>, "current_sha">, "pkg">> {
+}) {
     const { filePath, remote } = params;
     konsole.adv(`Downloading executable from KBI remote`);
     konsole.war(
@@ -45,10 +47,9 @@ async function installSingleExecutable(params: {
     // process.exit(1);
 
     return {
-        ver: remote.version,
-        remote: remote.asset,
-        timestamp: new Date().toString(),
-        scope: "std",
+        version: remote.version,
+        remote_url: remote.asset,
+        installation_ts: new Date().toString(),
     };
 }
 
@@ -111,13 +112,14 @@ async function downloadSafetyRelatedFiles(params: {
     return { shaHash };
 }
 
-export async function installPackage(pkgName: string, method: "install" | "update" = "install") {
+export async function installPackage(
+    pkgName: string,
+    method: "install" | "update" | "reinstall" = "install",
+) {
     const manifest = await getPkgManifest(pkgName);
 
     const usrDir = USR_PATH({ author: manifest.author_id });
     const pkgDir = PKG_PATH({ pkg: pkgName, author: manifest.author_id });
-
-    let reinstall: boolean = false;
 
     if (existsSync(pkgDir)) {
         if (method === "install") {
@@ -127,7 +129,8 @@ export async function installPackage(pkgName: string, method: "install" | "updat
                 return;
             } else {
                 konsole.suc("At your order, captain. Reinstalling this package.");
-                reinstall = true;
+                // mutate this so it works when doing aliased install
+                method = "reinstall";
             }
         } else {
             konsole.adv("Updating package", pkgName);
@@ -140,13 +143,12 @@ export async function installPackage(pkgName: string, method: "install" | "updat
         process.exit(1);
     }
     const kps = parseKps(platform);
-    if (kps.src !== "std") {
+    if (!isStdScope(platform)) {
         const ret = installAliasedPackage({
             kps,
             pkgName,
             manifest,
             method,
-            reinstall,
         });
         if (ret === "installedOrUpdated")
             konsole.suc(
@@ -158,11 +160,11 @@ export async function installPackage(pkgName: string, method: "install" | "updat
     konsole.dbg(`Reading remotes for ${manifest.name}`);
     const remotes = await getPkgRemotes(platform, manifest);
 
-    const prevManifest = parse(
+    const prevLockfile = parse(
         readFileSync(join(pkgDir, FILENAMES.lockfile), { encoding: "utf-8" }),
     ) as KONBINI_LOCKFILE;
 
-    if (prevManifest.scope === "std" && prevManifest.ver === remotes.pkgVersion) {
+    if (isStdLockfile(prevLockfile) && prevLockfile.version === remotes.pkgVersion) {
         konsole.suc(`${pkgName} is already up to date.`);
         return;
     }
@@ -223,9 +225,7 @@ export async function installPackage(pkgName: string, method: "install" | "updat
         konsole.dbg(
             gpgMatch === "error"
                 ? "Note: Its an unknown error that triggered this."
-                : gpgMatch === "non-valid"
-                  ? "Note: Its an invalid signature (does NOT match at all) that triggered this."
-                  : "Note: Its a non-compliant (does OR does NOT match, but DOES NOT comply with the required GPG-SHA512 standard) that triggered this.",
+                : "Note: Its an invalid signature (does NOT match at all) that triggered this.",
         );
         destroyPkg(pkgDir);
         process.exit(1);
@@ -233,7 +233,12 @@ export async function installPackage(pkgName: string, method: "install" | "updat
     konsole.dbg("GPG signature matches, download is authentic. Nice.");
     konsole.dbg("Security tests passed - great! We'll make this install usable right now.");
 
-    const lockfile = { ...stuff, pkg: pkgName, current_sha: safetyInfo.shaHash };
+    const lockfile: KONBINI_LOCKFILE = {
+        ...stuff,
+        scope: platform,
+        pkg: pkgName,
+        installation_hash: safetyInfo.shaHash,
+    };
     writeLockfile(lockfile, pkgName, manifest.author_id);
     konsole.dbg("Lockfile written.");
 

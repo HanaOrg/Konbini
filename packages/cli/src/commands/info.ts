@@ -3,6 +3,7 @@ import { isOrganization } from "shared";
 import { PKG_PATH } from "../constants";
 import { konsole } from "../toolkit/konsole";
 import { existsSync } from "fs";
+import { truncate } from "@zakahacecosas/string-utils";
 
 export async function showPkgInfo(pkg: string) {
     const manifest = await getPkgManifest(pkg);
@@ -51,10 +52,14 @@ export async function showPkgInfo(pkg: string) {
     else konsole.dbg("Package is not installed.");
     console.log("");
     console.log(
-        manifest.desc
-            .split("\n")
-            .filter((s) => s.trim() != "")
-            .join("\n\n      "),
+        truncate(
+            manifest.desc
+                .split("\n")
+                .filter((s) => s.trim() != "")
+                .join("\n\n      "),
+            310,
+            true,
+        ),
     );
 }
 

@@ -7,7 +7,7 @@ export async function assertIntegrityGPG(params: {
     executableFilePath: string;
     executableAscFilePath: string;
     authorAscFilePath: string;
-}): Promise<"error" | "non-compliant" | "non-valid" | "valid"> {
+}): Promise<"error" | "non-valid" | "valid"> {
     const { executableFilePath, executableAscFilePath, authorAscFilePath } = params;
 
     // load data
@@ -38,8 +38,8 @@ export async function assertIntegrityGPG(params: {
     } else {
         return "non-valid";
     }
-    // hope we find a way to return "non-compliant" for non GPG-SHA512 signatures
 }
+
 /** Simply validates a signature is valid (based on format). Doesn't assert the safety of any package, but avoids the unnecessary redownload of signatures each time a package is installed or updated. */
 export async function validateGPGSignature(ascFilePath: string): Promise<boolean> {
     try {

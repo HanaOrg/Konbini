@@ -14,6 +14,7 @@
         "@vercel/speed-insights": "^1.2.0",
         "@zakahacecosas/string-utils": "catalog:",
         "preact": "^10.26.5",
+        "preact-iso": "^2.9.2",
         "react-markdown": "^10.1.0",
         "yaml": "catalog:"
     },

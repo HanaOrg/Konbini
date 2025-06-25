@@ -1,29 +1,36 @@
-import type { KPS_SOURCE } from "./manifest.ts";
+import type { KONBINI_PKG_SCOPE } from "./manifest.ts";
+
+interface KONBINI_ALI_LOCKFILE {
+    /** Package name. */
+    pkg: string;
+    /** Exact timestamp of the installation. */
+    installation_ts: string;
+    /** Package scope. */
+    scope: Exclude<KONBINI_PKG_SCOPE, `std:${string}`>;
+}
+
+interface KONBINI_STD_LOCKFILE {
+    /** Package name. */
+    pkg: string;
+    /** Exact timestamp of the installation. */
+    installation_ts: string;
+    /** Package scope. */
+    scope: `std:${string}`;
+    /** Version of the package. */
+    version: string;
+    /** Package remote URL. */
+    remote_url: string;
+    /** SHA3-512 hash of the currently installed download. */
+    installation_hash: string;
+}
 
 /** A Konbini lockfile that accompanies each package. */
-export type KONBINI_LOCKFILE =
-    | {
-          /** Version of the package. Should follow SemVer, although it being user provided means it doesn't necessarily do. */
-          ver: string;
-          /** Package name. */
-          pkg: string;
-          /** Package remote URL. */
-          remote: string;
-          /** Exact timestamp of the installation. */
-          timestamp: string;
-          /** SHA3-512 hash of the currently installed download. */
-          current_sha: string;
-          /** Package scope. */
-          scope: "std";
-      }
-    | {
-          /** Package name. */
-          pkg: string;
-          /** Exact timestamp of the installation. */
-          timestamp: string;
-          /** Package scope. */
-          scope: Exclude<KPS_SOURCE, "std">;
-      };
+export type KONBINI_LOCKFILE = KONBINI_ALI_LOCKFILE | KONBINI_STD_LOCKFILE;
+
+/** Checks if a lockfile belongs to a Konbini package. */
+export function isStdLockfile(lockfile: KONBINI_LOCKFILE): lockfile is KONBINI_STD_LOCKFILE {
+    return lockfile.scope.startsWith("std:");
+}
 
 /**
  * A Konbini hashfile. MUST be present on a project's GitHub release for it to be downloadable.

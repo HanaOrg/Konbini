@@ -30,7 +30,7 @@ export function locatePkg(pkg: string, src: "R" | "A" = "R"): string {
  * @example
  * ```ts
  * // imagine the AuthorsRegistry root URL is "konbini.sample/authors/"
- * KPI.locateUsr("org.Hana");
+ * KPI.locateUsr("org.hana");
  * // returns "https://konbini.samle/authors/org/ha"
  * ```
  * @returns {string} String URL.

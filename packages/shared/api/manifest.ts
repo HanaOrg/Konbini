@@ -2,7 +2,7 @@ import { validate, validateAgainst } from "@zakahacecosas/string-utils";
 import {
     type KONBINI_MANIFEST,
     type KONBINI_PKG_SCOPE,
-    type KPS_SOURCE,
+    type PARSED_KPS,
     KPS_SOURCES,
 } from "../types/manifest.ts";
 import type { KONBINI_HASHFILE } from "../types/files.ts";
@@ -10,12 +10,7 @@ import process from "node:process";
 import { getPlatform } from "./platform.ts";
 
 /** Parser for Konbini Package Scopes */
-export function parseKps(scope: unknown): {
-    /** Source. All of them are self-descriptive. */
-    src: KPS_SOURCE;
-    /** Value. Package name for non-Konbini hosts, filename for Konbini. */
-    val: string;
-} {
+export function parseKps(scope: unknown): PARSED_KPS {
     if (!validate(scope as string)) {
         throw `Invalid KPS (not a string): ${scope}.`;
     }
@@ -23,19 +18,48 @@ export function parseKps(scope: unknown): {
     if (splitted.length !== 2) {
         throw `Invalid KPS (${splitted.length} occurrences upon splitting): ${scope}`;
     }
-    if (!splitted[0]) {
-        throw `Invalid KPS (no prefix): ${scope}`;
-    }
-    if (!splitted[1]) {
-        throw `Invalid KPS (no suffix): ${scope}`;
-    }
-    if (!validateAgainst(splitted[0], KPS_SOURCES)) {
+
+    const src = splitted[0];
+    const val = splitted[1];
+
+    if (!src) throw `Invalid KPS (no prefix): ${scope}`;
+    if (!val) throw `Invalid KPS (no suffix): ${scope}`;
+    if (!validateAgainst(src, KPS_SOURCES)) {
         throw `Invalid KPS (prefix does not match specification): ${scope}`;
     }
+    if (src === "std")
+        return {
+            src,
+            val,
+            cmd: null,
+        };
     return {
-        src: splitted[0],
-        val: splitted[1],
+        src,
+        val,
+        cmd:
+            src === "apt"
+                ? "apt"
+                : src === "nix"
+                  ? "nix-env"
+                  : src === "brew"
+                    ? "brew"
+                    : src === "brew-k"
+                      ? "brew --cask"
+                      : src === "wget"
+                        ? "winget"
+                        : src === "fpak"
+                          ? "flatpak"
+                          : src === "snap"
+                            ? "snap"
+                            : src === "cho"
+                              ? "choco"
+                              : "scoop",
     };
+}
+
+/** Constructor for parsed Konbini Package Scopes */
+export function constructKps(scope: PARSED_KPS): KONBINI_PKG_SCOPE {
+    return `${scope.src}:${scope.val}`;
 }
 
 /** Gets the Konbini Package Scope relevant to the user's current platform. */

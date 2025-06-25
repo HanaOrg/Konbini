@@ -1,4 +1,6 @@
-// TODO: show maintainers too
+// TODO - ask for maintainers
+// it's either ask for everything or ask JUST for the basics
+// so yeah pls review this
 import { cwd } from "node:process";
 import { konsole } from "../toolkit/konsole";
 import { kominator, StringArray, validate, validateAgainst } from "@zakahacecosas/string-utils";
@@ -14,29 +16,13 @@ import {
     type CATEGORY,
     type LICENSE,
     isKps,
+    LICENSES,
 } from "shared";
-
-const VALID_LICENSES = [
-    "MIT",
-    "GPLv3",
-    "GPLv2",
-    "Apache2",
-    "BSD2Clause",
-    "BSD3Clause",
-    "ISC",
-    "MPLv2",
-    "LGPLv3",
-    "EPLv2",
-    "Unlicense",
-    "Zlib",
-    "PublicDomain",
-];
 
 export async function generateManifest() {
     konsole.suc(
         "Let's create a new package! This utility will generate the YAML manifest for you, just answer the questions.",
     );
-    konsole.adv('Questions preceded with a "[ · ]" are mandatory.');
 
     const name = await prompt(
         "[ · ] Package DISPLAY name? (supports spaces and caps, unlike its identifier)",
@@ -61,9 +47,9 @@ export async function generateManifest() {
 
     const license = await prompt(
         "Package license? Must be either one of the following:\n" +
-            VALID_LICENSES.map((x) => `"${x}"`).join(", ") +
+            LICENSES.map((x) => `"${x}"`).join(", ") +
             "\nor nothing (just hit enter) for an unspecified license (not recommended, though).",
-        (val) => !validate(val) || validateAgainst(val, VALID_LICENSES),
+        (val) => !validate(val) || validateAgainst(val, LICENSES),
         "Whoops, that license seems invalid...",
     );
     konsole.suc(validate(license) ? "Good!" : "No license? Well, okay...");
@@ -118,7 +104,7 @@ export async function generateManifest() {
     );
 
     const author_id: KONBINI_AUTHOR_ID = (await prompt(
-        "[ · ] Your author ID? (e.g. usr.JohnDoe) (be sure it exists!)",
+        "[ · ] Your author ID? (e.g. usr.johndoe) (be sure it exists!)",
         (val) =>
             validate(val) &&
             val.split(".").length === 2 &&

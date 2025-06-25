@@ -1,21 +1,37 @@
 import { useEffect, useState } from "preact/hooks";
-import { getAgeRating, type KONBINI_MANIFEST } from "../../shared/types/manifest";
-import { getPkgManifest } from "../../shared/api/core";
+import { getAgeRating, type KONBINI_MANIFEST } from "shared/types/manifest";
+import { getPkgManifest } from "shared/api/core";
 import Markdown from "react-markdown";
-import { getDesktopPlatform } from "./ua";
-import PlatformSupport from "./components/platform-support";
+import { getDesktopPlatform } from "../ua";
+import PlatformSupport from "../components/platform-support";
+import Nav from "../components/nav";
+import Footer from "../components/footer";
 
-export default function AppPage({ route }: { route: string }) {
+export default function PackagePage() {
     const [app, setApp] = useState<KONBINI_MANIFEST>();
+    const [loading, setLoading] = useState<boolean>(true);
+
+    const route = window.location.pathname.split("/package/").filter(Boolean)[0];
 
     useEffect(() => {
         async function getApp() {
-            const manifest = await getPkgManifest(route, true);
-            setApp(manifest);
+            try {
+                const manifest = await getPkgManifest(route, true);
+                setApp(manifest);
+                setLoading(false);
+            } catch (error) {
+                if (String(error).includes("does NOT exist")) {
+                    window.location.pathname = "/404";
+                    return;
+                }
+                console.error(error);
+                throw error;
+            }
         }
         getApp();
     }, []);
 
+    if (!app && loading) return <h1>Loading package "{route}"...</h1>;
     if (!app) return <h1>Error loading {route}</h1>;
 
     const plat = getDesktopPlatform();
@@ -35,45 +51,43 @@ export default function AppPage({ route }: { route: string }) {
 
     return (
         <>
-            <nav>
-                <img
-                    style={{ cursor: "pointer" }}
-                    src="/konball.png"
-                    alt="Konbini logo"
-                    onClick={() => {
-                        window.location.hash = "";
-                        window.location.pathname = "/";
-                    }}
-                />
-            </nav>
+            <Nav />
             <dialog id="install_dialog">
-                <button
-                    onClick={() => {
-                        const m = document.querySelector("#install_dialog");
-                        if (!m) {
-                            console.error("No modal rendered?");
-                            return;
-                        }
-                        (m as HTMLDialogElement).close();
-                    }}
-                >
-                    Close
-                </button>
-                <h2>Download {app.name}</h2>
+                <div className="flex">
+                    <h2>Download {app.name} from Konbini</h2>
+                    <button
+                        onClick={() => {
+                            const m = document.querySelector("#install_dialog");
+                            if (!m) {
+                                console.error("No modal rendered?");
+                                return;
+                            }
+                            (m as HTMLDialogElement).close();
+                        }}
+                    >
+                        <b>X</b>
+                    </button>
+                </div>
                 <hr />
                 <h3>Step one: Get Konbini</h3>
                 <p>
-                    On your system shell, run this script:
+                    On{" "}
+                    {getDesktopPlatform().plat === "Windows" ? (
+                        <b>a PowerShell session</b>
+                    ) : (
+                        <b>a BASH (or your system's shell) session</b>
+                    )}
+                    , run this script:
                     <br />
                     {getDesktopPlatform().plat === "Windows" ? (
-                        <code>WINDOWS SCRIPT HERE LOL</code>
+                        <code>powershell -c "irm konbini.vercel.app/dl.ps1 | iex"</code>
                     ) : (
-                        <code>LINUX SCRIPT HERE LOL</code>
+                        <code>curl -fsSL konbini.vercel.app/dl.sh | bash</code>
                     )}
                 </p>
                 <h3>Step two: Install this package</h3>
                 <p>
-                    Once Konbini installed, run the following command:
+                    Once Konbini installs, restart your terminal and run the following command:
                     <br />
                     <code>kbi install {route}</code>
                 </p>
@@ -138,8 +152,8 @@ export default function AppPage({ route }: { route: string }) {
                 <div className="details">
                     <div className="detail">
                         <svg
-                            width="55"
-                            height="55"
+                            width="50"
+                            height="50"
                             fill="none"
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
@@ -155,8 +169,8 @@ export default function AppPage({ route }: { route: string }) {
                     </div>
                     <div className="detail">
                         <svg
-                            width="55"
-                            height="55"
+                            width="50"
+                            height="50"
                             fill="none"
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
@@ -181,8 +195,8 @@ export default function AppPage({ route }: { route: string }) {
                     </div>
                     <div className="detail">
                         <svg
-                            width="55"
-                            height="55"
+                            width="50"
+                            height="50"
                             fill="none"
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
@@ -214,8 +228,8 @@ export default function AppPage({ route }: { route: string }) {
                     <div className="detail">
                         {app.repository ? (
                             <svg
-                                width="55"
-                                height="55"
+                                width="50"
+                                height="50"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -227,8 +241,8 @@ export default function AppPage({ route }: { route: string }) {
                             </svg>
                         ) : (
                             <svg
-                                width="55"
-                                height="55"
+                                width="50"
+                                height="50"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -241,6 +255,7 @@ export default function AppPage({ route }: { route: string }) {
                         )}
                         {app.repository ? (
                             <p>
+                                Find the source at{" "}
                                 <a
                                     href={`https://github.com/${app.repository}`}
                                     target="_blank"
@@ -257,6 +272,7 @@ export default function AppPage({ route }: { route: string }) {
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

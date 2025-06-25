@@ -27,8 +27,9 @@ export default function PlatformSupport({
                     <i>
                         "Aliased" means it is supported, but not via Konbini itself. Konbini is both
                         a standalone package manager and a downloader for other package managers
-                        such as WinGet, DPKG, Homebrew, or Flathub; "aliased" means the package will
-                        be downloaded through a trusted 3<sup>rd</sup> party package manager.
+                        such as WinGet, DPKG, Homebrew, or Flathub (among others); "aliased" means
+                        the package will be downloaded through a trusted 3<sup>rd</sup> party
+                        package manager.
                     </i>
                 </p>
             ) : (

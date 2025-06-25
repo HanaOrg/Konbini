@@ -1,7 +1,19 @@
 import { konsole } from "./konsole";
 import { execSync } from "child_process";
 import { writeLockfile } from "./write";
-import type { KONBINI_LOCKFILE, KPS_SOURCE, KONBINI_MANIFEST } from "shared";
+import {
+    type KONBINI_LOCKFILE,
+    type PARSED_KPS,
+    type KONBINI_MANIFEST,
+    parseKps,
+    getCurrentPlatformKps,
+    getPkgManifest,
+    constructKps,
+    type KONBINI_PKG_SCOPE,
+} from "shared";
+import { ALIASED_CMDs } from "./alias-cmds";
+import { PKG_PATH } from "../constants";
+import { existsSync } from "fs";
 
 function noNewUpdates(errorMsg: string): boolean {
     // TODO - the rest
@@ -15,91 +27,23 @@ function noNewUpdates(errorMsg: string): boolean {
 
 export function installAliasedPackage(params: {
     pkgName: string;
-    kps: {
-        src: KPS_SOURCE;
-        val: string;
-    };
+    kps: PARSED_KPS;
     manifest: KONBINI_MANIFEST;
-    method: "install" | "update";
-    reinstall: boolean;
+    method: "install" | "update" | "reinstall";
 }): "upToDate" | "no-op" | "needsPkgMgr" | "installedOrUpdated" {
-    const { kps, manifest, pkgName, method, reinstall } = params;
+    const { kps, manifest, pkgName, method } = params;
 
     // no-op
     if (kps.src === "std") return "no-op";
 
     const name = kps.src.toUpperCase();
-    const command =
-        kps.src === "apt"
-            ? "apt"
-            : kps.src === "nix"
-              ? "nix-env"
-              : kps.src === "brew"
-                ? "brew"
-                : kps.src === "brew-k"
-                  ? "brew --cask"
-                  : kps.src === "wget"
-                    ? "winget"
-                    : kps.src === "fpak"
-                      ? "flatpak"
-                      : "snap";
+
     konsole.adv(
-        `${manifest.name} is using ${name}, a non-Konbini remote. We'll ${method} the package for you using '${command}'.`,
+        `${manifest.name} is using ${name}, a non-Konbini remote. We'll ${method} the package for you using '${kps.cmd}'.`,
     );
 
-    const options: Record<Exclude<KPS_SOURCE, "std">, string> = {
-        "apt":
-            method === "install"
-                ? reinstall
-                    ? `sudo apt install -y --reinstall ${kps.val}`
-                    : `sudo apt install -y ${kps.val}`
-                : `sudo apt upgrade -y ${kps.val}`,
-
-        "nix":
-            method === "install"
-                ? reinstall
-                    ? `nix-env -e ${kps.val} && nix-env -iA nixpkgs.${kps.val}`
-                    : `nix-env -iA nixpkgs.${kps.val}`
-                : `nix-env -uA nixpkgs.${kps.val}`,
-
-        "snap":
-            method === "install"
-                ? reinstall
-                    ? `sudo snap remove ${kps.val} --yes && sudo snap install ${kps.val} --yes`
-                    : `sudo snap install ${kps.val} --yes`
-                : `sudo snap refresh ${kps.val} --yes`,
-
-        "brew":
-            method === "install"
-                ? reinstall
-                    ? `brew reinstall ${kps.val}`
-                    : `brew install ${kps.val}`
-                : `brew upgrade ${kps.val}`,
-
-        "brew-k":
-            method === "install"
-                ? reinstall
-                    ? `brew reinstall --cask ${kps.val}`
-                    : `brew install --cask ${kps.val}`
-                : `brew upgrade --cask ${kps.val}`,
-
-        "wget":
-            method === "install"
-                ? reinstall
-                    ? `winget install ${kps.val} --force --accept-package-agreements --accept-source-agreements`
-                    : `winget install ${kps.val} --accept-package-agreements --accept-source-agreements`
-                : `winget upgrade --accept-package-agreements --accept-source-agreements --id ${kps.val}`,
-
-        "fpak":
-            method === "install"
-                ? reinstall
-                    ? `flatpak install -y --reinstall flathub ${kps.val}`
-                    : `flatpak install -y flathub ${kps.val}`
-                : `flatpak update -y ${kps.val}`,
-    };
-
     try {
-        execSync(`${command} -v`);
+        execSync(`${kps.cmd} -v`);
     } catch {
         konsole.err(
             `This package requires a 3rd party package manager that is not installed on your system.`,
@@ -108,7 +52,7 @@ export function installAliasedPackage(params: {
     }
 
     try {
-        execSync(options[kps.src]);
+        execSync(ALIASED_CMDs[kps.src][method](kps.val));
     } catch (error) {
         if (noNewUpdates((error as any).stdout)) {
             konsole.suc(`${manifest.name} is already up to date!`);
@@ -121,11 +65,37 @@ export function installAliasedPackage(params: {
         `Because ${name} is a trusted registry, we don't perform GPG or SHA checks.\n      Keep that in mind.`,
     );
 
+    const scope = constructKps(kps);
+    if (scope.startsWith("std:")) throw `a`;
+
     const lockfile: KONBINI_LOCKFILE = {
         pkg: pkgName,
-        scope: kps.src,
+        scope: scope as Exclude<KONBINI_PKG_SCOPE, `std:${string}`>,
         timestamp: new Date().toString(),
     };
     writeLockfile(lockfile, pkgName, manifest.author_id);
     return "installedOrUpdated";
+}
+
+export async function existsAliasedPackage(pkg: string): Promise<boolean> {
+    const manifest = await getPkgManifest(pkg);
+    const { author_id } = manifest;
+    const kps = parseKps(getCurrentPlatformKps(manifest.platforms));
+    if (kps.src === "std") {
+        return existsSync(PKG_PATH({ author: author_id, pkg }));
+    }
+    const cmd = ALIASED_CMDs[kps.src]["exists"](kps.val);
+    let out: string;
+
+    try {
+        out = execSync(cmd).toString();
+    } catch (error) {
+        out = String(error);
+    }
+
+    // TODO - review all pkg managers to ensure behavior is consistent
+    // (if someone returned 'pkg A not found' this code wouldn't work, that's what i mean)
+    // TESTED: wget, brew, brew-k
+    if (out.includes(kps.val)) return true;
+    return false;
 }

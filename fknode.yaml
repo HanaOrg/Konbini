@@ -1,6 +1,7 @@
 destroy:
     targets:
-        - "./guard/build/"
+        - "./packages/cli/guard/build/"
+        - "./packages/gui/dist/"
     intensities:
         - "*"
 prettyCmd: "pretty"

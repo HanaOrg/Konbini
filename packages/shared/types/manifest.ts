@@ -20,19 +20,49 @@ export const CATEGORIES = [
 
 export type CATEGORY = (typeof CATEGORIES)[number];
 
-export const KPS_SOURCES = ["wget", "apt", "snap", "nix", "brew", "brew-k", "std", "fpak"] as const;
+export const KPS_SOURCES = [
+    "wget",
+    "apt",
+    "snap",
+    "nix",
+    "brew",
+    "brew-k",
+    "std",
+    "fpak",
+    "scp",
+    "cho",
+] as const;
 
 /** A KPS source. */
 export type KPS_SOURCE = (typeof KPS_SOURCES)[number];
 
-/** A Konbini package scope. It follows this format:
+/** A Konbini Package Scope (KPS). It follows this format:
  *
  *  `manager:pkg_name`
  *
- * For a non-Konbini package from either `apt`, `nix`, `brew`, or `wget`, the **prefix** represents the package manager and the ***suffix*** the name of the package within that manager.
- * For a Konbini package (`std`), the **prefix** obviously declares this as a Konbini package and the ***suffix*** indicates the filename to search for within the release.
+ * For a non-Konbini package, the **prefix** represents the package manager and the ***suffix*** the name of the package within that manager.
+ * For a Konbini package, the **prefix** declares this as a Konbini package and the ***suffix*** indicates the filename to search for within the release.
  */
 export type KONBINI_PKG_SCOPE = `${KPS_SOURCE}:${string}`;
+
+/** A parsed KPS. */
+export type PARSED_KPS =
+    | {
+          /** Source. All of them are self-descriptive. */
+          src: KPS_SOURCE;
+          /** Value. Package name for non-Konbini hosts, filename for Konbini. */
+          val: string;
+          /** Command to be executed  */
+          cmd: string;
+      }
+    | {
+          /** Source. All of them are self-descriptive. */
+          src: "std";
+          /** Value. Package name for non-Konbini hosts, filename for Konbini. */
+          val: string;
+          /** (null) */
+          cmd: null;
+      };
 
 export const LICENSES = [
     "MIT",
@@ -145,6 +175,12 @@ export function isKps(kps: any): kps is KONBINI_PKG_SCOPE {
     } catch {
         return false;
     }
+}
+
+/** Validates if the given scope is a `std:` one. */
+export function isStdScope(kps: any): kps is `std:${string}` {
+    if (isKps(kps) && kps.startsWith("std:")) return true;
+    return false;
 }
 
 export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {

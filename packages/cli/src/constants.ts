@@ -18,7 +18,7 @@ export const LAUNCHPAD_DIR = join(ROOT, "launchpad");
 /** This "constant" is actually a function. Pass the name of the package and its author and it'll generate the installation path.
  * @example
  * ```ts
- * PKG_PATH({pkg: "foobar", author: "usr.Foo"});
+ * PKG_PATH({pkg: "foobar", author: "usr.foo"});
  * // returns "/usr/local/kbi/usr.foo/foobar"
  * ```
  */
@@ -29,7 +29,7 @@ export function PKG_PATH(p: { pkg: string; author: string }): string {
 /** This "constant" is actually a function. Pass the name of the author and it'll generate his package installation path.
  * @example
  * ```ts
- * PKG_PATH({pkg: author: "usr.Foo"});
+ * PKG_PATH({pkg: author: "usr.foo"});
  * // returns "/usr/local/kbi/usr.foo"
  * ```
  */
@@ -40,7 +40,7 @@ export function USR_PATH(p: { author: string }): string {
 /** This "constant" is actually a function. Pass the name of the package and its author and it'll generate the launchpad file path.
  * @example
  * ```ts
- * LAUNCHPAD_DIR({pkg: "foobar", author: "usr.Foo"});
+ * LAUNCHPAD_DIR({pkg: "foobar", author: "usr.foo"});
  * // returns "/usr/local/kbi/launchpad/usr.foo/foobar.sh"
  * ```
  */
