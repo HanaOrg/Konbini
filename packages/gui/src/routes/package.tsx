@@ -138,7 +138,7 @@ export default function PackagePage() {
                     </button>
                 </div>
                 <h2>{app.slogan}</h2>
-                <div style={{ display: "flex", flexDirection: "row", gap: 10 }}>
+                <div className="app-badges">
                     <div className={`age ${age}`}>
                         {age === "everyone"
                             ? "Everyone"
