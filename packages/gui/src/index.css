@@ -85,7 +85,7 @@ h1 {
 
 button,
 input {
-    /* border-radius: 8px; */
+    border-radius: 8px;
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
@@ -132,7 +132,7 @@ footer img {
     display: flex;
     flex-direction: column;
     background-color: var(--bg-app-card);
-    /* border-radius: 15px; */
+    border-radius: 15px;
     gap: 15px;
     padding: 20px;
 }
@@ -184,7 +184,7 @@ footer img {
     width: 100%;
     display: flex;
     flex-direction: row;
-    /* border-radius: 20px; */
+    border-radius: 20px;
     overflow: hidden;
 }
 
@@ -192,7 +192,7 @@ footer img {
     width: 100%;
     display: grid;
     grid-template-columns: 50% 50%;
-    /* border-radius: 20px; */
+    border-radius: 20px;
     overflow: hidden;
     grid-template-rows: 50% 50%;
     background: var(--bg-generic);
@@ -218,7 +218,7 @@ footer img {
     min-height: 40px;
     padding: 10px;
     background-color: var(--bg-icon);
-    /* border-radius: 100%; */
+    border-radius: 100%;
     max-width: 40px;
     max-height: 40px;
 }
@@ -247,7 +247,7 @@ footer img {
 .badge,
 .age {
     padding: 2px 10px;
-    /* border-radius: 20px; */
+    border-radius: 20px;
     font-size: small;
     text-transform: uppercase;
     color: var(--badge-std-fg);
@@ -295,12 +295,12 @@ footer img {
 input {
     width: 100%;
     padding: 10px;
-    /* border-radius: 10px; */
+    border-radius: 10px;
     margin-bottom: 10px;
 }
 
 dialog {
-    /* border-radius: 20px; */
+    border-radius: 20px;
     background-color: var(--bg-dialog);
 }
 

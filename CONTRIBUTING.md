@@ -13,5 +13,4 @@ Konbini is structured as a monorepo.
 
 ## Contributing guides
 
-- Make descriptive, brief commit names. We don't enforce rulesets like Conventional Commits but
-  TODO
+- Make descriptive, brief commit names, following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).

@@ -1,17 +1,23 @@
-import type { KONBINI_MANIFEST } from "../../../shared";
+import { isStdScope, type KONBINI_MANIFEST, type KONBINI_PKG_SCOPE } from "shared/types/manifest";
 import IconMac from "../assets/mac";
 import IconTux from "../assets/tux";
 import IconWin from "../assets/win";
+import { parseKps } from "shared/api/manifest";
 
 export default function PlatformSupport({
     platforms,
 }: {
     platforms: KONBINI_MANIFEST["platforms"];
 }) {
-    function supported(plat: string | null): string {
+    function supported(plat: KONBINI_PKG_SCOPE | null): string {
         if (!plat) return "unsupported";
-        if (plat.startsWith("std:")) return "supported";
-        return "aliased";
+        if (isStdScope(plat)) return "supported";
+        return `aliased to ${parseKps(plat)
+            .src.replace("cho", "chocolatey")
+            .replace("scp", "scoop")
+            .replace("fpak", "flatpak")
+            .replace("wget", "winget")
+            .replace("brew-k", "brew")}`;
     }
 
     const linux64 = supported(platforms.linux64);

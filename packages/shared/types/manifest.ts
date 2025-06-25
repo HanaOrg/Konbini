@@ -278,6 +278,6 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 export function getAgeRating(data: AGE_RATING): "everyone" | "mid" | "high" | "very_high" {
     if (data.substances || data.violence) return "very_high";
     if (data.money) return "high";
-    if (data.social || data.telemetry) return "mid";
+    if (data.social) return "mid";
     return "everyone";
 }
