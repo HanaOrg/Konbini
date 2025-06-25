@@ -10,6 +10,7 @@ import Footer from "../components/footer";
 export default function PackagePage() {
     const [app, setApp] = useState<KONBINI_MANIFEST>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [slideIndex, setSlideIndex] = useState<number>(0);
 
     const route = window.location.pathname.split("/package/").filter(Boolean)[0];
 
@@ -49,30 +50,23 @@ export default function PackagePage() {
 
     const age = getAgeRating(app.age_rating);
 
-    const [slideIndex, setSlideIndex] = useState<number>(1);
-    showSlides(slideIndex);
-
-    function showSlides(n: number) {
-        let i;
-        let slides = document.getElementsByClassName("slides") as HTMLCollectionOf<HTMLElement>;
-        let dots = document.getElementsByClassName("dot");
-        if (n > slides.length) {
-            setSlideIndex(1);
+    function moveSlideIndex(n: number) {
+        if (!app || !app.screenshot_urls) return;
+        console.debug("passed", n, "len", app.screenshot_urls.length, "index", slideIndex);
+        if (n < 0) {
+            console.debug("should reset FWD");
+            setSlideIndex(app.screenshot_urls.length - 1);
+            return;
         }
-        if (n < 1) {
-            setSlideIndex(slides.length);
+        if (n > app.screenshot_urls.length - 1) {
+            console.debug("should reset BWD");
+            setSlideIndex(0);
+            return;
         }
-        for (i = 0; i < slides.length; i++) {
-            slides[i].style.display = "none";
-        }
-        for (i = 0; i < dots.length; i++) {
-            dots[i].className = dots[i].className.replace(" active", "");
-        }
-        if (slides[slideIndex - 1]) slides[slideIndex - 1].style.display = "block";
-        if (dots[slideIndex - 1]) dots[slideIndex - 1].className += " active";
+        console.debug("should behave");
+        setSlideIndex(n);
+        return;
     }
-
-    console.debug(app);
 
     return (
         <>
@@ -182,33 +176,34 @@ export default function PackagePage() {
                         <hr />
                         <h2>Screenshots</h2>
                         <div className="slideshow-container">
-                            {app.screenshot_urls.map((s) => (
-                                <div className="slides">
+                            {app.screenshot_urls.map((s, i) => (
+                                <div
+                                    className="slides"
+                                    style={{
+                                        display: i === slideIndex ? "block" : "none",
+                                    }}
+                                >
                                     <div className="numbertext">
-                                        {app.screenshot_urls!.indexOf(s) +
-                                            "/" +
-                                            app.screenshot_urls!.length}
+                                        {i + 1 + "/" + app.screenshot_urls!.length}
                                     </div>
                                     <img src={s.link} alt={s.text} style={{ width: "100%" }} />
                                     <div className="text">{s.text}</div>
                                 </div>
                             ))}
 
-                            <a className="prev" onClick={() => setSlideIndex(slideIndex - 1)}>
+                            <a className="prev" onClick={() => moveSlideIndex(slideIndex - 1)}>
                                 &#10094;
                             </a>
-                            <a className="next" onClick={() => setSlideIndex(slideIndex + 1)}>
+                            <a className="next" onClick={() => moveSlideIndex(slideIndex + 1)}>
                                 &#10095;
                             </a>
                         </div>
 
                         <div style={{ textAlign: "center" }}>
-                            {app.screenshot_urls.map((s) => (
+                            {app.screenshot_urls.map((_, i) => (
                                 <span
-                                    className="dot"
-                                    onClick={() =>
-                                        setSlideIndex(app.screenshot_urls!.indexOf(s) + 1)
-                                    }
+                                    className={i == slideIndex ? "dot active" : "dot"}
+                                    onClick={() => moveSlideIndex(i)}
                                 ></span>
                             ))}
                         </div>

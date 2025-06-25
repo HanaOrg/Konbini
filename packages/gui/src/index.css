@@ -435,15 +435,18 @@ code {
     height: 15px;
     width: 15px;
     margin: 0 2px;
-    background-color: #bbb;
+    background-color: var(--bg-app-card);
     border-radius: 50%;
     display: inline-block;
     transition: background-color 0.6s ease;
 }
 
-.active,
+.active {
+    background-color: var(--k);
+}
+
 .dot:hover {
-    background-color: #717171;
+    background-color: var(--bg-dialog-backdrop);
 }
 
 .slides img {
