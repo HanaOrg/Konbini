@@ -1,21 +1,12 @@
-// TODO - review this and remove optional stuff, to keep it brief
 import { cwd } from "node:process";
-import { konsole } from "../toolkit/konsole";
-import { kominator, validate, validateAgainst } from "@zakahacecosas/string-utils";
+import { konsole } from "shared/client";
+import { validate, validateAgainst } from "@zakahacecosas/string-utils";
 import { isBetween } from "@zakahacecosas/number-utils";
 import { stringify } from "yaml";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { prompt, promptBinary, promptScope } from "../toolkit/input";
-import {
-    CATEGORIES,
-    type KONBINI_AUTHOR_ID,
-    type KONBINI_MANIFEST,
-    type CATEGORY,
-    type LICENSE,
-    isKps,
-    LICENSES,
-} from "shared";
+import { type KONBINI_AUTHOR_ID, type KONBINI_MANIFEST, isKps } from "shared";
 
 export async function generateManifest() {
     konsole.suc(
@@ -42,48 +33,6 @@ export async function generateManifest() {
         "Whoops, that description is not valid. Enter a valid string between 1 and 4096 characters.",
     );
     konsole.suc("Great slogan!");
-
-    const license = await prompt(
-        "Package license? Must be either one of the following:\n" +
-            LICENSES.map((x) => `"${x}"`).join(", ") +
-            "\nor nothing (just hit enter) for an unspecified license (not recommended, though).",
-        (val) => !validate(val) || validateAgainst(val, LICENSES),
-        "Whoops, that license seems invalid...",
-    );
-    konsole.suc(validate(license) ? "Good!" : "No license? Well, okay...");
-
-    const icon = await prompt(
-        "Icon URL? If given, it must start with https:// and point to a WEBP file. It'll be shown in the Konbini UI.\nLeave blank for no icon (not recommended).",
-        (val) =>
-            !validate(val) ||
-            (validate(val) && val.startsWith("https://") && val.endsWith(".webp")),
-        "Whoops, this doesn't look right. Be sure the URL is valid.",
-    );
-    konsole.suc(
-        validate(icon)
-            ? `This icon looks awesome for sure!`
-            : "No icon? Well, we'll do without it...",
-    );
-
-    const categories = await prompt(
-        "Categories? If any, they must be one of the following (without the double quotes):\n" +
-            CATEGORIES.join(", ") +
-            "\n" +
-            "If you don't want to specify any, just hit enter. We recommend at least one category, though.\nSeparate them by commas (,).",
-        (val) =>
-            !validate(val) ||
-            (validate(val) &&
-                kominator(val)
-                    .map((s) => s.trim().toUpperCase())
-                    .map((s) => validateAgainst(s, CATEGORIES))
-                    .every((v) => v == true)),
-        "Whoops, this doesn't look right. List all categories using commas and be sure they're valid.",
-    );
-    konsole.suc(
-        validate(categories)
-            ? `These ${kominator(categories).length} categories sure fit your package!`
-            : "No categories? Okay...",
-    );
 
     const author_id: KONBINI_AUTHOR_ID = (await prompt(
         "[ · ] Your author ID? (e.g. usr.johndoe) (be sure it exists!)",
@@ -120,8 +69,8 @@ export async function generateManifest() {
     );
 
     const telemetry: boolean = await promptBinary(
-        "[ · ] For age guidance, does your package or app require the user to grant or deny consent over user data treatment? (Y/N)",
-        "Got it, there's consent over data privacy to be granted. This may make your app unavailable for too young people.",
+        "[ · ] Does your package or app require the user to grant or deny consent over user data treatment? (Y/N)",
+        "Got it, there's consent over data privacy to be granted. This will be visible in store.",
         "Got it, no data sharing. That's actually nice!",
     );
 
@@ -132,8 +81,8 @@ export async function generateManifest() {
     const platWin64 = await promptScope("Windows64");
 
     const repository: `${string}/${string}` = (await prompt(
-        '[ · ] GitHub repository? (in the author/repo format, no "github.com" or whatever)',
-        (val) => validate(val) && val.split("/").length == 2,
+        'Repository? (in the author/repo format, without "github.com/" or whatever)',
+        (val) => !validate(val) || (validate(val) && val.split("/").length == 2),
         "Whoops, that doesn't seem like a valid GitHub repo.",
     )) as `${string}/${string}`;
     konsole.suc("Great!");
@@ -145,17 +94,16 @@ export async function generateManifest() {
         author_id,
         slogan,
         desc,
-        icon: validate(icon) ? (icon as `https://${string}.webp`) : null,
-        categories: kominator(categories).map((s) => s.trim().toUpperCase()) as CATEGORY[],
+        telemetry,
         age_rating: {
             money,
             social,
             substances,
             violence,
-            telemetry,
         },
-        license: validate(license) ? (license as LICENSE) : null,
         repository,
+        categories: [],
+        license: null,
         platforms: {
             linux64: isKps(platLinux64) ? platLinux64 : null,
             linuxARM: isKps(platLinuxARM) ? platLinuxARM : null,
@@ -170,4 +118,5 @@ export async function generateManifest() {
     konsole.suc(
         "Wrote this manifest to 'konbini-manifest.yaml' in the current directory. You can now use it to publish your package!",
     );
+    konsole.out("Keep in mind there are many optional properties we recommend you to specify.");
 }

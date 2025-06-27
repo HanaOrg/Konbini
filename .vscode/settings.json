@@ -24,6 +24,9 @@
         "nixpkgs",
         "openpgp",
         "setx",
+        "supabase",
+        "timestampz",
+        "untrackable",
         "winget",
         "zakahacecosas"
     ]

@@ -1,6 +1,6 @@
 import { listPackages } from "./list";
 import { installPackage } from "./install";
-import { konsole } from "../toolkit/konsole";
+import { konsole } from "shared/client";
 
 export async function updatePackages() {
     const packages = await listPackages("SILENT");

@@ -32,15 +32,14 @@ export function Safety() {
                     on it &ndash; as most used apps sadly happen to be that way &ndash; we will not
                     do it until we have reliable enough methods to assert they're safe.
                 </p>
-                <h2>Konbini apps require to be digitally signed and hashed</h2>
+                <h2>Konbini apps require to be hashed and digitally signed</h2>
                 <p>
                     EVERY binary distributed directly through Konbini requires a SHA3-512 hash (
-                    <i>Secure Hash Algorithm 3-512 bits</i>) and a PGP digital signature.
-                    <br />
-                    Hashes assert integrity and signatures assert authenticity. Binaries are checked
-                    immediately after download, and if anything doesn't match, they're immediately
-                    removed from your system and you get notified about the incident, so that you
-                    can report the package to us as broken.
+                    <i>Secure Hash Algorithm 3-512 bits</i>) and a PGP (<i>Pretty Good Privacy</i>)
+                    digital signature. Hashes assert integrity and signatures assert authenticity.
+                    Binaries are checked immediately after download, and if anything doesn't match,
+                    they're immediately removed from your system and you get notified about the
+                    incident, so that you can report the package to us as broken.
                 </p>
                 <h2>Konbini publishers are audited</h2>
                 <p>

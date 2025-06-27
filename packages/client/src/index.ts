@@ -1,6 +1,6 @@
 import { version } from "../package.json";
-import { INSTALL_DIR, LAUNCHPAD_DIR } from "./constants";
-import { konsole } from "./toolkit/konsole";
+import { PACKAGES_DIR, LAUNCHPAD_DIR, INSTALLATION_DIR, SIGNATURE_DIR } from "shared/client";
+import { konsole } from "shared/client";
 import { installPackage } from "./commands/install";
 import { existsSync, mkdirSync, realpathSync } from "fs";
 import { listPackages } from "./commands/list";
@@ -13,6 +13,8 @@ import { generateManifest } from "./commands/manifest-pkg";
 import { about } from "./commands/about";
 import { getPlatform } from "shared";
 import { konbiniHash } from "shared";
+import { validateAgainst } from "@zakahacecosas/string-utils";
+import { sign } from "./commands/sign";
 
 const p = getPlatform();
 const platformString =
@@ -27,7 +29,7 @@ async function main() {
     const command = args[0];
     const subcommand = args[1];
 
-    if (!existsSync(INSTALL_DIR)) mkdirSync(INSTALL_DIR, { recursive: true });
+    if (!existsSync(PACKAGES_DIR)) mkdirSync(PACKAGES_DIR, { recursive: true });
     if (!existsSync(LAUNCHPAD_DIR)) mkdirSync(LAUNCHPAD_DIR, { recursive: true });
     addToUserPathEnvVariable(LAUNCHPAD_DIR);
 
@@ -37,20 +39,21 @@ async function main() {
                 `${konsole.clr("deeppink", "Konbini")} CLI for ${platformString} v${version}`,
                 "Enter a command to get started. Available commands:",
                 konsole.clr("lightgrey", "<parameters> are mandatory, [-flags] are optional."),
-                `> install <pkg>      ${konsole.clr("grey", "// installs a package")}`,
-                `> update [pkg]       ${konsole.clr("grey", "// updates a package, or all packages if none specified")}`,
-                `> remove <pkg>       ${konsole.clr("grey", "// removes a package")}`,
-                `> info <pkg | user>  ${konsole.clr("grey", "// shows info for a specific package or publisher")}`,
-                `> list [-v]          ${konsole.clr("grey", "// lists all installed packages")}`,
-                `> learn <item>       ${konsole.clr("grey", "// shows helpful info about something specific")}`,
-                `> where              ${konsole.clr("grey", "// shows where all program files are stored")}`,
-                `> about              ${konsole.clr("grey", "// shows some info about Konbini")}`,
-                `> -v, --version      ${konsole.clr("grey", "// shows current Konbini version")}`,
+                `> install <pkg>          ${konsole.clr("grey", "// installs a package")}`,
+                `> update [pkg]           ${konsole.clr("grey", "// updates a package, or all packages if none specified")}`,
+                `> remove <pkg>           ${konsole.clr("grey", "// removes a package")}`,
+                `> info <pkg | user>      ${konsole.clr("grey", "// shows info for a specific package or publisher")}`,
+                `> list [-v]              ${konsole.clr("grey", "// lists all installed packages")}`,
+                `> learn <item>           ${konsole.clr("grey", "// shows helpful info about something specific")}`,
+                `> where                  ${konsole.clr("grey", "// shows where all program files are stored")}`,
+                `> about                  ${konsole.clr("grey", "// shows some info about Konbini")}`,
+                `> -v, --version          ${konsole.clr("grey", "// shows current Konbini version")}`,
                 "",
                 `- "kbd" prefixed commands are for developers. ${konsole.clr("grey", "// KonBini Dev, KBD, get it?")}`,
                 "",
-                `> kbd-hash <file>    ${konsole.clr("grey", "// generates a Konbini compliant SHA hash for the given file")}`,
-                `> kbd-manifest-pkg   ${konsole.clr("grey", "// guides you and creates a manifest for a Konbini package")}`,
+                `> kbd-hash <file>        ${konsole.clr("grey", "// generates a Konbini compliant SHA hash for the given file")}`,
+                `> kbd-sign <mode> [...]  ${konsole.clr("grey", "// works around PGP signatures, run it for more info")}`,
+                `> kbd-manifest-pkg       ${konsole.clr("grey", "// guides you and creates a manifest for a Konbini package")}`,
             ].join("\n"),
         );
         return;
@@ -59,6 +62,7 @@ async function main() {
     switch (command) {
         case "install":
             if (!subcommand) throw "No package specified.";
+            if (validateAgainst(command, ["konbini", "kbi", "kbu"])) throw "To update Konbini";
             await installPackage(subcommand);
             break;
         case "list":
@@ -83,11 +87,13 @@ async function main() {
         case "where":
             konsole.suc("Sure, here's where we live on your PC:");
             konsole.adv("Konbini is installed at and running from", import.meta.dir);
+            konsole.adv("Konbini executables overall live at", INSTALLATION_DIR);
             konsole.adv(
                 "Installed packages (that don't come from a scoped 3rd party pkg manager) are at",
-                INSTALL_DIR,
+                PACKAGES_DIR,
             );
             konsole.adv("Launchpad shortcuts are at", LAUNCHPAD_DIR);
+            konsole.adv("Your private signatures (NEVER SHARE THEM) are stored at", SIGNATURE_DIR);
             break;
         case "info":
             if (!subcommand) throw "No package or user specified.";
@@ -106,7 +112,11 @@ async function main() {
                 'Run "learn hash" if you\'re curious about why we use our own hasher for Konbini.',
             );
             konsole.suc(konbiniHash(subcommand));
-            konsole.war("Remember you also need a GNU Privacy Guard (GPG) signature.");
+            break;
+        case "kbd-sign":
+            if (!validateAgainst(subcommand, ["new", "apply"]))
+                throw `No action specified. Available options are 'new' (to make a new signature) or 'apply' (to sign an executable).\n      To learn further, run 'learn sign'`;
+            await sign(subcommand);
             break;
         case "kbd-manifest-pkg":
             generateManifest();
@@ -148,4 +158,5 @@ try {
     } else {
         konsole.err(e as string);
     }
+    process.exit(1);
 }

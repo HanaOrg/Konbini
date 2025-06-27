@@ -1,6 +1,6 @@
 import { stdin as input, stdout as output } from "node:process";
 import { validate, validateAgainst } from "@zakahacecosas/string-utils";
-import { konsole } from "./konsole";
+import { konsole } from "shared/client";
 import readline from "node:readline/promises";
 import { parseKps, type KONBINI_PKG_SCOPE } from "shared";
 

@@ -1,4 +1,4 @@
-import { validateAgainst } from "@zakahacecosas/string-utils";
+import { validate, validateAgainst } from "@zakahacecosas/string-utils";
 
 /** Properties common to persons and organizations. */
 interface COMMON_PROFILE {
@@ -62,6 +62,15 @@ export type KONBINI_AUTHOR = PERSON | ORGANIZATION;
  * The prefix is `org.` for organizations and `usr.` for persons.
  */
 export type KONBINI_AUTHOR_ID = `${"org" | "usr"}.${string}`;
+
+/** Validates the given Konbini author ID. */
+export function isAuthorId(id: any): id is KONBINI_AUTHOR_ID {
+    return (
+        validate(id) &&
+        (id.startsWith("org.") || id.startsWith("usr.")) &&
+        validate(id.split(".")[1])
+    );
+}
 
 /** If true, given author is an `ORGANIZATION`, else it is a `PERSON`. */
 export function isOrganization(author: KONBINI_AUTHOR): author is ORGANIZATION {

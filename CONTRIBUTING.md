@@ -6,8 +6,9 @@ Konbini is structured as a monorepo.
 
 | Project                          | Path (`packages/*`) |
 | :------------------------------- | :------------------ |
-| Konbini's Command Line Interface | `cli/`              |
-| Konbini's safety system          | `cli/guard/`        |
+| Konbini's Command Line Interface | `client/`           |
+| Konbini's CLI Updater            | `update/`           |
+| Konbini's safety system          | `client/guard/`     |
 | Konbini's Graphic User Interface | `gui/`              |
 | Code shared between the two      | `shared/`           |
 

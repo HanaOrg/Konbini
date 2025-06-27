@@ -1,8 +1,8 @@
 import { readdirSync, readFileSync, rmSync, statSync } from "fs";
 import { join } from "path";
-import { INSTALL_DIR } from "../constants";
+import { PACKAGES_DIR } from "shared/client";
 import { parse } from "yaml";
-import { konsole } from "../toolkit/konsole";
+import { konsole } from "shared/client";
 import { isStdScope, FILENAMES, type KONBINI_LOCKFILE, type KPS_SOURCE } from "shared";
 import { existsAliasedPackage } from "../toolkit/aliased";
 
@@ -32,7 +32,7 @@ type EXTENDED_LOCKFILE =
 export async function listPackages(
     verbosity: "VERBOSE" | "STANDARD" | "SILENT",
 ): Promise<EXTENDED_LOCKFILE[]> {
-    const lockfiles = findLockFiles(INSTALL_DIR);
+    const lockfiles = findLockFiles(PACKAGES_DIR);
     const pkgsToList: EXTENDED_LOCKFILE[] = [];
 
     for (const lockfile of lockfiles) {

@@ -20,9 +20,9 @@ As of now, Konbini _per se_ (not aliased) only supports self-packaged releases, 
 
 Konbini requires all executables to be digitally signed using PGP, and to be hashed using the SHA3-512 hashing algorithm, ensuring secure distribution.
 
-These can be generated using `GPG` (builtin to Linux) and Konbini itself using `kbd-hash <file>`, respectively. Hashes are generated using the builtin BunJS `CryptoHasher` utility.
+These can be generated using Konbini itself, via `kbd-sign` and `kbd-hash` respectively.
 
-We also have a weekly running task that scans all downloadable projects with ClamAV. [More onto this here](./packages/cli/guard/README.md).
+We also have a periodically running task that scans all downloadable projects with ClamAV. [More onto this here](./packages/client/guard/README.md).
 
 ### Cross-platform
 

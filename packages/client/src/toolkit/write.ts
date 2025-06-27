@@ -1,8 +1,8 @@
 import { join } from "path";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { stringify } from "yaml";
-import { USR_PATH, PKG_PATH, LAUNCHPAD_DIR, LAUNCHPAD_FILE_PATH } from "../constants";
 import { type KONBINI_LOCKFILE, type KONBINI_AUTHOR_ID, FILENAMES, getPlatform } from "shared";
+import { USR_PATH, PKG_PATH, LAUNCHPAD_DIR, LAUNCHPAD_FILE_PATH } from "shared/client";
 
 export function writeLockfile(lockfile: KONBINI_LOCKFILE, pkg: string, author: KONBINI_AUTHOR_ID) {
     const usrDir = USR_PATH({ author });

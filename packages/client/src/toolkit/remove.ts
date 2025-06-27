@@ -1,15 +1,15 @@
 import { readdirSync, statSync, rmSync, readFileSync } from "fs";
 import { join } from "path";
-import { INSTALL_DIR, PKG_PATH } from "../constants";
-import { konsole } from "./konsole";
+import { PACKAGES_DIR, PKG_PATH } from "shared/client";
+import { konsole } from "shared/client";
 import { FILENAMES, getPkgManifest, parseKps, type KONBINI_LOCKFILE } from "shared";
 import { parse } from "yaml";
 import { execSync } from "child_process";
 import { ALIASED_CMDs } from "./alias-cmds";
 
 function findPackage(pkg: string): string | null {
-    for (const entry of readdirSync(INSTALL_DIR)) {
-        const fullPath = join(INSTALL_DIR, entry);
+    for (const entry of readdirSync(PACKAGES_DIR)) {
+        const fullPath = join(PACKAGES_DIR, entry);
         const stats = statSync(fullPath);
 
         if (stats.isDirectory() && fullPath.endsWith(pkg)) {

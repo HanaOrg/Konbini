@@ -93,8 +93,6 @@ export interface AGE_RATING {
     substances: boolean;
     /** Does the app show scenes of real, graphical violence in any case? */
     violence: boolean;
-    /** Does the app require the user to grant or deny consent over user data treatment? */
-    telemetry: boolean;
 }
 
 /** A Konbini package manifest. */
@@ -141,6 +139,19 @@ export interface KONBINI_MANIFEST {
     homepage?: `https://${string}`;
     /** Documentation website of the package, if any. */
     docs?: `https://${string}`;
+    /** Privacy policy of the package, if any. */
+    privacy?: `https://${string}`;
+    /** Terms and conditions of the package, if any. */
+    terms?: `https://${string}`;
+    /** System requirements, if any. */
+    sys_requirements?: {
+        /** Minimal OS version number, if any. In Linux, any string is valid (e.g. "Ubuntu 22.04 or later"). */
+        os_ver?: `mac=${number | "x"},lin=${string | "x"},win=${number | "x"}`;
+        /** Minimal RAM. */
+        ram_gb?: number;
+        /** Minimal storage. */
+        storage_gb?: number;
+    };
     /** App screenshots to be displayed in the Konbini UI. Only WEBP is supported. */
     screenshot_urls?: {
         text: string;
@@ -168,6 +179,8 @@ export interface KONBINI_MANIFEST {
      * For anyone wondering where nudity references are, that kind of content is prohibited from Konbini.
      */
     age_rating: AGE_RATING;
+    /** True if the app collects user data, with or without consent. */
+    telemetry: boolean;
 }
 
 /** Validates if the given string is a valid KPS. */
@@ -251,7 +264,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const validAgeRating =
         typeof ar === "object" &&
         ar !== null &&
-        ["money", "social", "substances", "violence", "telemetry"].every(
+        ["money", "social", "substances", "violence"].every(
             (k) => typeof ar?.[k as keyof typeof ar] === "boolean",
         );
 
@@ -273,7 +286,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
  *
  * `"everyone"` means anyone can use this freely.
  *
- * `"mid"` means that parental guidance is recommended, as this flag appears over `social` & `telemetry` flagged apps.
+ * `"mid"` means that parental guidance is recommended, as this flag appears over `social` flagged apps.
  *
  * `"high"` means the same as `"mid"`, but a small warning will be shown in the page indicating that `money` is present in the package.
  *

@@ -12,7 +12,7 @@ export default function PackagePage() {
     const [loading, setLoading] = useState<boolean>(true);
     const [slideIndex, setSlideIndex] = useState<number>(0);
 
-    const route = window.location.pathname.split("/package/").filter(Boolean)[0];
+    const route = window.location.pathname.split("/package/").filter(Boolean)[0]!;
 
     useEffect(() => {
         async function getApp() {
@@ -148,12 +148,7 @@ export default function PackagePage() {
                                 ? "Inappropriate for kids"
                                 : "Inappropriate for young users"}
                     </div>
-                    {app.age_rating.telemetry ? (
-                        <div className="age high">Shares telemetry data</div>
-                    ) : (
-                        <></>
-                    )}
-                    ·
+                    {app.telemetry ? <div className="age high">Shares telemetry data</div> : <></>}·
                     {isSupported ? (
                         <div className="badge supported">Works on your device</div>
                     ) : isPossiblySupported ? (
@@ -180,13 +175,13 @@ export default function PackagePage() {
                                 <div
                                     className="slides"
                                     style={{
-                                        display: i === slideIndex ? "block" : "none",
+                                        display: i === slideIndex ? "flex" : "none",
                                     }}
                                 >
-                                    <div className="numbertext">
+                                    <div className="number-text">
                                         {i + 1 + "/" + app.screenshot_urls!.length}
                                     </div>
-                                    <img src={s.link} alt={s.text} style={{ width: "100%" }} />
+                                    <img src={s.link} alt={s.text} />
                                     <div className="text">{s.text}</div>
                                 </div>
                             ))}
@@ -216,6 +211,44 @@ export default function PackagePage() {
                 <PlatformSupport platforms={app.platforms} />
                 <h2>Details</h2>
                 <div className="details">
+                    <div className="detail">
+                        <svg
+                            width="50"
+                            height="50"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M3.75 3a.75.75 0 0 0 0 1.5h1.042l-2.737 6.717A.75.75 0 0 0 2 11.5a3.5 3.5 0 1 0 7 0 .75.75 0 0 0-.055-.283L6.208 4.5h5.042v12H7.253a2.25 2.25 0 0 0 0 4.5h9.497a2.25 2.25 0 0 0 0-4.5h-4v-12h5.042l-2.737 6.717A.75.75 0 0 0 15 11.5a3.5 3.5 0 1 0 7 0 .75.75 0 0 0-.055-.283L19.208 4.5h1.042a.75.75 0 0 0 0-1.5H3.75ZM5.5 6.738l1.635 4.012h-3.27L5.5 6.738Zm11.365 4.012L18.5 6.738l1.635 4.012h-3.27Z"
+                                fill="#ffffff"
+                            />
+                        </svg>
+                        {app.terms ? (
+                            <>Privacy Policy: {app.privacy}</>
+                        ) : (
+                            <i>No Privacy Policy provided.</i>
+                        )}
+                    </div>
+                    <div className="detail">
+                        <svg
+                            width="50"
+                            height="50"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M3.75 3a.75.75 0 0 0 0 1.5h1.042l-2.737 6.717A.75.75 0 0 0 2 11.5a3.5 3.5 0 1 0 7 0 .75.75 0 0 0-.055-.283L6.208 4.5h5.042v12H7.253a2.25 2.25 0 0 0 0 4.5h9.497a2.25 2.25 0 0 0 0-4.5h-4v-12h5.042l-2.737 6.717A.75.75 0 0 0 15 11.5a3.5 3.5 0 1 0 7 0 .75.75 0 0 0-.055-.283L19.208 4.5h1.042a.75.75 0 0 0 0-1.5H3.75ZM5.5 6.738l1.635 4.012h-3.27L5.5 6.738Zm11.365 4.012L18.5 6.738l1.635 4.012h-3.27Z"
+                                fill="#ffffff"
+                            />
+                        </svg>
+                        {app.terms ? (
+                            <>Terms of Use: {app.terms}</>
+                        ) : (
+                            <i>No Terms of Use provided.</i>
+                        )}
+                    </div>
                     <div className="detail">
                         <svg
                             width="50"
@@ -337,6 +370,49 @@ export default function PackagePage() {
                         )}
                     </div>
                 </div>
+                {app.sys_requirements && (
+                    <>
+                        <h2>Minimal requirements</h2>
+                        <div className="requirements">
+                            <div className="requirement">
+                                <b>OS</b> | {app.sys_requirements?.os_ver} or later
+                            </div>
+                            <div className="requirement">
+                                <b>RAM</b> | {app.sys_requirements?.ram_gb} MB
+                            </div>
+                            <div className="requirement">
+                                <b>DISK</b> | {app.sys_requirements?.storage_gb} GB
+                            </div>
+                        </div>
+                    </>
+                )}
+                {app.maintainers && (
+                    <>
+                        <h2>People behind this app, besides {app.author_id}</h2>
+                        <div className="maintainers">
+                            {app.maintainers.map((m) => (
+                                <div className="maintainer">
+                                    <h3>{m.name}</h3>
+                                    {m.email && <a href={`mailto:${m.email}`}>{m.email}</a>}
+                                    {m.github && (
+                                        <a
+                                            href={`https://github.com/${m.github}`}
+                                            rel="noopener noreferrer"
+                                            target="_blank"
+                                        >
+                                            {m.github} on GitHub
+                                        </a>
+                                    )}
+                                    {m.link && (
+                                        <a href={m.link} rel="noopener noreferrer" target="_blank">
+                                            {m.link}
+                                        </a>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
             <Footer />
         </>

@@ -1,6 +1,6 @@
-import { PKG_PATH, USR_PATH } from "../constants";
+import { PKG_PATH, USR_PATH } from "shared/client";
 import { existsSync, readFileSync, mkdirSync, statSync, chmodSync } from "fs";
-import { konsole } from "../toolkit/konsole";
+import { konsole } from "shared/client";
 import { join } from "path";
 import { parse } from "yaml";
 import { destroyPkg } from "../toolkit/remove";
@@ -18,7 +18,7 @@ import {
     getCurrentPlatformShaKey,
     assertIntegritySHA,
     konbiniHash,
-    assertIntegrityGPG,
+    assertIntegrityPGP,
     getUsrSignature,
     isStdLockfile,
 } from "shared";
@@ -40,7 +40,7 @@ async function installSingleExecutable(params: {
         filePath,
     });
 
-    // TODO: place this somewhere
+    // TODO - place this somewhere
     // konsole.war("Download took too long to complete (timeout: 4 minutes).");
     // easter egg
     // if (Math.random() < 0.3) konsole.war("hope no one's DDoS-ing us");
@@ -74,7 +74,7 @@ async function downloadSafetyRelatedFiles(params: {
         );
     } catch {
         konsole.err(
-            "CRITICAL: Unable to download GPG signature file. Cannot validate signature of the package, meaning it's unsafe. For your own safety, we did not download it.",
+            "CRITICAL: Unable to download PGP signature file. Cannot validate signature of the package, meaning it's unsafe. For your own safety, we did not download it.",
         );
         process.exit(1);
     }
@@ -213,24 +213,24 @@ export async function installPackage(
         process.exit(1);
     }
     konsole.dbg("SHA hash matches, download is valid. Nice.");
-    const gpgMatch = await assertIntegrityGPG({
+    const pgpMatch = await assertIntegrityPGP({
         executableFilePath: outputPath,
         executableAscFilePath: ascPath,
         authorAscFilePath: authorAscPath,
     });
-    if (gpgMatch !== "valid") {
+    if (pgpMatch !== "valid") {
         konsole.err(
-            "GPG signature IS NOT VALID!! The download is invalid. Please report this to Hana, as this download might be malicious. It could also be a mistake by the author, though.",
+            "PGP signature IS NOT VALID!! The download is invalid. Please report this to Hana, as this download might be malicious. It could also be a mistake by the author, though.",
         );
         konsole.dbg(
-            gpgMatch === "error"
+            pgpMatch === "error"
                 ? "Note: Its an unknown error that triggered this."
                 : "Note: Its an invalid signature (does NOT match at all) that triggered this.",
         );
         destroyPkg(pkgDir);
         process.exit(1);
     }
-    konsole.dbg("GPG signature matches, download is authentic. Nice.");
+    konsole.dbg("PGP signature matches, download is authentic. Nice.");
     konsole.dbg("Security tests passed - great! We'll make this install usable right now.");
 
     const lockfile: KONBINI_LOCKFILE = {

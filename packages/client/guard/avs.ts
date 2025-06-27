@@ -40,7 +40,7 @@ function buildFilenames(scope: KONBINI_PKG_SCOPE, version: string) {
 
 async function gh_fetch_elem(url: string): Promise<gh_elem[]> {
     const res = await fetchAPI(url);
-    if (!res.ok) throw new Error(`GitHub fetch failed: ${res.statusText}`);
+    if (!res.ok) throw `GitHub fetch failed: ${res.statusText}`;
     return (await res.json()) as gh_elem[];
 }
 
@@ -60,7 +60,7 @@ async function fetchAllManifests(): Promise<string[]> {
 function ensureGuardFile(path: string): string {
     if (!existsSync(path)) {
         console.log("[INF] Using no guard file");
-        writeFileSync(path, "", { encoding: "utf-8" });
+        writeFileSync(path, "", { encoding: "utf-8", flag: "w" });
     } else {
         console.log("[INF] Using earlier guard file");
     }
@@ -70,7 +70,7 @@ function ensureGuardFile(path: string): string {
 async function writeFileIfNotExists(filename: string, assetUrl: string) {
     if (existsSync(filename)) return;
     const response = await fetchAPI(assetUrl);
-    if (!response.ok) throw new Error(`Failed to fetch ${assetUrl}`);
+    if (!response.ok) throw `Failed to fetch ${assetUrl}: ${response.statusText}`;
     const arrayBuffer = await response.arrayBuffer();
     writeFileSync(filename, new Uint8Array(arrayBuffer));
 }
@@ -107,15 +107,9 @@ function scanBuildFiles() {
 }
 
 async function main() {
-    const IRL = (
-        (await fetchAPI("https://api.github.com/repos/HanaOrg/KonbiniPkgs/contents")) as any
-    ).message?.includes("rate limit");
-
-    if (IRL) throw new Error("Rate limited by GitHub.");
-
     logBlock("KONBINI GUARD ClamAV SCAN BEGINS");
 
-    const GUARD_FILE_PATH = "./guard/GUARD_FILE.guard.konbini";
+    const GUARD_FILE_PATH = "./guard.konbini";
     const GUARD_TEXT = ensureGuardFile(GUARD_FILE_PATH);
 
     const manifests = await fetchAllManifests();

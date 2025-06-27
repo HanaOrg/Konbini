@@ -1,4 +1,4 @@
-import { konsole } from "../toolkit/konsole";
+import { konsole } from "shared/client";
 
 export function about() {
     konsole.adv("COPYRIGHT (C) - The Hana Organization - 2025");

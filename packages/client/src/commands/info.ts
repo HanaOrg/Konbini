@@ -1,7 +1,7 @@
 import { getPkgManifest, getUsrManifest } from "shared";
 import { isOrganization } from "shared";
-import { PKG_PATH } from "../constants";
-import { konsole } from "../toolkit/konsole";
+import { PKG_PATH } from "shared/client";
+import { konsole } from "shared/client";
 import { existsSync } from "fs";
 import { truncate } from "@zakahacecosas/string-utils";
 

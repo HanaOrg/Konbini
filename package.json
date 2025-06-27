@@ -12,23 +12,26 @@
             "@zakahacecosas/string-utils": "npm:@jsr/zakahacecosas__string-utils@latest",
             "yaml": "^2.8.0",
             "typescript": "~5.8.3",
-            "@types/bun": "latest"
+            "@types/bun": "latest",
+            "@supabase/supabase-js": "^2.50.2"
         }
     },
     "scripts": {
-        "pretty": "prettier --w . && eslint . --cache --fix && tsc --noEmit",
-        "run:cli": "bun packages/cli/src/index.ts",
+        "pretty": "prettier --w .",
+        "lint": "eslint . --cache --fix && tsc --noEmit",
+        "run:cli": "bun packages/client/src/index.ts",
+        "run:upd": "bun packages/update/src/index.ts",
         "run:web": "cd packages/gui && bun run dev",
         "build": "echo 'Building the CLI...' && bun run bld:cli && echo 'Building the GUI...' && bun run bld:web",
-        "bld:cli": "bun packages/cli/build.ts",
+        "bld:cli": "bun packages/client/build.ts",
         "bld:web": "cd packages/gui && bun run build",
         "launch:web": "cd packages/gui && bun run prod",
         "launch:web:bld": "bun run bld:web && cd packages/gui && bun run prod",
-        "av": "bun packages/guard/avs.ts"
+        "guard": "bun packages/client/guard/avs.ts"
     },
     "dependencies": {
-        "prettier": "^3.6.1",
-        "eslint": "^9.29.0"
+        "eslint": "^9.29.0",
+        "prettier": "^3.6.1"
     },
     "trustedDependencies": [
         "@vercel/speed-insights"

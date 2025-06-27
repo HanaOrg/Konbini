@@ -1,4 +1,4 @@
-import { konsole } from "./konsole";
+import { konsole } from "shared/client";
 import { execSync } from "child_process";
 import { writeLockfile } from "./write";
 import {
@@ -12,7 +12,7 @@ import {
     type KONBINI_PKG_SCOPE,
 } from "shared";
 import { ALIASED_CMDs } from "./alias-cmds";
-import { PKG_PATH } from "../constants";
+import { PKG_PATH } from "shared/client";
 import { existsSync } from "fs";
 
 function noNewUpdates(errorMsg: string): boolean {
@@ -62,7 +62,7 @@ export function installAliasedPackage(params: {
     }
 
     konsole.dbg(
-        `Because ${name} is a trusted registry, we don't perform GPG or SHA checks.\n      Keep that in mind.`,
+        `Because ${name} is a trusted registry, we don't perform PGP or SHA checks.\n      Keep that in mind.`,
     );
 
     const scope = constructKps(kps);

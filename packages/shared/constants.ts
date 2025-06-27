@@ -1,4 +1,4 @@
-import { normalize } from "@zakahacecosas/string-utils";
+import { normalize, validate } from "@zakahacecosas/string-utils";
 
 /** All source sets for the KPI.
  *
@@ -28,5 +28,20 @@ export function normalizer(str: string): string {
         preserveCase: false,
         strict: false,
         removeCliColors: true,
+    });
+}
+
+/** Returns the user IP in a privacy respecting manner (hashed).
+ * Use this for rate limiting.
+ */
+export async function USR_PRV_HASH(): Promise<string | null> {
+    const res = await fetch("https://api.ipify.org?format=json");
+    const { ip } = await res.json();
+    if (!validate(ip)) return null;
+    return Bun.CryptoHasher.hash(
+        "sha3-512",
+        btoa(`ñ. this is a fixed, long salt, so that you can't brute force $"{ip}", someone's IP.`),
+    ).toBase64({
+        alphabet: "base64url",
     });
 }

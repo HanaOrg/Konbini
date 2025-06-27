@@ -1,7 +1,7 @@
 import { writeFileSync, accessSync, constants, readFileSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
-import { konsole } from "./konsole";
+import { konsole } from "shared/client";
 import { execSync } from "child_process";
 import { normalizer, getPlatform } from "shared";
 

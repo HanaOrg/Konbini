@@ -14,20 +14,23 @@ export default function AppGrid({ apps, title }: { apps: MANIFEST_WITH_ID[]; tit
                             {app.name}
                             {app.slogan}
                         </div>
-                        <h3 key={app.name}>{app.name}</h3>
-                        <p>{app.slogan}</p>
-                        <div className="bottom">
-                            <a href={`/package/${app.id}`}>
-                                <button>More info</button>
-                            </a>
-                            <div className="icons">
-                                {app.platforms.win64 && <IconWin arch="none" />}
-                                {(app.platforms.linux64 || app.platforms.linuxARM) && (
-                                    <IconTux arch="none" />
-                                )}
-                                {(app.platforms.mac64 || app.platforms.macARM) && (
-                                    <IconMac arch="none" />
-                                )}
+                        {app.icon && <img src={app.icon} alt={`${app.name}'s icon`} />}
+                        <div className="cnt">
+                            <h3 key={app.name}>{app.name}</h3>
+                            <p>{app.slogan}</p>
+                            <div className="bottom">
+                                <a href={`/package/${app.id}`}>
+                                    <button>More info</button>
+                                </a>
+                                <div className="icons">
+                                    {app.platforms.win64 && <IconWin arch="none" />}
+                                    {(app.platforms.linux64 || app.platforms.linuxARM) && (
+                                        <IconTux arch="none" />
+                                    )}
+                                    {(app.platforms.mac64 || app.platforms.macARM) && (
+                                        <IconMac arch="none" />
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 import { parseKps } from "./manifest.ts";
 import { fetchAPI } from "./network.ts";
-import { validateGPGSignature } from "../security.ts";
+import { validatePGPSignature } from "../security.ts";
 import { existsSync } from "fs";
 import { join } from "path";
 import type { GRA_RELEASE } from "../types/github.ts";
@@ -60,16 +60,16 @@ export async function getPkgRemotes(
 }
 
 /**
- * Downloads given author's GPG signature and returns the path to the downloaded file.
+ * Downloads given author's PGP signature and returns the path to the downloaded file.
  *
  * @async
  * @param {string} authorId Author ID.
  * @param {string} folderPath Path you want the signature to be saved to. It should be the local publisher DIR.
- * @returns {Promise<string>} Path to the GPG signature.
+ * @returns {Promise<string>} Path to the PGP signature.
  */
 export async function getUsrSignature(authorId: string, folderPath: string): Promise<string> {
     const filePath = join(folderPath, `${authorId}.asc`);
-    const signatureAlreadyPresent = existsSync(filePath) && (await validateGPGSignature(filePath));
+    const signatureAlreadyPresent = existsSync(filePath) && (await validatePGPSignature(filePath));
     if (signatureAlreadyPresent) {
         return filePath;
     }
@@ -83,7 +83,7 @@ export async function getUsrSignature(authorId: string, folderPath: string): Pro
         throw `Author ${authorId} does NOT exist. Perhaps the author misspelled it on their manifest, or something else's not alright.`;
     }
     if (!response.ok) {
-        throw `Could not access KPI remote for ${authorId}'s GPG signature (HTTP:${response.status}).`;
+        throw `Could not access KPI remote for ${authorId}'s PGP signature (HTTP:${response.status}).`;
     }
 
     await downloadHandler({

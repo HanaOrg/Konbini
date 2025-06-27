@@ -11,7 +11,7 @@ Both profile registration and package registration are GitHub Pull Request-based
 **Your Pull Request MUST comply with the following criteria**, where `USER` is your unique author name:
 
 - **Includes a `USER.yaml` file.** This is your "author manifest" and includes relevant info about you, following [this specification](#author-manifest-specification).
-- **Includes a `USER.asc` file.** _**Developers are required to provide a public GPG key generated using SHA512.**_ This signature will be used to validate binaries of your package against it. Each binary you distribute must be signed with this GPG key.
+- **Includes a `USER.asc` file.** _**Developers are required to provide a public PGP key.**_ This signature will be used to validate binaries of your package against it. Each binary you distribute must be signed with this PGP key.
 - **Is properly routed.** Both files you made should be in a `/SCOPE/LEVEL/` directory.
     - The root of the repo contains two directories: `org/` and `usr/`. These are the two SCOPE directories; use `usr/` if you are publishing software by yourself or `org/` if you are publishing software by an organization (does not need to be legally established whatsoever; a "collab org" you and your friends made, for example, should use the `org/` directory).
     - Inside `org/` or `usr/`, you’ll find subdirectories named using the first two letters of your username, used to group entries by initials and optimize HTTP queries. These are the LEVEL directories, and use THE INITIALS of the content that lives inside. In other words: if your `USER` is called "foobar", for example, you should contribute your files to `fo/foobar.*` (well, `usr/fo/foobar.*` more precisely).
@@ -151,8 +151,6 @@ age_rating:
     substances: false
     # Does the app show scenes of real, graphical violence in any case?
     violence: false
-    # Does the app require the user to grant or deny consent over user data treatment?
-    telemetry: true
 ```
 
 Where `AUTHOR_ID` is your author ID as previously defined (`scope.username`), `LICENSE` is one of the following codes:
@@ -235,7 +233,7 @@ Now you will need to add the following files to it:
 +konbini.hash.yaml
 ```
 
-**You need to generate a GPG signature using the** _**same signature**_ **you used to generate the public key you initially uploaded to the author's registry.** Upload each file's signature using EXACTLY THE SAME NAME AND FILE EXTENSION, then appending `.asc` to it.
+**You need to generate a PGP signature using the** _**same signature**_ **you used to generate the public key you initially uploaded to the author's registry.** Upload each file's signature using EXACTLY THE SAME NAME AND FILE EXTENSION, then appending `.asc` to it.
 
 **You also need a konbini.hash.yaml file (a "hashfile") that looks like this:**
 
@@ -260,6 +258,6 @@ For generating a file hash, you should **use Konbini's builtin hasher (via `kbi 
 
 ---
 
-If all the steps above were properly followed (you PRed both manifest files, your signature, and made a GitHub release with valid GPG signatures and SHA3-512 hashes), Konbini will be able to directly download your package's binaries and make them usable to users who download it.
+If all the steps above were properly followed (you PRed both manifest files, your signature, and made a GitHub release with valid PGP signatures and SHA3-512 hashes), Konbini will be able to directly download your package's binaries and make them usable to users who download it.
 
 Welcome to Konbini!

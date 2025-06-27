@@ -1,5 +1,4 @@
 import { normalize, removeWhitespace } from "@zakahacecosas/string-utils";
-import type { FormEvent } from "preact/compat";
 import { useEffect, useState } from "preact/hooks";
 import { parse } from "yaml";
 import { fetchAPI } from "shared/api/network";
@@ -32,17 +31,15 @@ export function Home() {
             }),
         );
 
-    function search(event: FormEvent<HTMLInputElement>) {
-        const input = event.target as HTMLInputElement;
-        const searchTerm = n(input.value);
+    function search(val: string) {
+        const searchTerm = n(val);
 
         const items = document.querySelectorAll<HTMLElement>(".__konbini_item_info_giver");
         let visibleCount = 0;
 
         items.forEach((item) => {
             const actual = item.parentElement;
-            if (!actual)
-                throw new Error("This broke, a konbini info giver doesn't have a parent...");
+            if (!actual) throw "This broke, a Konbini info giver doesn't have a parent...";
             const text = n(item.innerText);
 
             if (text.includes(searchTerm)) {
@@ -107,7 +104,7 @@ export function Home() {
                 <input
                     type="search"
                     placeholder="Search for something specific"
-                    onInput={(event) => search(event)}
+                    onInput={(ev) => search(ev.currentTarget.value)}
                 />
                 <div id="not_found" className="hidden">
                     <h1>We couldn't find anything?</h1>

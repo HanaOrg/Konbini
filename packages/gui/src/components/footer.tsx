@@ -4,7 +4,11 @@ export default function Footer() {
             <i>Your convenience store.</i>
             Copyright &copy; The Hana Organization, 2025
             <hr />
-            <a href="/safety">How we keep our apps safe.</a>
+            <p>
+                <a href="/safety">How we keep our apps safe</a>
+                {" · "}
+                <a href="/credits">Who we are</a>
+            </p>
             <hr />
             <p style={{ textAlign: "center", margin: 0, color: "orange", fontWeight: 600 }}>
                 THIS IS NOT RELEASE SOFTWARE, it has been publicized for testing purposes.

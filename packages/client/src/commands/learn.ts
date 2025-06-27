@@ -1,14 +1,14 @@
 import { konbiniHash } from "shared";
-import { konsole } from "../toolkit/konsole";
+import { konsole } from "shared/client";
 import { fileURLToPath } from "url";
 
 export function learn(subcommand: string | undefined) {
     if (!subcommand) {
-        konsole.war('Available topics for learning are: "hash".');
+        konsole.war('Available topics for learning are: "hash", "sign".');
     }
     if (subcommand === "hash") {
         const filePath = fileURLToPath(import.meta.url);
-        konsole.adv("Here's an example Konbini HASH for the Konbini binary itself.");
+        konsole.adv("Here's an example Konbini HASH, for the Konbini binary itself.");
         konsole.suc(konbiniHash(filePath));
         konsole.adv(
             "The above is a SHA3-512 compliant hash. It's required for EVERYTHING released to Konbini.",
@@ -25,7 +25,22 @@ export function learn(subcommand: string | undefined) {
             "It looks different because of most apps use HEX for hashes while we use BASE64URL format.",
             "Why? Because it makes the hash 88 chars long (and it'd be 128 in HEX).",
         ].map((s) => konsole.adv(s));
+        konsole.suc("This is a good method to ensure integrity of downloads.");
+        konsole.dbg("Be advised that aliased packages do not undergo this check.");
         return;
     }
-    konsole.err('Invalid item. Available topics for learning are: "hash".');
+    if (subcommand === "sign") {
+        [
+            "Konbini uses PGP (Pretty Good Privacy) to ensure all executables are authentic.",
+            "These signatures validate authenticity.",
+            "They include the signer's name and email, which can be tested against a public signature.",
+            "This public signature is, for Konbini, hosted on a public registry (HanaOrg/AuthorsRegistry).",
+            "If a package's signature didn't match the author's public signature, it'd mean the package file is fake.",
+            "So, if a signature isn't valid, or we happen to be unable to download them, we block installs.",
+        ].map((s) => konsole.adv(s));
+        konsole.suc("This is a good method to ensure authenticity of downloads.");
+        konsole.dbg("Be advised that aliased packages do not undergo this check.");
+        return;
+    }
+    konsole.err('Invalid item. Available topics for learning are: "hash", "sign".');
 }

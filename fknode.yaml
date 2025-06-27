@@ -1,11 +1,14 @@
 destroy:
     targets:
-        - "./packages/cli/guard/build/"
+        - "./packages/client/guard/build/"
+        - "./packages/client/dist/"
         - "./packages/gui/dist/"
     intensities:
         - "*"
 prettyCmd: "pretty"
+lintCmd: "lint"
 flagless:
     flaglessUpdate: true
     flaglessDestroy: true
     flaglessPretty: true
+    flaglessLint: true
