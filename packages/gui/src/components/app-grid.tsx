@@ -11,7 +11,7 @@ export default function AppGrid({ apps, title }: { apps: MANIFEST_WITH_ID[]; tit
                 {apps.map((app) => (
                     <a
                         href={`/package/${app.id}`}
-                        className="overflow-hidden hover:scale-[0.95] hover:opacity-[0.9] active:scale-[0.9] active:opacity-[0.8] duration-100 rounded-xl bg-[#FFFFFF14] p-6 border-1 border-[#FFFFFF17] flex flex-col gap-2 relative"
+                        className="overflow-hidden hover:opacity-[0.9] active:scale-[0.95] active:opacity-[0.8] duration-100 rounded-xl bg-[#FFFFFF14] p-6 border-1 border-[#FFFFFF17] flex flex-col gap-2 relative"
                     >
                         {app.icon && (
                             <img

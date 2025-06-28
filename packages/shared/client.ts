@@ -58,44 +58,44 @@ export function LAUNCHPAD_FILE_PATH(p: { pkg: string; author: string }): string 
     return join(LAUNCHPAD_DIR, `${normalize(p.pkg)}.${getPlatform() === "win64" ? "ps1" : "sh"}`);
 }
 
-/** Konbini's beautiful console logging. */
-export namespace konsole {
-    const R = Bun.color("white", "ansi-16m");
+const R = Bun.color("white", "ansi-16m");
 
+/** Konbini's beautiful console logging. */
+export const konsole = {
     /** Colors a CLI string. */
-    export function clr(color: Bun.ColorInput, string: string, res: boolean = true): string {
+    clr(color: Bun.ColorInput, string: string, res: boolean = true): string {
         return `${Bun.color(color, "ansi-16m")}${string}${res ? R : ""}`;
-    }
+    },
     /** Logs an error. */
-    export function err(...stuff: any[]): void {
-        console.error(clr("crimson", "[ X ]", false), ...stuff, R);
-    }
+    err(...stuff: any[]): void {
+        console.error(this.clr("crimson", "[ X ]", false), ...stuff, R);
+    },
     /** Logs a warning. */
-    export function war(...stuff: any[]): void {
-        console.warn(clr("yellow", "[ ~ ]", false), ...stuff, R);
-    }
+    war(...stuff: any[]): void {
+        console.warn(this.clr("yellow", "[ ~ ]", false), ...stuff, R);
+    },
     /** Logs an information / "debug" message. */
-    export function dbg(...stuff: any[]): void {
-        console.debug(clr("grey", "[ D ]", false), ...stuff, R);
-    }
+    dbg(...stuff: any[]): void {
+        console.debug(this.clr("grey", "[ D ]", false), ...stuff, R);
+    },
     /** Logs a success message. */
-    export function suc(...stuff: any[]): void {
-        console.log(clr("lightgreen", "[ ✓ ]", false), ...stuff, R);
-    }
+    suc(...stuff: any[]): void {
+        console.log(this.clr("lightgreen", "[ ✓ ]", false), ...stuff, R);
+    },
     /** Logs an advancement message (signaling a step out of many on whatever process is going on). */
-    export function adv(...stuff: any[]): void {
+    adv(...stuff: any[]): void {
         console.log("[ > ]", ...stuff, R);
-    }
+    },
     /** Asks the user for confirmation. */
-    export function ask(question: string): boolean {
-        return confirm(clr("gold", `[ ? ] ${question}`));
-    }
+    ask(question: string): boolean {
+        return confirm(this.clr("gold", `[ ? ] ${question}`));
+    },
     /** Logs a question message (without actually asking anything). */
-    export function que(...stuff: string[]): void {
-        console.log(clr("gold", "[ ? ]", false), ...stuff, R);
-    }
+    que(...stuff: string[]): void {
+        console.log(this.clr("gold", "[ ? ]", false), ...stuff, R);
+    },
     /** Logs a heads up message. */
-    export function out(...stuff: string[]): void {
-        console.log(clr("gold", "[ ! ]", false), ...stuff, R);
-    }
-}
+    out(...stuff: string[]): void {
+        console.log(this.clr("gold", "[ ! ]", false), ...stuff, R);
+    },
+};

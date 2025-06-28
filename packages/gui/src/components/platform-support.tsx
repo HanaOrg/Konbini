@@ -86,10 +86,10 @@ export default function PlatformSupport({
             )}
             <div className="w-full grid grid-cols-5 grid-rows-1 gap-4">
                 {platformsToRender.map((p) => (
-                    <div className="h-54 p-4 border-1 border-[#2A2A2A] rounded-2xl bg-[#151515] relative overflow-hidden">
+                    <div className="h-54 p-6 border-1 border-[#2A2A2A] rounded-2xl bg-[#151515] relative overflow-hidden">
                         <p className="text-3xl text-white font-semibold">{p.plat}</p>
                         <p className="text-xl text-white font-light opacity-[0.7]">{p.arch}</p>
-                        <div className="absolute top-6 right-4">
+                        <div className="absolute top-8 right-6">
                             {p.plat === "Linux" && <IconTux />}
                             {p.plat === "macOS" && <IconMac />}
                             {p.plat === "Windows" && <IconWin />}

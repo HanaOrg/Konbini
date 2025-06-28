@@ -7,23 +7,21 @@ export function Safety() {
             <Nav />
             <div className="app-main-cont">
                 <h1>Keeping Konbini apps safe</h1>
-                <h4 className="text-lg font-medium text-[#ddd]">
+                <h4 className="text-xl font-medium text-[#ddd] mb-2">
                     Yet another package registry, without the "reputation" of it being managed by a
                     large scale corporation (like Microsoft or Canonical) can raise doubts about its
                     safety. This is what we do at Konbini to keep all uploads safe and sound.
                 </h4>
-                <p>
-                    Be advised that this only refers to <i>Konbini apps per se</i>. Aliased packages
-                    come from 3rd party, trustable enough package managers, which we cannot manage
-                    and to be fair don't need to. If you're unsure about a package manager's overall
-                    safety, just don't install it! Konbini won't install packages if they're aliased
-                    to an unavailable manager. Also, keep in mind our claim of disallowing
-                    closed-source software as of now does not apply to aliased packages.
-                    Closed-source trusted software like WhatsApp is published to WinGet or
-                    SnapCraft.
+                <p className="mb-6">
+                    This only applies to <i>Konbini apps</i>. Aliased packages come from third-party
+                    managers we don't control — and honestly, we don’t need to. If you’re unsure
+                    about one, don’t use it! Konbini won’t install anything from unavailable
+                    managers. Also, our current no-closed-source rule doesn’t cover aliased
+                    packages; trusted closed-source apps like WhatsApp may appear via WinGet or
+                    Snap.
                 </p>
-                <hr className="mt-2 mb-2" />
-                <h2 className="text-white text-2xl font-semibold">
+                <hr />
+                <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
                     Konbini apps require to be open-source
                 </h2>
                 <p>
@@ -34,7 +32,7 @@ export function Safety() {
                     on it &ndash; as most used apps sadly happen to be that way &ndash; we will not
                     do it until we have reliable enough methods to assert they're safe.
                 </p>
-                <h2 className="text-white text-2xl font-semibold">
+                <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
                     Konbini apps require to be hashed and digitally signed
                 </h2>
                 <p>
@@ -45,7 +43,7 @@ export function Safety() {
                     they're immediately removed from your system and you get notified about the
                     incident, so that you can report the package to us as broken.
                 </p>
-                <h2 className="text-white text-2xl font-semibold">
+                <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
                     Konbini publishers are audited
                 </h2>
                 <p>
@@ -54,19 +52,17 @@ export function Safety() {
                     Since packages are managed via GitHub, we can run a small auditory over each
                     publisher before letting them in.
                 </p>
-                <h2 className="text-white text-2xl font-semibold">
+                <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
                     Konbini packages are constantly scanned
                 </h2>
                 <p>
-                    "Don't trust, verify" &mdash; trusting open source and doing all of the above is
-                    already "enough". In the end, open source registries run on trust. However,
-                    publishing clean code, then uploading a different binary to a release will
-                    always be an option, which is why{" "}
+                    "Don't trust, verify" &mdash;{" "}
                     <b>
                         we've setup our own local hardware to periodically fetch all binaries server
                         through Konbini and test them against antivirus software
                     </b>
                     . We use ClamAV, and a script that's open-source on Konbini's main repository.
+                    All Konbini packages, even open source or verified ones must undergo this scan.
                 </p>
             </div>
             <Footer />

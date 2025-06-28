@@ -70,8 +70,10 @@ footer a:hover {
 }
 
 hr {
-    border: 1px solid var(--hr);
-    width: 100%;
+    border: none;
+    width: 85%;
+    margin: 0px auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body {

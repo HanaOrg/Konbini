@@ -443,9 +443,10 @@ export default function PackagePage() {
                 )}
                 {app.maintainers && (
                     <>
-                        <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">
-                            Maintainers behind this app, besides {app.author_id}
+                        <h2 className="mt-12  text-3xl text-white font-semibold">
+                            Maintainers of this package
                         </h2>
+                        <p className="mb-4">besides {app.author_id}</p>
                         <div className="flex flex-row gap-4">
                             {app.maintainers.map((m) => (
                                 <div className="flex flex-col gap-1">
