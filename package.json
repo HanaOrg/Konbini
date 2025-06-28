@@ -12,8 +12,7 @@
             "@zakahacecosas/string-utils": "npm:@jsr/zakahacecosas__string-utils@latest",
             "yaml": "^2.8.0",
             "typescript": "~5.8.3",
-            "@types/bun": "latest",
-            "@supabase/supabase-js": "^2.50.2"
+            "@types/bun": "latest"
         }
     },
     "scripts": {

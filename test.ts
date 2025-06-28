@@ -6,3 +6,5 @@ console.log(
         action: "dwn",
     }),
 );
+console.log("works?");
+process.exit(0);

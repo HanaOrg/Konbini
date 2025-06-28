@@ -1,7 +1,7 @@
 export default function Footer() {
     return (
         <>
-            <footer className="p-10 bg-[#00000075] flex flex-row items-start justify-between overflow-hidden relative h-80">
+            <footer className="p-10 bg-[#00000075] flex flex-row items-start justify-between overflow-hidden relative h-100">
                 <div className="bg-[#FF0088] w-128 h-128 blur-[200px] absolute top-[-50px] left-[-150px] opacity-[0.4] z-[-1]" />
                 <div className="flex flex-col items-start justify-start">
                     <a href="/">
@@ -23,6 +23,14 @@ export default function Footer() {
                     </a>
                     <a href="/credits" className="text-lg font-medium">
                         Credits and acknowledgments
+                    </a>
+                    <a
+                        href="https://github.com/HanaOrg/Konbini/blob/main/doc/README.md"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lg font-medium"
+                    >
+                        Publish your app
                     </a>
                     <div className="bg-[#FFCF574D] flex flex-col gap-2 p-4 rounded-xl border-2 border-[#FFFFFF33]">
                         <h3 className="text-xl font-semibold text-[#FFCC96]">

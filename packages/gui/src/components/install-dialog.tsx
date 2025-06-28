@@ -4,7 +4,7 @@ export default function InstallDialog({ appName, appId }: { appName: string; app
     return (
         <dialog
             id="install_dialog"
-            className="p-8 bg-[#FFFFFF08] rounded-3xl backdrop-blur-[30px] border-1 border-[#FFFFFF2E] top-[50%] left-[50%] translate-[-50%]"
+            className="p-8 bg-[#0000000F] rounded-3xl backdrop-blur-[40px] border-1 border-[#FFFFFF2E] top-[50%] left-[50%] translate-[-50%]"
         >
             <div className="flex flex-row items-start justify-between mb-4">
                 <h1 style={{ fontWeight: 800, color: "#fff", fontSize: "2.5em" }}>
@@ -44,9 +44,7 @@ export default function InstallDialog({ appName, appId }: { appName: string; app
                     : "curl -fsSL konbini.vercel.app/dl.sh | bash"}
             </code>
             <h3 className="mt-4 text-lg text-white font-bold">2. Install {appName}</h3>
-            <p className="ml-4 mb-2">
-                Once Konbini installs, restart your terminal and run the following command:
-            </p>
+            <p className="ml-4 mb-2">Once Konbini installs, restart your terminal and run this:</p>
             <code className="ml-4 p-3 rounded-lg bg-[#FFFFFF19] font-mono font-light text-sm">
                 $ kbi install {appId}
             </code>

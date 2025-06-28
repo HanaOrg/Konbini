@@ -5,7 +5,6 @@
     "type": "module",
     "module": "index.ts",
     "dependencies": {
-        "@zakahacecosas/string-utils": "catalog:",
-        "@supabase/supabase-js": "catalog:"
+        "@zakahacecosas/string-utils": "catalog:"
     }
 }
