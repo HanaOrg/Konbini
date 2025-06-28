@@ -51,11 +51,14 @@ export function Home() {
         });
 
         const notFoundMessage = document.getElementById("not_found");
+        const contentToHide = document.getElementsByClassName("hide_on_no_results");
         if (notFoundMessage) {
             if (visibleCount === 0) {
                 notFoundMessage.classList.remove("hidden");
+                for (const el of contentToHide) el.classList.add("hidden");
             } else {
                 notFoundMessage.classList.add("hidden");
+                for (const el of contentToHide) el.classList.remove("hidden");
             }
         }
     }
@@ -97,33 +100,35 @@ export function Home() {
         fetchApps();
     }, []);
 
+    if (loading) return <h1>Konbini is loading, just one sec!</h1>;
+
     return (
         <>
             <Nav />
             <div className="app-main-cont">
+                <div className="bg-[#FF6F00] w-300 h-150 blur-[300px] opacity-[0.5] absolute top-[-250px] left-[-250px] z-[-1]" />
+                <h1 style={{ color: "#fff", opacity: 0.9, fontSize: "6em" }}>
+                    Your convenience store
+                </h1>
                 <input
                     type="search"
-                    placeholder="Search for something specific"
+                    placeholder="Search packages"
                     onInput={(ev) => search(ev.currentTarget.value)}
+                    className="border-1 border-[#FFFFFF17] bg-[#FFFFFF14] px-4 py-3 focus:border-1 focus:border-[#FFFFFF5A] rounded-2xl focus:outline-none"
                 />
                 <div id="not_found" className="hidden">
-                    <h1>We couldn't find anything?</h1>
+                    <h1>We couldn't find anything...</h1>
                     <p>
                         Sorry about that. Perhaps the package wasn't added yet to Konbini, or
                         perhaps you're just too original.
                     </p>
                 </div>
-                {loading ? (
-                    <h1>Loading... Please wait</h1>
-                ) : (
-                    <>
-                        <p>
-                            Since the amount of packages is very low, for now we just place them all
-                            here. As we grow the amount we'll more specifically classify them.
-                        </p>
-                        <AppGrid title="All packages" apps={apps} />
-                    </>
-                )}
+
+                <p className="hide_on_no_results">
+                    Since the amount of packages is very low, for now we just place them all here.
+                    As we grow the amount we'll more specifically classify them.
+                </p>
+                <AppGrid title="All packages" apps={apps} />
             </div>
             <Footer />
         </>

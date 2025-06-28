@@ -1,0 +1,11 @@
+name: "BetterWhatsapp"
+slogan: "WhatsApp client for Linux with theme customization."
+repository: pico190/betterwhatsapp
+platforms:
+    # TODO:
+    linux64: null
+    linuxARM: null
+    mac64: null
+    macARM: null
+    win64: null
+license: "MIT"

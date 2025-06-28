@@ -1,8 +1,13 @@
 export default function Nav() {
     return (
-        <nav>
+        <nav className="p-8">
             <a href="/">
-                <img style={{ cursor: "pointer" }} src="/konball.png" alt="Konbini logo" />
+                <img
+                    className="h-8 object-scale-down"
+                    style={{ cursor: "pointer" }}
+                    src="/konball.png"
+                    alt="Konbini logo"
+                />
             </a>
         </nav>
     );

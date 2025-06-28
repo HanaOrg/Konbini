@@ -3,6 +3,7 @@ import IconMac from "../assets/mac";
 import IconTux from "../assets/tux";
 import IconWin from "../assets/win";
 import { parseKps } from "shared/api/manifest";
+import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 
 export default function PlatformSupport({
     platforms,
@@ -12,12 +13,28 @@ export default function PlatformSupport({
     function supported(plat: KONBINI_PKG_SCOPE | null): string {
         if (!plat) return "unsupported";
         if (isStdScope(plat)) return "supported";
-        return `aliased to ${parseKps(plat)
-            .src.replace("cho", "chocolatey")
-            .replace("scp", "scoop")
-            .replace("fpak", "flatpak")
-            .replace("wget", "winget")
-            .replace("brew-k", "brew")}`;
+
+        const src = parseKps(plat).src;
+        const aliasing =
+            src === "cho"
+                ? "Chocolatey"
+                : src === "scp"
+                  ? "Scoop"
+                  : src === "fpak"
+                    ? "Flatpak"
+                    : src === "wget"
+                      ? "WinGet"
+                      : src === "brew"
+                        ? "Homebrew"
+                        : src === "brew-k"
+                          ? "Homebrew"
+                          : src === "apt"
+                            ? "DPKG"
+                            : src === "nix"
+                              ? "Nix"
+                              : "SnapCraft";
+
+        return `aliased to ${aliasing}`;
     }
 
     const linux64 = supported(platforms.linux64);
@@ -26,9 +43,37 @@ export default function PlatformSupport({
     const macARM = supported(platforms.macARM);
     const win = supported(platforms.win64);
 
+    const platformsToRender = [
+        {
+            plat: "Linux",
+            arch: "64",
+            support: linux64,
+        },
+        {
+            plat: "Linux",
+            arch: "ARM",
+            support: linuxARM,
+        },
+        {
+            plat: "macOS",
+            arch: "64",
+            support: mac64,
+        },
+        {
+            plat: "macOS",
+            arch: "ARM",
+            support: macARM,
+        },
+        {
+            plat: "Windows",
+            arch: "64",
+            support: win,
+        },
+    ];
+
     return (
         <>
-            {[linux64, linuxARM, mac64, macARM, win].includes("aliased") ? (
+            {[linux64, linuxARM, mac64, macARM, win].includes("aliased") && (
                 <p>
                     <i>
                         "Aliased" means it is supported, but not via Konbini itself. Konbini is both
@@ -38,35 +83,32 @@ export default function PlatformSupport({
                         package manager.
                     </i>
                 </p>
-            ) : (
-                <></>
             )}
-            <div className="platforms">
-                <div className="platform">
-                    <IconTux arch="64" />
-                    Linux 64
-                    <div className={`badge ${linux64}`}>{linux64}</div>
-                </div>
-                <div className="platform">
-                    <IconTux arch="ARM" />
-                    Linux ARM
-                    <div className={`badge ${linuxARM}`}>{linuxARM}</div>
-                </div>
-                <div className="platform">
-                    <IconMac arch="64" />
-                    macOS Intel
-                    <div className={`badge ${mac64}`}>{mac64}</div>
-                </div>
-                <div className="platform">
-                    <IconMac arch="ARM" />
-                    macOS Apple Silicon
-                    <div className={`badge ${macARM}`}>{macARM}</div>
-                </div>
-                <div className="platform">
-                    <IconWin arch="64" />
-                    Windows 64
-                    <div className={`badge ${win}`}>{win}</div>
-                </div>
+            <div className="w-full grid grid-cols-5 grid-rows-1 gap-4">
+                {platformsToRender.map((p) => (
+                    <div className="h-54 p-4 border-1 border-[#2A2A2A] rounded-2xl bg-[#151515] relative overflow-hidden">
+                        <p className="text-3xl text-white font-semibold">{p.plat}</p>
+                        <p className="text-xl text-white font-light opacity-[0.7]">{p.arch}</p>
+                        <div className="absolute top-6 right-4">
+                            {p.plat === "Linux" && <IconTux />}
+                            {p.plat === "macOS" && <IconMac />}
+                            {p.plat === "Windows" && <IconWin />}
+                        </div>
+                        <p className="text-xl font-normal absolute bottom-4 text-center left-0 right-0">
+                            {toUpperCaseFirst(p.support)}
+                        </p>
+                        <div
+                            className="w-[100%] m-auto h-14 absolute bottom-2 blur-[80px]"
+                            style={{
+                                backgroundColor: p.support.startsWith("aliased")
+                                    ? "#65A5FF"
+                                    : p.support === "unsupported"
+                                      ? "#FF7C65"
+                                      : "#6FFF65",
+                            }}
+                        />
+                    </div>
+                ))}
             </div>
         </>
     );

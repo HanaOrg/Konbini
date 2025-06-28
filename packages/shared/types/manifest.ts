@@ -124,8 +124,8 @@ export interface KONBINI_MANIFEST {
     license: LICENSE | null;
     /** Author's unique identifier. */
     author_id: KONBINI_AUTHOR_ID;
-    /** Package's logo, to be displayed in the Konbini UI. Only WEBP is supported. */
-    icon?: `https://${string}.webp` | null;
+    /** Package's logo, to be displayed in the Konbini UI. Only WEBP or PNG are allowed. */
+    icon?: `https://${string}.${"webp" | "png"}` | null;
     /** A list of persons who have contributed to the development of this package. */
     maintainers?: {
         name: string;
@@ -146,16 +146,16 @@ export interface KONBINI_MANIFEST {
     /** System requirements, if any. */
     sys_requirements?: {
         /** Minimal OS version number, if any. In Linux, any string is valid (e.g. "Ubuntu 22.04 or later"). */
-        os_ver?: `mac=${number | "x"},lin=${string | "x"},win=${number | "x"}`;
+        os_ver?: `win=${string | number | "x"},mac=${string | number | "x"},lin=${string | "x"}`;
         /** Minimal RAM. */
-        ram_gb?: number;
+        ram_mb?: number;
         /** Minimal storage. */
-        storage_gb?: number;
+        disk_mb?: number;
     };
     /** App screenshots to be displayed in the Konbini UI. Only WEBP is supported. */
     screenshot_urls?: {
         text: string;
-        link: `https://${string}.webp`;
+        link: `https://${string}.${"webp" | "png"}`;
     }[];
     /**
      * A category that represents the type of tool or software the app is meant to be.
@@ -210,7 +210,8 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const isURL = (s?: any) => validate(s) && s.startsWith("https://");
 
-    const isWebpURL = (s?: any) => validate(s) && s.startsWith("https://") && s.endsWith(".webp");
+    const isImageURL = (s?: any) =>
+        validate(s) && s.startsWith("https://") && (s.endsWith(".webp") || s.endsWith(".png"));
 
     const allPlatformsValid =
         typeof m.platforms === "object" &&
@@ -240,7 +241,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const validLicense = m.license === null || validateAgainst(m.license, LICENSES);
 
-    const validIcon = m.icon === undefined || m.icon === null || isWebpURL(m.icon);
+    const validIcon = m.icon === undefined || m.icon === null || isImageURL(m.icon);
 
     const validMaintainers =
         m.maintainers === undefined ||
@@ -256,7 +257,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const validScreenshots =
         m.screenshot_urls === undefined ||
         (Array.isArray(m.screenshot_urls) &&
-            m.screenshot_urls.every((i) => isWebpURL(i.link) && validate(i.text)));
+            m.screenshot_urls.every((i) => isImageURL(i.link) && validate(i.text)));
 
     const validCategories = Array.isArray(m.categories) && m.categories.every(validate);
 
@@ -297,4 +298,43 @@ export function getAgeRating(data: AGE_RATING): "everyone" | "mid" | "high" | "v
     if (data.money) return "high";
     if (data.social) return "mid";
     return "everyone";
+}
+
+/** Parses the os_ver string from manifest files. */
+export function parseOsVer(
+    ver: string,
+): { win: string | null; mac: string | null; lin: string | null } | "Invalid OS requirements." {
+    const splitted = ver.split(",");
+
+    if (splitted.length !== 3) return "Invalid OS requirements.";
+
+    try {
+        const winContent = splitted[0]!.split("win=")[1]!;
+        const macContent = splitted[1]!.split("mac=")[1]!;
+        const linContent = splitted[2]!.split("lin=")[1]!;
+
+        console.debug(splitted, winContent, macContent, linContent);
+
+        const win =
+            winContent === "x"
+                ? null
+                : isNaN(Number(winContent))
+                  ? winContent
+                  : `Windows ${winContent} or later`;
+        const mac =
+            macContent === "x"
+                ? null
+                : isNaN(Number(macContent))
+                  ? macContent
+                  : `macOS ${macContent} or later`;
+        const lin = linContent === "x" ? null : linContent;
+
+        return {
+            win,
+            mac,
+            lin,
+        };
+    } catch {
+        return "Invalid OS requirements.";
+    }
 }

@@ -6,34 +6,43 @@ import type { MANIFEST_WITH_ID } from "../routes/home";
 export default function AppGrid({ apps, title }: { apps: MANIFEST_WITH_ID[]; title: string }) {
     return (
         <>
-            <h2>{title}</h2>
-            <div className="app-grid">
+            <h2 className="hide_on_no_results">{title}</h2>
+            <div className="app-grid hide_on_no_results">
                 {apps.map((app) => (
-                    <div className="app-card">
+                    <a
+                        href={`/package/${app.id}`}
+                        className="overflow-hidden hover:scale-[0.95] hover:opacity-[0.9] active:scale-[0.9] active:opacity-[0.8] duration-100 rounded-xl bg-[#FFFFFF14] p-6 border-1 border-[#FFFFFF17] flex flex-col gap-2 relative"
+                    >
+                        {app.icon && (
+                            <img
+                                className="w-24 h-24 absolute bottom-[-5px] right-[-5px] blur-[60px]"
+                                src={app.icon}
+                                alt={`${app.name}'s icon`}
+                            />
+                        )}
                         <div className="hidden __konbini_item_info_giver">
                             {app.name}
                             {app.slogan}
                         </div>
-                        {app.icon && <img src={app.icon} alt={`${app.name}'s icon`} />}
-                        <div className="cnt">
-                            <h3 key={app.name}>{app.name}</h3>
-                            <p>{app.slogan}</p>
-                            <div className="bottom">
-                                <a href={`/package/${app.id}`}>
-                                    <button>More info</button>
-                                </a>
-                                <div className="icons">
-                                    {app.platforms.win64 && <IconWin arch="none" />}
-                                    {(app.platforms.linux64 || app.platforms.linuxARM) && (
-                                        <IconTux arch="none" />
-                                    )}
-                                    {(app.platforms.mac64 || app.platforms.macARM) && (
-                                        <IconMac arch="none" />
-                                    )}
-                                </div>
-                            </div>
+                        <div className="flex flex-row items-center gap-2">
+                            {app.icon && (
+                                <img
+                                    className="w-10 h-10 rounded-sm"
+                                    src={app.icon}
+                                    alt={`${app.name}'s icon`}
+                                />
+                            )}
+                            <h3 className="text-white text-2xl font-semibold" key={app.name}>
+                                {app.name}
+                            </h3>
                         </div>
-                    </div>
+                        <p className="text-white text-lg/[105%] font-normal">{app.slogan}</p>
+                        <div className="mt-auto flex flex-row gap-2 items-center">
+                            {app.platforms.win64 && <IconWin />}
+                            {(app.platforms.linux64 || app.platforms.linuxARM) && <IconTux />}
+                            {(app.platforms.mac64 || app.platforms.macARM) && <IconMac />}
+                        </div>
+                    </a>
                 ))}
             </div>
         </>

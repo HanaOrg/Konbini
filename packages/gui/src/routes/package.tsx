@@ -1,11 +1,15 @@
 import { useEffect, useState } from "preact/hooks";
-import { getAgeRating, type KONBINI_MANIFEST } from "shared/types/manifest";
-import { getPkgManifest } from "shared/api/core";
+import { getAgeRating, parseOsVer, type KONBINI_MANIFEST } from "shared/types/manifest";
+import { getPkgManifest, locatePkg } from "shared/api/core";
 import Markdown from "react-markdown";
 import { getDesktopPlatform } from "../ua";
 import PlatformSupport from "../components/platform-support";
 import Nav from "../components/nav";
 import Footer from "../components/footer";
+import InstallDialog from "../components/install-dialog";
+import Badge from "../components/badge";
+import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
+import Detail from "../components/detail";
 
 export default function PackagePage() {
     const [app, setApp] = useState<KONBINI_MANIFEST>();
@@ -13,6 +17,11 @@ export default function PackagePage() {
     const [slideIndex, setSlideIndex] = useState<number>(0);
 
     const route = window.location.pathname.split("/package/").filter(Boolean)[0]!;
+    const manifestUrl =
+        locatePkg(route).replace("raw.githubusercontent", "github").replace("main", "blob/main") +
+        "/" +
+        route +
+        ".yaml";
 
     useEffect(() => {
         async function getApp() {
@@ -48,6 +57,12 @@ export default function PackagePage() {
         (plat.plat == "macOS" && (app.platforms.mac64 || app.platforms.macARM)) ||
         (plat.plat == "Linux" && (app.platforms.linux64 || app.platforms.linuxARM));
 
+    const supportString = isSupported
+        ? "Works on your device"
+        : isPossiblySupported
+          ? "Maybe works on your device"
+          : "Does not work on your device";
+    const supportColor = isSupported ? "#FFC3C4" : isPossiblySupported ? "#FF7C65" : "#FF3863";
     const age = getAgeRating(app.age_rating);
 
     function moveSlideIndex(n: number) {
@@ -68,108 +83,94 @@ export default function PackagePage() {
         return;
     }
 
+    const osVer =
+        app.sys_requirements && app.sys_requirements.os_ver
+            ? parseOsVer(app.sys_requirements.os_ver)
+            : null;
+
     return (
         <>
+            <div className="bg-[#8800FF] w-128 h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-50px] z-[-1]" />
+            <div className="bg-[#FF07EA] w-128 h-128 blur-[300px] opacity-[0.65] absolute bottom-[50px] right-[-300px] z-[-1]" />
+            <div className="bg-[#C23282] w-128 h-128 blur-[300px] opacity-[0.50] absolute top-[-150px] right-[-150px] z-[-1]" />
             <Nav />
-            <dialog id="install_dialog">
-                <div className="flex">
-                    <h2>Download {app.name} from Konbini</h2>
-                    <button
-                        onClick={() => {
-                            const m = document.querySelector("#install_dialog");
-                            if (!m) {
-                                console.error("No modal rendered?");
-                                return;
-                            }
-                            (m as HTMLDialogElement).close();
-                        }}
-                    >
-                        <b>X</b>
-                    </button>
-                </div>
-                <hr />
-                <h3>Step one: Get Konbini</h3>
-                <p>
-                    On{" "}
-                    {getDesktopPlatform().plat === "Windows" ? (
-                        <b>a PowerShell session</b>
-                    ) : (
-                        <b>a BASH (or your system's shell) session</b>
-                    )}
-                    , run this script:
-                    <br />
-                    {getDesktopPlatform().plat === "Windows" ? (
-                        <code>powershell -c "irm konbini.vercel.app/dl.ps1 | iex"</code>
-                    ) : (
-                        <code>curl -fsSL konbini.vercel.app/dl.sh | bash</code>
-                    )}
-                </p>
-                <h3>Step two: Install this package</h3>
-                <p>
-                    Once Konbini installs, restart your terminal and run the following command:
-                    <br />
-                    <code>kbi install {route}</code>
-                </p>
-            </dialog>
+            <InstallDialog appName={app.name} appId={route} />
             <div className="app-main-cont">
-                <div className="flex">
-                    <div className="left">
-                        {app.icon && (
-                            <img className="app-icon" src={app.icon} alt={`${app.name}'s icon.`} />
-                        )}
-                        <div className="label">
-                            <h1 className="grad">{app.name}</h1>
-                            <p>
-                                By <b>{app.author_id}</b>
-                            </p>
+                <div className="flex flex-row gap-4">
+                    {app.icon && (
+                        <img
+                            className="w-24 h-24 rounded-2xl"
+                            src={app.icon}
+                            alt={`${app.name}'s icon.`}
+                        />
+                    )}
+                    <div className="flex flex-col w-fit gap-0">
+                        <h1 className="grad">{app.name}</h1>
+                        <h2 className="text-xl text-white opacity-[0.7] mb-2">{app.slogan}</h2>
+                        <Badge text={`By ${app.author_id}`} color="#ffffff1a" />
+                        <div className="flex flex-row gap-1 mt-2">
+                            <Badge
+                                color={
+                                    age === "everyone"
+                                        ? "#00FF6F1a"
+                                        : age === "mid"
+                                          ? "#FF8C001A"
+                                          : age === "high"
+                                            ? "#FF6C002A"
+                                            : "#FF1C003A"
+                                }
+                                text={
+                                    age === "everyone"
+                                        ? "Everyone"
+                                        : age === "mid"
+                                          ? "May be inappropriate for kids"
+                                          : age === "high"
+                                            ? "Inappropriate for kids"
+                                            : "Inappropriate for young users"
+                                }
+                            />
+                            {app.telemetry && (
+                                <Badge text="Shares telemetry data" color="#FF8C001A" />
+                            )}
+                            {app.categories.map((c) => (
+                                <Badge text={toUpperCaseFirst(c)} color="#FFE8BF1A" />
+                            ))}
                         </div>
                     </div>
-                    <button
-                        onClick={() => {
-                            const m = document.querySelector("#install_dialog");
-                            if (!m) {
-                                console.error("No modal rendered?");
-                                return;
+                    <div className="ml-auto h-fit text-xl flex flex-col items-end gap-4">
+                        <button
+                            onClick={() => {
+                                const m = document.querySelector("#install_dialog");
+                                if (!m) {
+                                    console.error("No modal rendered?");
+                                    return;
+                                }
+                                if (!isSupported && !isPossiblySupported) {
+                                    console.warn("Unsupported");
+                                    return;
+                                }
+                                (m as HTMLDialogElement).showModal();
+                            }}
+                            className={
+                                isSupported || isPossiblySupported ? "" : "button-unsupported"
                             }
-                            (m as HTMLDialogElement).showModal();
-                        }}
-                    >
-                        Download
-                    </button>
-                </div>
-                <h2>{app.slogan}</h2>
-                <div className="app-badges">
-                    <div className={`age ${age}`}>
-                        {age === "everyone"
-                            ? "Everyone"
-                            : age === "mid"
-                              ? "May be inappropriate for kids"
-                              : age === "high"
-                                ? "Inappropriate for kids"
-                                : "Inappropriate for young users"}
+                        >
+                            Download
+                        </button>
+                        <div className="text-base" style={{ color: supportColor }}>
+                            {supportString}
+                        </div>
                     </div>
-                    {app.telemetry ? <div className="age high">Shares telemetry data</div> : <></>}·
-                    {isSupported ? (
-                        <div className="badge supported">Works on your device</div>
-                    ) : isPossiblySupported ? (
-                        <div className="badge unsupported">Maybe works on your device</div>
-                    ) : (
-                        <div className="badge">Does not work on your device</div>
-                    )}
-                    ·
-                    {app.categories.map((c) => (
-                        <div className="badge">{c}</div>
-                    ))}
                 </div>
                 <br />
-                <hr />
                 <div className="markdown">
                     <Markdown>{app.desc.replaceAll("\\n", "\n")}</Markdown>
                 </div>
-                {app.screenshot_urls && app.screenshot_urls.length > 0 ? (
+                {app.screenshot_urls && app.screenshot_urls.length > 0 && (
                     <>
-                        <hr />
-                        <h2>Screenshots</h2>
+                        <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">
+                            Screenshots
+                        </h2>
                         <div className="slideshow-container">
                             {app.screenshot_urls.map((s, i) => (
                                 <div
@@ -203,18 +204,39 @@ export default function PackagePage() {
                             ))}
                         </div>
                     </>
-                ) : (
-                    <></>
                 )}
-                <hr />
-                <h2>Platform support</h2>
+                <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">Platform support</h2>
                 <PlatformSupport platforms={app.platforms} />
-                <h2>Details</h2>
-                <div className="details">
-                    <div className="detail">
+                <h2 className="mt-12  mb-4 text-3xl text-white font-semibold">Package details</h2>
+                <div className="flex flex-row gap-2 flex-wrap">
+                    <Detail>
                         <svg
-                            width="50"
-                            height="50"
+                            width="35"
+                            height="35"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M3.75 3a.75.75 0 0 0 0 1.5h1.042l-2.737 6.717A.75.75 0 0 0 2 11.5a3.5 3.5 0 1 0 7 0 .75.75 0 0 0-.055-.283L6.208 4.5h5.042v12H7.253a2.25 2.25 0 0 0 0 4.5h9.497a2.25 2.25 0 0 0 0-4.5h-4v-12h5.042l-2.737 6.717A.75.75 0 0 0 15 11.5a3.5 3.5 0 1 0 7 0 .75.75 0 0 0-.055-.283L19.208 4.5h1.042a.75.75 0 0 0 0-1.5H3.75ZM5.5 6.738l1.635 4.012h-3.27L5.5 6.738Zm11.365 4.012L18.5 6.738l1.635 4.012h-3.27Z"
+                                fill="#ffffff"
+                            />
+                        </svg>
+                        {app.privacy ? (
+                            <p>
+                                <a href={app.privacy} target="_blank" rel="noopener noreferrer">
+                                    Privacy Policy
+                                </a>
+                                <p className="text-xs font-light">{app.privacy}</p>
+                            </p>
+                        ) : (
+                            <p className="font-normal">No Privacy Policy provided.</p>
+                        )}
+                    </Detail>
+                    <Detail>
+                        <svg
+                            width="35"
+                            height="35"
                             fill="none"
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
@@ -225,34 +247,20 @@ export default function PackagePage() {
                             />
                         </svg>
                         {app.terms ? (
-                            <>Privacy Policy: {app.privacy}</>
+                            <p>
+                                <a href={app.terms} target="_blank" rel="noopener noreferrer">
+                                    Terms of Use
+                                </a>
+                                <p className="text-xs font-light">{app.terms}</p>
+                            </p>
                         ) : (
-                            <i>No Privacy Policy provided.</i>
+                            <p className="font-normal">No Terms of Use provided.</p>
                         )}
-                    </div>
-                    <div className="detail">
+                    </Detail>
+                    <Detail>
                         <svg
-                            width="50"
-                            height="50"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M3.75 3a.75.75 0 0 0 0 1.5h1.042l-2.737 6.717A.75.75 0 0 0 2 11.5a3.5 3.5 0 1 0 7 0 .75.75 0 0 0-.055-.283L6.208 4.5h5.042v12H7.253a2.25 2.25 0 0 0 0 4.5h9.497a2.25 2.25 0 0 0 0-4.5h-4v-12h5.042l-2.737 6.717A.75.75 0 0 0 15 11.5a3.5 3.5 0 1 0 7 0 .75.75 0 0 0-.055-.283L19.208 4.5h1.042a.75.75 0 0 0 0-1.5H3.75ZM5.5 6.738l1.635 4.012h-3.27L5.5 6.738Zm11.365 4.012L18.5 6.738l1.635 4.012h-3.27Z"
-                                fill="#ffffff"
-                            />
-                        </svg>
-                        {app.terms ? (
-                            <>Terms of Use: {app.terms}</>
-                        ) : (
-                            <i>No Terms of Use provided.</i>
-                        )}
-                    </div>
-                    <div className="detail">
-                        <svg
-                            width="50"
-                            height="50"
+                            width="35"
+                            height="35"
                             fill="none"
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
@@ -265,11 +273,11 @@ export default function PackagePage() {
                         <p>
                             Licensed under <b>{app.license}</b>
                         </p>
-                    </div>
-                    <div className="detail">
+                    </Detail>
+                    <Detail>
                         <svg
-                            width="50"
-                            height="50"
+                            width="35"
+                            height="35"
                             fill="none"
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
@@ -281,21 +289,21 @@ export default function PackagePage() {
                         </svg>
                         {app.homepage ? (
                             <p>
-                                Learn more at{" "}
                                 <a href={app.homepage} target="_blank" rel="noopener noreferrer">
-                                    {app.homepage}
+                                    Learn more
                                 </a>
+                                <p className="text-xs font-light">{app.homepage}</p>
                             </p>
                         ) : (
-                            <p>
-                                <i>The author of this package didn't specify a homepage.</i>
+                            <p className="font-normal">
+                                The author of this package didn't specify a homepage.
                             </p>
                         )}
-                    </div>
-                    <div className="detail">
+                    </Detail>
+                    <Detail>
                         <svg
-                            width="50"
-                            height="50"
+                            width="35"
+                            height="35"
                             fill="none"
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
@@ -311,24 +319,22 @@ export default function PackagePage() {
                         </svg>
                         {app.docs ? (
                             <p>
-                                Learn to use it at{" "}
                                 <a href={app.docs} target="_blank" rel="noopener noreferrer">
-                                    {app.docs}
+                                    Learn to use it
                                 </a>
+                                <p className="text-xs font-light">{app.docs}</p>
                             </p>
                         ) : (
-                            <p>
-                                <i>
-                                    The author of this package didn't specify a documentation site.
-                                </i>
+                            <p className="font-normal">
+                                The author of this package didn't specify a documentation site.
                             </p>
                         )}
-                    </div>
-                    <div className="detail">
+                    </Detail>
+                    <Detail>
                         {app.repository ? (
                             <svg
-                                width="50"
-                                height="50"
+                                width="35"
+                                height="35"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -340,8 +346,8 @@ export default function PackagePage() {
                             </svg>
                         ) : (
                             <svg
-                                width="50"
-                                height="50"
+                                width="35"
+                                height="35"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -354,45 +360,96 @@ export default function PackagePage() {
                         )}
                         {app.repository ? (
                             <p>
-                                Find the source at{" "}
                                 <a
                                     href={`https://github.com/${app.repository}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    github.com/<b>{app.repository}</b>
+                                    Open source code :)
                                 </a>
+                                <p className="text-xs font-light">{`https://github.com/${app.repository}`}</p>
                             </p>
                         ) : (
-                            <p>
-                                <i>This package is closed source.</i>
-                            </p>
+                            <p className="font-normal">This package is closed source :(</p>
                         )}
-                    </div>
+                    </Detail>
+                    <Detail>
+                        <svg
+                            width="35"
+                            height="35"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="m8.086 18.611 5.996-14.004a1 1 0 0 1 1.878.677l-.04.11-5.996 14.004a1 1 0 0 1-1.878-.677l.04-.11 5.996-14.004L8.086 18.61Zm-5.793-7.318 4-4a1 1 0 0 1 1.497 1.32l-.083.094L4.414 12l3.293 3.293a1 1 0 0 1-1.32 1.498l-.094-.084-4-4a1 1 0 0 1-.083-1.32l.083-.094 4-4-4 4Zm14-4.001a1 1 0 0 1 1.32-.083l.093.083 4.001 4.001a1 1 0 0 1 .083 1.32l-.083.095-4.001 3.995a1 1 0 0 1-1.497-1.32l.084-.095L19.584 12l-3.293-3.294a1 1 0 0 1 0-1.414Z"
+                                fill="#ffffff"
+                            />
+                        </svg>
+                        <p>
+                            <a href={manifestUrl} target="_blank" rel="noopener noreferrer">
+                                {app.name}'s Konbini manifest
+                            </a>
+                            <p className="text-xs font-light">
+                                {manifestUrl
+                                    .replace("https://github.com/HanaOrg/", "")
+                                    .replace("blob/main/", "")}
+                            </p>
+                        </p>
+                    </Detail>
                 </div>
                 {app.sys_requirements && (
                     <>
-                        <h2>Minimal requirements</h2>
-                        <div className="requirements">
-                            <div className="requirement">
-                                <b>OS</b> | {app.sys_requirements?.os_ver} or later
-                            </div>
-                            <div className="requirement">
-                                <b>RAM</b> | {app.sys_requirements?.ram_gb} MB
-                            </div>
-                            <div className="requirement">
-                                <b>DISK</b> | {app.sys_requirements?.storage_gb} GB
-                            </div>
+                        <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">
+                            System requirements
+                        </h2>
+                        <div className="flex flex-row gap-12">
+                            {app.sys_requirements.os_ver &&
+                                osVer &&
+                                osVer !== "Invalid OS requirements." && (
+                                    <div className="flex flex-col gap-1">
+                                        <b className="mb-2">OS</b>
+                                        {osVer.win && (
+                                            <p>
+                                                <b>Windows</b> | {osVer.win}
+                                            </p>
+                                        )}
+                                        {osVer.mac && (
+                                            <p>
+                                                <b>macOS</b> | {osVer.mac}
+                                            </p>
+                                        )}
+                                        {osVer.lin && (
+                                            <p>
+                                                <b>Linux</b> | {osVer.lin}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            {app.sys_requirements.ram_mb && (
+                                <div className="flex flex-col gap-1">
+                                    <b className="mb-2">RAM</b>
+                                    {app.sys_requirements.ram_mb} MB
+                                </div>
+                            )}
+                            {app.sys_requirements.disk_mb && (
+                                <div className="flex flex-col gap-1">
+                                    <b className="mb-2">Storage</b>
+                                    {app.sys_requirements.disk_mb} MB
+                                </div>
+                            )}
                         </div>
                     </>
                 )}
                 {app.maintainers && (
                     <>
-                        <h2>People behind this app, besides {app.author_id}</h2>
-                        <div className="maintainers">
+                        <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">
+                            Maintainers behind this app, besides {app.author_id}
+                        </h2>
+                        <div className="flex flex-row gap-4">
                             {app.maintainers.map((m) => (
-                                <div className="maintainer">
-                                    <h3>{m.name}</h3>
+                                <div className="flex flex-col gap-1">
+                                    <h3 className="text-xl text-white">{m.name}</h3>
                                     {m.email && <a href={`mailto:${m.email}`}>{m.email}</a>}
                                     {m.github && (
                                         <a

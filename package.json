@@ -30,8 +30,8 @@
         "guard": "bun packages/client/guard/avs.ts"
     },
     "dependencies": {
-        "eslint": "^9.29.0",
-        "prettier": "^3.6.1"
+        "eslint": "^9.30.0",
+        "prettier": "^3.6.2"
     },
     "trustedDependencies": [
         "@vercel/speed-insights"
