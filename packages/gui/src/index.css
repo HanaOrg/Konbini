@@ -11,38 +11,15 @@
 
 :root {
     --k: #c23282;
-    --k2: hsl(327, 59%, 48%);
     --k-lighter: #ff9fd9;
 
-    --bg-body: #0c0c0c;
-    --bg-app-card: #3a2a3a;
-    --bg-dialog: #352535;
-    --bg-dialog-backdrop: #ffe6f090;
-    --bg-code: #1a0d1a;
-    --bg-generic: #200820;
-    --bg-icon: #2b1a2b;
     --bg-button: #241424;
-
-    --hr: #ffccff50;
-
-    --badge-std-fg: #f0d0f0;
-    --badge-std-bg: #3a2a3a;
-    --badge-good-fg: #b9fbc0;
-    --badge-good-bg: #1b4332;
-    --badge-blue-fg: #b9c0fb;
-    --badge-blue-bg: #1b3243;
-    --badge-warn-fg: #ffe5b4;
-    --badge-warn-bg: #7f2d00;
-    --badge-risk-fg: #ffd6a5;
-    --badge-risk-bg: #78350f;
-    --badge-destructive-fg: #ffadad;
-    --badge-destructive-bg: #641220;
 
     font-family: "Inter", system-ui, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
 
-    color-scheme: light dark;
+    color-scheme: dark;
     color: rgba(255, 255, 255, 0.8);
 
     font-synthesis: none;
@@ -177,29 +154,9 @@ button.button-unsupported {
     display: none;
 }
 
-dialog {
-    border-radius: 20px;
-    background-color: var(--bg-dialog);
-}
-
-dialog h2 {
-    margin: 0;
-}
-
-dialog .flex button {
-    width: 45px;
-    height: 45px;
-    text-align: center;
-    padding: 0;
-}
-
 dialog::backdrop {
-    background-color: var(--bg-dialog-backdrop);
-}
-
-code {
-    padding: 5px;
-    background-color: var(--bg-code);
+    background-color: #00000033;
+    backdrop-filter: blur(5px);
 }
 
 .grad {
@@ -302,7 +259,7 @@ code {
     height: 15px;
     width: 15px;
     margin: 0 2px;
-    background-color: var(--bg-app-card);
+    background-color: #3a2a3a;
     border-radius: 50%;
     display: inline-block;
     transition: background-color 0.6s ease;
@@ -313,7 +270,7 @@ code {
 }
 
 .dot:hover {
-    background-color: var(--bg-dialog-backdrop);
+    background-color: #ffe6f090;
 }
 
 .slides img {

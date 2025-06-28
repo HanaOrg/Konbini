@@ -208,7 +208,7 @@ export default function PackagePage() {
                 <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">Platform support</h2>
                 <PlatformSupport platforms={app.platforms} />
                 <h2 className="mt-12  mb-4 text-3xl text-white font-semibold">Package details</h2>
-                <div className="flex flex-row gap-2 flex-wrap">
+                <div className="flex flex-row gap-3 flex-wrap">
                     <Detail>
                         <svg
                             width="35"
