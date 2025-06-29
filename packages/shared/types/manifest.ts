@@ -313,8 +313,6 @@ export function parseOsVer(
         const macContent = splitted[1]!.split("mac=")[1]!;
         const linContent = splitted[2]!.split("lin=")[1]!;
 
-        console.debug(splitted, winContent, macContent, linContent);
-
         const win =
             winContent === "x"
                 ? null

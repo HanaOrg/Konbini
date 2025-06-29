@@ -1,6 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
 import { getAgeRating, parseOsVer, type KONBINI_MANIFEST } from "shared/types/manifest";
-import { getPkgManifest, locatePkg } from "shared/api/core";
+import { getPkgManifest, getUsrManifest, locatePkg } from "shared/api/core";
 import Markdown from "react-markdown";
 import { getDesktopPlatform } from "../ua";
 import PlatformSupport from "../components/platform-support";
@@ -10,9 +10,12 @@ import InstallDialog from "../components/install-dialog";
 import Badge from "../components/badge";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 import Detail from "../components/detail";
+import { type KONBINI_AUTHOR } from "shared/types/author";
+import PublisherDetails from "../components/publisher-details";
 
 export default function PackagePage() {
     const [app, setApp] = useState<KONBINI_MANIFEST>();
+    const [author, setAuthor] = useState<KONBINI_AUTHOR>();
     const [loading, setLoading] = useState<boolean>(true);
     const [slideIndex, setSlideIndex] = useState<number>(0);
 
@@ -27,6 +30,8 @@ export default function PackagePage() {
         async function getApp() {
             try {
                 const manifest = await getPkgManifest(route, true);
+                const pkgAuthor = await getUsrManifest(manifest.author_id);
+                setAuthor(pkgAuthor);
                 setApp(manifest);
                 setLoading(false);
             } catch (error) {
@@ -41,8 +46,10 @@ export default function PackagePage() {
         getApp();
     }, []);
 
-    if (!app && loading) return <h1>Loading package "{route}"...</h1>;
-    if (!app) return <h1>Error loading {route}</h1>;
+    if ((!app || !author) && loading) return <h1>Loading package "{route}"...</h1>;
+    if (!app) return <h1>Error loading {route}. Failed to load app.</h1>;
+    if (!author)
+        return <h1>Error loading {route}. The app itself loaded, but its author's data didn't.</h1>;
 
     const plat = getDesktopPlatform();
 
@@ -67,18 +74,14 @@ export default function PackagePage() {
 
     function moveSlideIndex(n: number) {
         if (!app || !app.screenshot_urls) return;
-        console.debug("passed", n, "len", app.screenshot_urls.length, "index", slideIndex);
         if (n < 0) {
-            console.debug("should reset FWD");
             setSlideIndex(app.screenshot_urls.length - 1);
             return;
         }
         if (n > app.screenshot_urls.length - 1) {
-            console.debug("should reset BWD");
             setSlideIndex(0);
             return;
         }
-        console.debug("should behave");
         setSlideIndex(n);
         return;
     }
@@ -107,8 +110,13 @@ export default function PackagePage() {
                     <div className="flex flex-col w-fit gap-0">
                         <h1 className="grad">{app.name}</h1>
                         <h2 className="text-xl text-white opacity-[0.7] mb-2">{app.slogan}</h2>
-                        <Badge text={`By ${app.author_id}`} color="#ffffff1a" />
-                        <div className="flex flex-row gap-1 mt-2">
+                        <div className="flex flex-row gap-1">
+                            <Badge text={`By ${app.author_id}`} color="#ffffff1a" />
+                            {author.verified && (
+                                <Badge text="Verified developer" color="#c232826a" />
+                            )}
+                        </div>
+                        <div className="flex flex-row gap-1 mt-1">
                             <Badge
                                 color={
                                     age === "everyone"
@@ -121,7 +129,7 @@ export default function PackagePage() {
                                 }
                                 text={
                                     age === "everyone"
-                                        ? "Everyone"
+                                        ? "For everyone"
                                         : age === "mid"
                                           ? "May be inappropriate for kids"
                                           : age === "high"
@@ -238,12 +246,12 @@ export default function PackagePage() {
                             </svg>
                         )}
                         {app.privacy ? (
-                            <p>
+                            <div className="flex flex-col">
                                 <a href={app.privacy} target="_blank" rel="noopener noreferrer">
                                     Privacy Policy
                                 </a>
                                 <p className="text-xs font-light">{app.privacy}</p>
-                            </p>
+                            </div>
                         ) : (
                             <p className="font-normal">No Privacy Policy provided.</p>
                         )}
@@ -262,12 +270,12 @@ export default function PackagePage() {
                             />
                         </svg>
                         {app.terms ? (
-                            <p>
+                            <div className="flex flex-col">
                                 <a href={app.terms} target="_blank" rel="noopener noreferrer">
                                     Terms of Use
                                 </a>
                                 <p className="text-xs font-light">{app.terms}</p>
-                            </p>
+                            </div>
                         ) : (
                             <p className="font-normal">No Terms of Use provided.</p>
                         )}
@@ -303,12 +311,12 @@ export default function PackagePage() {
                             />
                         </svg>
                         {app.homepage ? (
-                            <p>
+                            <div className="flex flex-col">
                                 <a href={app.homepage} target="_blank" rel="noopener noreferrer">
                                     Package's website
                                 </a>
                                 <p className="text-xs font-light">{app.homepage}</p>
-                            </p>
+                            </div>
                         ) : (
                             <p className="font-normal">
                                 The author of this package didn't specify a homepage.
@@ -333,12 +341,12 @@ export default function PackagePage() {
                             />
                         </svg>
                         {app.docs ? (
-                            <p>
+                            <div className="flex flex-col">
                                 <a href={app.docs} target="_blank" rel="noopener noreferrer">
                                     Learn to use it
                                 </a>
                                 <p className="text-xs font-light">{app.docs}</p>
-                            </p>
+                            </div>
                         ) : (
                             <p className="font-normal">
                                 The author of this package didn't specify a documentation site.
@@ -374,18 +382,18 @@ export default function PackagePage() {
                             </svg>
                         )}
                         {app.repository ? (
-                            <p>
+                            <div className="flex flex-col">
                                 <a
                                     href={`https://github.com/${app.repository}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    Open source code :)
+                                    Open source code {":]"}
                                 </a>
                                 <p className="text-xs font-light">{`https://github.com/${app.repository}`}</p>
-                            </p>
+                            </div>
                         ) : (
-                            <p className="font-normal">This package is closed source :(</p>
+                            <p className="font-normal">This package is closed source {":["}</p>
                         )}
                     </Detail>
                     <Detail>
@@ -401,7 +409,7 @@ export default function PackagePage() {
                                 fill="#ffffff"
                             />
                         </svg>
-                        <p>
+                        <div className="flex flex-col">
                             <a href={manifestUrl} target="_blank" rel="noopener noreferrer">
                                 Project manifest
                             </a>
@@ -410,7 +418,7 @@ export default function PackagePage() {
                                     .replace("https://github.com/HanaOrg/", "")
                                     .replace("blob/main/", "")}
                             </p>
-                        </p>
+                        </div>
                     </Detail>
                 </div>
                 {app.sys_requirements && (
@@ -456,12 +464,13 @@ export default function PackagePage() {
                         </div>
                     </>
                 )}
+                <PublisherDetails usr={author} />
                 {app.maintainers && (
                     <>
                         <h2 className="mt-12  text-3xl text-white font-semibold">
                             Maintainers of this package
                         </h2>
-                        <p className="mb-4">besides {app.author_id}</p>
+                        <p className="mb-4">besides {author.name}</p>
                         <div className="flex flex-row gap-4">
                             {app.maintainers.map((m) => (
                                 <div className="flex flex-col gap-1">
