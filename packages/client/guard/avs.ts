@@ -11,7 +11,6 @@ import {
     getPkgRemotes,
     isStdScope,
     parseKps,
-    type GRA_RELEASE,
     type KONBINI_MANIFEST,
     type KONBINI_PKG_SCOPE,
 } from "shared";
@@ -126,11 +125,12 @@ async function main() {
             if (!m.repository) continue;
 
             const [owner, repo] = m.repository.split("/");
+            // TODO - update
             const release = await fetchAPI(
                 `https://api.github.com/repos/${owner}/${repo}/releases`,
             );
             const releases = await release.json();
-            const ver = (releases as GRA_RELEASE[])[0]?.tag_name;
+            const ver = releases[0]?.tag_name;
 
             console.log("[WRK] Seeking", `${m.name}@${ver}`);
 

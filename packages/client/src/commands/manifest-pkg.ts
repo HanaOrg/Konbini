@@ -36,7 +36,7 @@ export async function generateManifest() {
     konsole.suc("Great slogan!");
 
     const author_id: KONBINI_AUTHOR_ID = (await prompt(
-        "[ · ] Your author ID? (e.g. usr.johndoe) (be sure it exists!)",
+        "[ · ] Your author ID? (e.g. usr.john-doe) (be sure it exists!)",
         (val) =>
             validate(val) &&
             val.split(".").length === 2 &&

@@ -1,11 +1,11 @@
 import { stdin as input, stdout as output } from "node:process";
 import { validate, validateAgainst } from "@zakahacecosas/string-utils";
 import { konsole } from "shared/client";
-import readline from "node:readline/promises";
+import { createInterface } from "node:readline/promises";
 import { parseKps, type KONBINI_PKG_SCOPE } from "shared";
 
 async function ask(q: string): Promise<string> {
-    const rl = readline.createInterface({ input, output });
+    const rl = createInterface({ input, output });
 
     const ans = await rl.question(konsole.clr("cyan", "[ ? ] " + q + " =>\n"));
 

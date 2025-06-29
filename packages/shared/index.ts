@@ -8,7 +8,7 @@ export * from "./api/network";
 // TYPES
 export { type KONBINI_HASHFILE, type KONBINI_LOCKFILE, isStdLockfile } from "./types/files";
 export { type KONBINI_AUTHOR, type KONBINI_AUTHOR_ID, isOrganization } from "./types/author";
-export type { GRA_RELEASE } from "./types/git";
+export type { RELEASE_CODEBERG, RELEASE_GITHUB, RELEASE_GITLAB } from "./types/git";
 export {
     isKps,
     isStdScope,

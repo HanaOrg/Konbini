@@ -1,7 +1,8 @@
 import { useEffect, useState } from "preact/hooks";
 import { getAgeRating, type KONBINI_MANIFEST } from "shared/types/manifest";
 import { getPkgManifest, getUsrManifest, locatePkg } from "shared/api/core";
-import Markdown from "react-markdown";
+import { micromark } from "micromark";
+import DOMPurify from "dompurify";
 import { getDesktopPlatform } from "../ua";
 import PlatformSupport from "../components/package/platform-support";
 import Nav from "../components/nav";
@@ -154,9 +155,12 @@ export default function PackagePage() {
                     </div>
                 </div>
                 <br />
-                <div className="markdown">
-                    <Markdown>{app.desc.replaceAll("\\n", "\n")}</Markdown>
-                </div>
+                <div
+                    className="markdown"
+                    dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(micromark(app.desc.replaceAll("\\n", "\n"))),
+                    }}
+                />
                 {app.screenshot_urls && app.screenshot_urls.length > 0 && (
                     <ScreenshotSlideshow ss={app.screenshot_urls} />
                 )}

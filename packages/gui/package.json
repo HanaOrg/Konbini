@@ -14,9 +14,10 @@
         "@vercel/analytics": "^1.5.0",
         "@vercel/speed-insights": "^1.2.0",
         "@zakahacecosas/string-utils": "catalog:",
+        "dompurify": "^3.2.6",
+        "micromark": "^4.0.2",
         "preact": "^10.26.5",
         "preact-iso": "^2.9.2",
-        "react-markdown": "^10.1.0",
         "tailwindcss": "^4.1.11",
         "yaml": "catalog:"
     },

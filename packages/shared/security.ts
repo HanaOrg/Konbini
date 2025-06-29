@@ -1,5 +1,14 @@
 import { createHash, randomBytes } from "node:crypto";
-import * as openpgp from "openpgp";
+import {
+    readKey,
+    readSignature,
+    verify,
+    createMessage,
+    sign,
+    readPrivateKey,
+    decryptKey,
+    generateKey,
+} from "openpgp";
 import { readFileSync } from "node:fs";
 
 /** Asserts the integrity of a given executable, taking both the author's signature and the binary signature. */
@@ -15,12 +24,12 @@ export async function assertIntegrityPGP(params: {
     const signatureArmored = readFileSync(executableAscFilePath, "utf8");
     const signedBinary = readFileSync(executableFilePath, null); // No encoding
 
-    const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
-    const signature = await openpgp.readSignature({ armoredSignature: signatureArmored });
+    const publicKey = await readKey({ armoredKey: publicKeyArmored });
+    const signature = await readSignature({ armoredSignature: signatureArmored });
 
     // verify the signature
-    const verification = await openpgp.verify({
-        message: await openpgp.createMessage({ binary: signedBinary }),
+    const verification = await verify({
+        message: await createMessage({ binary: signedBinary }),
         signature,
         verificationKeys: publicKey,
     });
@@ -43,7 +52,7 @@ export async function assertIntegrityPGP(params: {
 /** Simply validates a signature is valid (based on format). Doesn't assert the safety of any package, but avoids the unnecessary redownload of signatures each time a package is installed or updated. */
 export async function validatePGPSignature(ascFilePath: string): Promise<boolean> {
     try {
-        const signature = await openpgp.readSignature({
+        const signature = await readSignature({
             binarySignature: new Uint8Array(readFileSync(ascFilePath)),
         });
 
@@ -92,7 +101,7 @@ export async function genSignature(params: {
 
     const passphrase = passphrase_component + Buffer.from(randomBytes(64)).toString("base64");
 
-    const { privateKey, publicKey } = await openpgp.generateKey({
+    const { privateKey, publicKey } = await generateKey({
         type: "ecc",
         keyExpirationTime: 0,
         userIDs: [{ name: signer_name, email: signer_email }],
@@ -114,10 +123,10 @@ export async function useSignature(params: {
 }) {
     const { binary, passphrase, privateKey } = params;
 
-    return await openpgp.sign({
-        message: await openpgp.createMessage({ binary }),
-        signingKeys: await openpgp.decryptKey({
-            privateKey: await openpgp.readPrivateKey({ armoredKey: privateKey }),
+    return await sign({
+        message: await createMessage({ binary }),
+        signingKeys: await decryptKey({
+            privateKey: await readPrivateKey({ armoredKey: privateKey }),
             passphrase,
         }),
         format: "armored",

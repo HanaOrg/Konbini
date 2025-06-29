@@ -1,5 +1,3 @@
-import process from "node:process";
-
 export function getPlatform(): "linux64" | "linuxArm" | "mac64" | "macArm" | "win64" {
     if (process.platform === "linux") {
         if (process.arch === "x64") {

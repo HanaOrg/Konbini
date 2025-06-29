@@ -6,7 +6,6 @@ import {
     KPS_SOURCES,
 } from "../types/manifest.ts";
 import type { KONBINI_HASHFILE } from "../types/files.ts";
-import process from "node:process";
 import { getPlatform } from "./platform.ts";
 
 /** Parser for Konbini Package Scopes */

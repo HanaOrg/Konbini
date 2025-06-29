@@ -1,12 +1,12 @@
 import { konsole } from "shared/client";
 import { version as kVersion } from "../../../client/package.json";
-import { fetchAPI, type GRA_RELEASE } from "shared";
+import { fetchAPI, type RELEASE_GITHUB } from "shared";
 
 export async function updateKonbini() {
     konsole.adv("You're currently on Konbini", kVersion);
     konsole.adv("Checking for updates...");
 
-    const res: GRA_RELEASE = await (
+    const res: RELEASE_GITHUB = await (
         await fetchAPI("https://api.github.com/repos/HanaOrg/Konbini/releases/latest")
     ).json();
 
