@@ -1,7 +1,7 @@
 import { isStdScope, type KONBINI_MANIFEST, type KONBINI_PKG_SCOPE } from "shared/types/manifest";
-import IconMac from "../assets/mac";
-import IconTux from "../assets/tux";
-import IconWin from "../assets/win";
+import IconMac from "../../assets/mac";
+import IconTux from "../../assets/tux";
+import IconWin from "../../assets/win";
 import { parseKps } from "shared/api/manifest";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 

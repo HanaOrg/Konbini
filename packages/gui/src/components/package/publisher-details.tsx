@@ -1,5 +1,5 @@
 import { isOrganization, type KONBINI_AUTHOR } from "shared/types/author";
-import Badge from "./badge";
+import Badge from "../badge";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 
 export default function PublisherDetails({ usr }: { usr: KONBINI_AUTHOR }) {

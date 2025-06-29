@@ -1,4 +1,4 @@
-import { getDesktopPlatform } from "../ua";
+import { getDesktopPlatform } from "../../ua";
 
 export default function InstallDialog({ appName, appId }: { appName: string; appId: string }) {
     return (

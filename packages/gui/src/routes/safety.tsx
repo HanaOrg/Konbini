@@ -14,11 +14,11 @@ export function Safety() {
                 </h4>
                 <p className="mb-6">
                     This only applies to <i>Konbini apps</i>. Aliased packages come from third-party
-                    managers we don't control — and honestly, we don't need to. If you're unsure
-                    about one, don't use it! Konbini won't install anything from unavailable
-                    managers. Also, our current no-closed-source rule doesn't cover aliased
-                    packages; trusted closed-source apps like WhatsApp may appear via WinGet or
-                    Snap.
+                    managers we don't control. They're usually safe enough - and anyway Konbini
+                    allows you to disable downloads from any aliased registry you don't trust.
+                    <br />
+                    Our current no-closed-source rule doesn't cover aliased packages; trusted
+                    closed-source apps like WhatsApp may appear via WinGet or Snap.
                 </p>
                 <hr />
                 <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
