@@ -13,6 +13,7 @@ import {
 import { downloadHandler } from "./download.ts";
 import { locateUsr } from "./core.ts";
 import { parseKps } from "./manifest.ts";
+import { replace } from "@zakahacecosas/string-utils";
 
 /** Given a package manifest and the desired KPS, returns the absolute URL to its downloadable file. */
 export async function getPkgRemotes(
@@ -53,7 +54,11 @@ export async function getPkgRemotes(
         url.startsWith("gl") ? (release as RELEASE_GITLAB).assets.links : release.assets
     ) as ({ url: string; name: string } | { browser_download_url: string; name: string })[];
 
-    const asset = assets.find((a) => normalizer(a.name) === normalizer(kv.val));
+    const versionedName = replace(kv.val, {
+        "[[VER]]": release.tag_name,
+    });
+
+    const asset = assets.find((a) => normalizer(a.name) === normalizer(versionedName));
     if (!asset) {
         throw `Undefined asset for the ${kps} scope.`;
     }

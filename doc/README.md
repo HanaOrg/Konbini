@@ -80,7 +80,7 @@ Just as when you made your profile, you will need to make a Pull Request includi
 #### Package manifest specification
 
 ```yaml
-# GitHub repository where the package _itself_ is stored.
+# GitHub/GitLab/Codeberg repository where the package _itself_ is stored.
 repository: string/string
 # Supported platforms for the package, with their Konbini Package Scope (KPS).
 platforms:
@@ -187,20 +187,25 @@ A scope is defined in the `SOURCE:VALUE` format, where `SOURCE` can be one of th
 
 and `VALUE` is:
 
-_IF `SOURCE` EQUALS `std`_: **the FILENAME of the binary associated with that scope.** Since we grab binaries from your GitHub release, you specify on each scope (you define a scope for each platform) the filename we should look for. **This assumes linear file naming**, this means all releases should call your executables the same way, without versions (`my-program-v2.0.0.exe`) or whatever.
+**_IF `SOURCE` EQUALS `std`_**: **the FILENAME of the binary associated with that scope.** Since we grab binaries from your GitHub/GitLab/Codeberg release, you specify on each scope (you define a scope for each platform) the filename we should look for.
 
-_IF `SOURCE` EQUALS ANYTHING ELSE_: **the PACKAGE NAME as defined in the package manager denoted by the SOURCE itself**. This must be the same unique name used for identifying the package when using the corresponding package manager.
+**If you write version codes in your file names**, you don't need to modify the manifest each time, don't worry. Use `[[VER]]` in the manifest to reference the place where it appears (we assume your naming is consistent, as it should be). Be sure the version is equal to your release's `tag_name`.
+
+> [!TIP]
+> If your executable is called `my-program-v2.0.0.exe`, the scope should be `std:my-program-[[VER]].exe` and your release's tag name should be exactly "`v2.0.0`". Do this for every platform scope you plan to add.
+
+**_IF `SOURCE` EQUALS ANYTHING ELSE_**: **the PACKAGE NAME as defined in the package manager denoted by the SOURCE itself**. This must be the same unique name used for identifying the package when using the corresponding package manager.
 
 By supporting all scopes, Konbini instantly becomes a superset of `apt`, `nix`, `brew`, `flatpak`, and `winget` at the same time, including packages from all registries _without needing additional setup_ - as they're trusted, and we thus do not require signatures or extra overhead.
 
 ## Releasing your package
 
-To avoid making a PR for each version, we use GitHub releases for package publishing. Once your manifest is uploaded, if the GitHub repository was properly specified and you have at least one public (Konbini compliant) release, your package becomes instantly downloadable.
+To avoid making a PR for each version, we use GitHub/GitLab/Codeberg releases for package publishing. Once your manifest is uploaded, if the GitHub/GitLab/Codeberg repository was properly specified and you have at least one public (Konbini compliant) release, your package becomes instantly downloadable.
 
-This means, once you PR the manifest file, you do not need to make changes to it, and just by making a GitHub release (with proper [safety practices](#safety-requirements-for-publishing)), you are done. Your package's version are taken from the tag of the release.
+This means, once you PR the manifest file, you do not need to make changes to it, and just by making a GitHub/GitLab/Codeberg release (with proper [safety practices](#safety-requirements-for-publishing)), you are done. Your package's version are taken from the tag of the release.
 
 > [!IMPORTANT]
-> Not any release is valid, however. You need to follow the safety practices latterly described. To avoid added complexity, we recommend using a GitHub actions for release, or a manually defined automation to generate required files.
+> Not any release is valid, however. You need to follow the safety practices latterly described. To avoid added complexity, we recommend using GitHub actions for release, or a manually defined automation to generate required files.
 
 ## Safety requirements for publishing
 
@@ -235,22 +240,20 @@ Now you will need to add the following files to it:
 
 **You need to generate a PGP signature using the** _**same signature**_ **you used to generate the public key you initially uploaded to the author's registry.** Upload each file's signature using EXACTLY THE SAME NAME AND FILE EXTENSION, then appending `.asc` to it.
 
-**You also need a konbini.hash.yaml file (a "hashfile") that looks like this:**
+**You also need a konbini.hash.yaml file (a "hashfile") that looks like this** (but with real hashes, obviously):
 
 ```yaml
 linux_64_sha: >-
-    X8QSU2VKBulMqaanov-EZveYGBERffkaoaFQll3DA5MMmuJRcRjsuWx1ZfFUg7uAALKoN4YaRkiFzKxWRIY0PQ
+    SOME-HASH-abcdefghijk...
 linux_arm_sha: >-
-    M5-lOR4oMFuYGJd3rZfzs1y-l3Bxt5KpYkNRWV3XilqbHfVp2kAO0etSVWxCgQB1rynJmltc6KVoNSbIo5wpYw
+    SOME-HASH-abcdefghijk...
 mac_64_sha: >-
-    jGD37wINiM1p-6uJyUw6Lm29tHqsxKbxEmYrHG5gkpwbRY7Mcvjcn3lGfyIVDbrxXUKFeIPiBo4Kav8qlFTJdg
+    SOME-HASH-abcdefghijk...
 mac_arm_sha: >-
-    kKEAbWj7_l4spf7GsRbLEb979XBTAARHQ8y5C7rtNowXqL5z4lGbEuoSFZ62na8sCGWiSvoiskbOuaO9QPC-Ng
+    SOME-HASH-abcdefghijk...
 win64_sha: >-
-    Pzml-QVWNWsQY8PfGPT9DoJs1tPFbT_9XeFQ7Sr4cHqSwkJoFOwEd76KVuB_dRRSX8X-ybOXAjx0L80-68tZAQ
+    SOME-HASH-abcdefghijk...
 ```
-
-> ###### [FuckingNode's 3.2.1](https://github.com/FuckingNode/FuckingNode/releases/tag/3.2.1) real Konbini hashfile
 
 Each platform you make a release for (you do not need to specify hashes for platforms you do not build for) should get its binary hashed, to assert its integrity upon download.
 
@@ -258,6 +261,6 @@ For generating a file hash, you should **use Konbini's builtin hasher (via `kbi 
 
 ---
 
-If all the steps above were properly followed (you PRed both manifest files, your signature, and made a GitHub release with valid PGP signatures and SHA3-512 hashes), Konbini will be able to directly download your package's binaries and make them usable to users who download it.
+If all the steps above were properly followed (you PRed both manifest files, your signature, and made a GitHub/GitLab/Codeberg release with valid PGP signatures and SHA3-512 hashes), Konbini will be able to directly download your package's binaries and make them usable to users who download it.
 
 Welcome to Konbini!
