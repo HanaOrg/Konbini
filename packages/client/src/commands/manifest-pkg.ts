@@ -7,6 +7,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { prompt, promptBinary, promptScope } from "../toolkit/input";
 import { type KONBINI_AUTHOR_ID, type KONBINI_MANIFEST, isKps } from "shared";
+import type { REPOSITORY_SCOPE } from "shared/types/manifest";
 
 export async function generateManifest() {
     konsole.suc(
@@ -80,11 +81,11 @@ export async function generateManifest() {
     const platMacARM = await promptScope("macARM");
     const platWin64 = await promptScope("Windows64");
 
-    const repository: `${string}/${string}` = (await prompt(
-        'Repository? (in the author/repo format, without "github.com/" or whatever)',
+    const repository: REPOSITORY_SCOPE = (await prompt(
+        'Repository? (in the provider:author/repo format, being provider "gh", "gl", or "cb")',
         (val) => !validate(val) || (validate(val) && val.split("/").length == 2),
         "Whoops, that doesn't seem like a valid GitHub repo.",
-    )) as `${string}/${string}`;
+    )) as REPOSITORY_SCOPE;
     konsole.suc("Great!");
 
     konsole.adv("Your manifest is done!");

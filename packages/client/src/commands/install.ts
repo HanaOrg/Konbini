@@ -4,7 +4,7 @@ import { konsole } from "shared/client";
 import { join } from "path";
 import { parse } from "yaml";
 import { destroyPkg } from "../toolkit/remove";
-import { installAliasedPackage } from "../toolkit/aliased";
+import { installAliasedPackage, packageExists } from "../toolkit/aliased";
 import { writeLaunchpadShortcut, writeLockfile } from "../toolkit/write";
 import {
     type KONBINI_LOCKFILE,
@@ -121,7 +121,7 @@ export async function installPackage(
     const usrDir = USR_PATH({ author: manifest.author_id });
     const pkgDir = PKG_PATH({ pkg: pkgName, author: manifest.author_id });
 
-    if (existsSync(pkgDir)) {
+    if (await packageExists(pkgName)) {
         if (method === "install") {
             const conf = konsole.ask(`${pkgName} is already installed. Reinstall?`);
             if (!conf) {
@@ -160,13 +160,17 @@ export async function installPackage(
     konsole.dbg(`Reading remotes for ${manifest.name}`);
     const remotes = await getPkgRemotes(platform, manifest);
 
-    const prevLockfile = parse(
-        readFileSync(join(pkgDir, FILENAMES.lockfile), { encoding: "utf-8" }),
-    ) as KONBINI_LOCKFILE;
+    const prevLockfilePath = join(pkgDir, FILENAMES.lockfile);
 
-    if (isStdLockfile(prevLockfile) && prevLockfile.version === remotes.pkgVersion) {
-        konsole.suc(`${pkgName} is already up to date.`);
-        return;
+    if (existsSync(prevLockfilePath)) {
+        const prevLockfile = parse(
+            readFileSync(prevLockfilePath, { encoding: "utf-8" }),
+        ) as KONBINI_LOCKFILE;
+
+        if (isStdLockfile(prevLockfile) && prevLockfile.version === remotes.pkgVersion) {
+            konsole.suc(`${pkgName} is already up to date.`);
+            return;
+        }
     }
 
     /** package pathname */

@@ -4,7 +4,7 @@ import { PACKAGES_DIR } from "shared/client";
 import { parse } from "yaml";
 import { konsole } from "shared/client";
 import { isStdScope, FILENAMES, type KONBINI_LOCKFILE, type KPS_SOURCE } from "shared";
-import { existsAliasedPackage } from "../toolkit/aliased";
+import { packageExists } from "../toolkit/aliased";
 
 function findLockFiles(dir: string, filename = FILENAMES.lockfile): string[] {
     const results: string[] = [];
@@ -37,13 +37,9 @@ export async function listPackages(
 
     for (const lockfile of lockfiles) {
         const parsed = parse(readFileSync(lockfile, { encoding: "utf-8" }));
-        const exists = await existsAliasedPackage(parsed.pkg);
+        const exists = await packageExists(parsed.pkg);
         if (!exists) {
-            konsole.dbg(
-                "Asserted",
-                parsed.pkg,
-                "(aliased package) no longer is installed. Removed its lockfile.",
-            );
+            konsole.dbg("Asserted", parsed.pkg, "no longer is installed. Removed its lockfile.");
             rmSync(join(lockfile, "../"), { recursive: true, force: true });
         } else {
             pkgsToList.push({ ...parsed, path: lockfile });

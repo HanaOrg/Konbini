@@ -9,6 +9,7 @@ import {
     fetchAPI,
     getCurrentPlatformKps,
     getPkgRemotes,
+    isStdScope,
     parseKps,
     type GRA_RELEASE,
     type KONBINI_MANIFEST,
@@ -151,7 +152,7 @@ async function main() {
                     console.log("[<<<] ASSET", plat, "SKIPPED");
                     continue;
                 }
-                if (parseKps(scope).src !== "std") {
+                if (!isStdScope(scope)) {
                     console.log("[<<<] ASSET", plat, "TRUSTED");
                     continue;
                 }

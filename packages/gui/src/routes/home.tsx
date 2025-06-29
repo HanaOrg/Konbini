@@ -114,7 +114,7 @@ export function Home() {
                     type="search"
                     placeholder="Search packages"
                     onInput={(ev) => search(ev.currentTarget.value)}
-                    className="border-1 border-[#FFFFFF17] bg-[#FFFFFF14] px-4 py-3 focus:border-1 focus:border-[#FFFFFF5A] rounded-2xl focus:outline-none"
+                    className="w-full my-4 border-1 border-[#FFFFFF17] bg-[#FFFFFF14] px-4 py-3 focus:border-1 focus:border-[#FFFFFF5A] rounded-2xl focus:outline-none"
                 />
                 <div id="not_found" className="hidden">
                     <h1>We couldn't find anything...</h1>
@@ -123,11 +123,6 @@ export function Home() {
                         perhaps you're just too original.
                     </p>
                 </div>
-
-                <p className="hide_on_no_results">
-                    Since the amount of packages is very low, for now we just place them all here.
-                    As we grow the amount we'll more specifically classify them.
-                </p>
                 <AppGrid title="All packages" apps={apps} />
             </div>
             <Footer />

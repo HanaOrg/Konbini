@@ -27,10 +27,10 @@ export const KPS_SOURCES = [
     "nix",
     "brew",
     "brew-k",
-    "std",
     "fpak",
     "scp",
     "cho",
+    "std",
 ] as const;
 
 /** A KPS source. */
@@ -84,6 +84,9 @@ export const LICENSES = [
 /** These are license _codes_ used by us to identify and define licenses. They should not be used in the UI. */
 export type LICENSE = (typeof LICENSES)[number];
 
+/** A Git repository scope. */
+export type REPOSITORY_SCOPE = `${"gh" | "gl" | "cb"}:${string}/${string}`;
+
 export interface AGE_RATING {
     /** Does the app allow to use real currency in any way? */
     money: boolean;
@@ -97,10 +100,10 @@ export interface AGE_RATING {
 
 /** A Konbini package manifest. */
 export interface KONBINI_MANIFEST {
-    /** GitHub repository where the package _itself_ is stored.
-     * Can be null, because of closed-source or non-GitHub software, or just software that uses aliasing.
+    /** GitHub, GitLab, or CodeBerg repository where the package _itself_ is stored.
+     * Can be null, because of closed-source software.
      */
-    repository: `${string}/${string}` | null;
+    repository: REPOSITORY_SCOPE | null;
     /** Supported platforms for the package, with their Konbini Package Scope (KPS). */
     platforms: {
         /** 64-bit Linux KPS. */
@@ -194,8 +197,8 @@ export function isKps(kps: any): kps is KONBINI_PKG_SCOPE {
 }
 
 /** Validates if the given scope is a `std:` one. */
-export function isStdScope(kps: any): kps is `std:${string}` {
-    if (isKps(kps) && kps.startsWith("std:")) return true;
+export function isStdScope(kps: KONBINI_PKG_SCOPE): kps is `std:${string}` {
+    if (kps.startsWith("std:")) return true;
     return false;
 }
 
@@ -335,4 +338,51 @@ export function parseOsVer(
     } catch {
         return "Invalid OS requirements.";
     }
+}
+
+export function isRepositoryScope(scope: any): scope is REPOSITORY_SCOPE {
+    const colonSplit = scope.split(":");
+
+    if (!validate(colonSplit[0]) || !validate(colonSplit[1])) return false;
+
+    if (!validateAgainst(colonSplit[0], ["gh", "gl", "cb"])) return false;
+
+    const slashSplit = colonSplit[1].split("/");
+
+    if (!validate(slashSplit[0]) || !validate(slashSplit[1])) return false;
+
+    return true;
+}
+
+export function parseRepositoryScope(scope: REPOSITORY_SCOPE): {
+    /** Source of the repo. */
+    source: "gh" | "gl" | "cb";
+    /** Remote, REST API URL. */
+    remote: string;
+    /** Public, frontend URL. */
+    public: string;
+} {
+    if (!isRepositoryScope(scope)) throw `Invalid REPOSITORY_SCOPE "${scope}".`;
+
+    const colonSplit = scope.split(":");
+    const pref = colonSplit[1]!;
+    const slashSplit = pref.split("/");
+
+    if (colonSplit[0] === "gh")
+        return {
+            source: "gh",
+            remote: `https://api.github.com/repos/${slashSplit[0]}/${slashSplit[1]}/releases/latest`,
+            public: `https://github.com/${slashSplit[0]}/${slashSplit[1]}`,
+        };
+    if (colonSplit[0] === "gl")
+        return {
+            source: "gl",
+            remote: `https://gitlab.com/api/v4/projects/${encodeURIComponent(pref)}/releases`,
+            public: `https://gitlab.com/${slashSplit[0]}/${slashSplit[1]}`,
+        };
+    return {
+        source: "cb",
+        remote: `https://codeberg.org/api/v1/repos/${slashSplit[0]}/${slashSplit[1]}/releases/latest`,
+        public: `https://codeberg.org/${slashSplit[0]}/${slashSplit[1]}`,
+    };
 }

@@ -1,4 +1,4 @@
-import type { KONBINI_MANIFEST } from "shared/types/manifest";
+import { parseRepositoryScope, type KONBINI_MANIFEST } from "shared/types/manifest";
 import Detail from "../detail";
 
 export default function PackageDetails({
@@ -8,6 +8,8 @@ export default function PackageDetails({
     app: KONBINI_MANIFEST;
     manifestUrl: string;
 }) {
+    const repo = app.repository ? parseRepositoryScope(app.repository) : null;
+
     return (
         <>
             <h2 className="mt-12  mb-4 text-3xl text-white font-semibold">Package details</h2>
@@ -176,16 +178,12 @@ export default function PackageDetails({
                             />
                         </svg>
                     )}
-                    {app.repository ? (
+                    {repo ? (
                         <div className="flex flex-col">
-                            <a
-                                href={`https://github.com/${app.repository}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
+                            <a href={repo.public} target="_blank" rel="noopener noreferrer">
                                 Open source code {":]"}
                             </a>
-                            <p className="text-xs font-light">{`https://github.com/${app.repository}`}</p>
+                            <p className="text-xs font-light">{repo.public}</p>
                         </div>
                     ) : (
                         <p className="font-normal">This package is closed source {":["}</p>

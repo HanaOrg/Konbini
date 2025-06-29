@@ -1,13 +1,18 @@
-import { parseKps } from "./manifest.ts";
 import { fetchAPI } from "./network.ts";
 import { validatePGPSignature } from "../security.ts";
 import { existsSync } from "fs";
 import { join } from "path";
-import type { GRA_RELEASE } from "../types/github.ts";
+import type { RELEASE_CODEBERG, RELEASE_GITHUB, RELEASE_GITLAB } from "../types/git.ts";
 import { FILENAMES, normalizer } from "../constants.ts";
-import type { KONBINI_MANIFEST, KONBINI_PKG_SCOPE } from "../types/manifest.ts";
+import {
+    isStdScope,
+    parseRepositoryScope,
+    type KONBINI_MANIFEST,
+    type KONBINI_PKG_SCOPE,
+} from "../types/manifest.ts";
 import { downloadHandler } from "./download.ts";
 import { locateUsr } from "./core.ts";
+import { parseKps } from "./manifest.ts";
 
 /** Given a package manifest and the desired KPS, returns the absolute URL to its downloadable file. */
 export async function getPkgRemotes(
@@ -20,42 +25,57 @@ export async function getPkgRemotes(
     ascAsset: string;
 }> {
     const kv = parseKps(kps);
-    if (kv.src !== "std") {
-        throw `KPI attempt to fetch remotes for a non-Konbini package (scope src: ${kv.src}). Aliased scopes don't work this way.\nThis is likely a bug in Konbini's code.`;
+    if (!isStdScope(kps)) {
+        throw `KPI attempt to fetch remotes for a non-Konbini package (KPS: ${kps}). Aliased scopes don't work this way.\nThis is likely a bug in Konbini's code.`;
     }
     if (!manifest.repository) {
-        throw `KPI attempt to fetch remotes without a repository. The author of this package didn't specify the repository where his package his hosted.`;
+        throw `KPI attempt to fetch remotes without a repository. The author of this package didn't specify the repository where his package is hosted.`;
     }
 
-    const repo = manifest.repository.split("/");
+    /** rs as in repository scope */
+    const rs = manifest.repository;
+    const url = parseRepositoryScope(rs).remote;
 
-    const releases = (await (
-        await fetchAPI(`https://api.github.com/repos/${repo[0]}/${repo[1]}/releases`)
-    ).json()) as GRA_RELEASE[];
+    const releases = await (await fetchAPI(url)).json();
+
+    const release: RELEASE_CODEBERG | RELEASE_GITHUB | RELEASE_GITLAB = rs.startsWith("gl")
+        ? (releases[0] as RELEASE_GITLAB)
+        : rs.startsWith("cb")
+          ? (releases as RELEASE_CODEBERG)
+          : (releases as RELEASE_GITHUB);
+
     // github 1st release is always the latest
-    if (!releases[0]) {
+    if (!release) {
         throw `Repository for the ${kps} scope does NOT have any releases.`;
     }
-    const asset = releases[0]!.assets.find((a) => normalizer(a.name) === normalizer(kv.val));
+
+    const assets = (
+        url.startsWith("gl") ? (release as RELEASE_GITLAB).assets.links : release.assets
+    ) as ({ url: string; name: string } | { browser_download_url: string; name: string })[];
+
+    const asset = assets.find((a) => normalizer(a.name) === normalizer(kv.val));
     if (!asset) {
         throw `Undefined asset for the ${kps} scope.`;
     }
 
-    const sha = releases[0]!.assets.find((a) => a.name === FILENAMES.hashfile);
+    const sha = assets.find((a) => a.name === FILENAMES.hashfile);
     if (!sha) {
         throw "The author of this package did NOT include a hashfile on the latest version of the package. Without a hashfile we cannot validate download integrity, so we did not install the package, for your safety. Please inform the Konbini team, or, preferably, the package author.";
     }
 
-    const asc = releases[0]!.assets.find((a) => a.name === kv.val + ".asc");
+    const asc = assets.find((a) => a.name === kv.val + ".asc");
     if (!asc) {
         throw "The author of this package did NOT include a PGP signature on the latest version of the package. Without a PGP signature we cannot validate download authenticity, so we did not install the package, for your safety. Please inform the Konbini team, or, preferably, the package author.";
     }
 
+    const getUrl = (i: typeof asc) =>
+        url.startsWith("gl") ? (i as any).url : (i as any).browser_download_url;
+
     return {
-        coreAsset: asset.browser_download_url,
-        pkgVersion: releases[0]!.tag_name,
-        shaAsset: sha.browser_download_url,
-        ascAsset: asc.browser_download_url,
+        coreAsset: getUrl(asset),
+        pkgVersion: release.tag_name,
+        shaAsset: getUrl(sha),
+        ascAsset: getUrl(asc),
     };
 }
 
@@ -80,7 +100,7 @@ export async function getUsrSignature(authorId: string, folderPath: string): Pro
     const response = await fetchAPI(signaturePath);
 
     if (response.status === 404) {
-        throw `Author ${authorId} does NOT exist. Perhaps the author misspelled it on their manifest, or something else's not alright.`;
+        throw `Author ${authorId} does NOT have a valid signature (or at least, we didn't find one). Report this issue, please.`;
     }
     if (!response.ok) {
         throw `Could not access KPI remote for ${authorId}'s PGP signature (HTTP:${response.status}).`;

@@ -14,6 +14,7 @@ import {
 import { ALIASED_CMDs } from "./alias-cmds";
 import { PKG_PATH } from "shared/client";
 import { existsSync } from "fs";
+import { join } from "path";
 
 function noNewUpdates(errorMsg: string): boolean {
     // TODO - the rest
@@ -66,7 +67,7 @@ export function installAliasedPackage(params: {
     );
 
     const scope = constructKps(kps);
-    if (scope.startsWith("std:")) throw `a`;
+    if (scope.startsWith("std:")) throw `Impossible error? Non-std scope became std.`;
 
     const lockfile: KONBINI_LOCKFILE = {
         pkg: pkgName,
@@ -77,12 +78,14 @@ export function installAliasedPackage(params: {
     return "installedOrUpdated";
 }
 
-export async function existsAliasedPackage(pkg: string): Promise<boolean> {
+export async function packageExists(pkg: string): Promise<boolean> {
     const manifest = await getPkgManifest(pkg);
     const { author_id } = manifest;
-    const kps = parseKps(getCurrentPlatformKps(manifest.platforms));
+    const currentKps = getCurrentPlatformKps(manifest.platforms)!;
+    const kps = parseKps(currentKps);
     if (kps.src === "std") {
-        return existsSync(PKG_PATH({ author: author_id, pkg }));
+        const pkgPath = PKG_PATH({ author: author_id, pkg });
+        return existsSync(join(pkgPath, kps.val));
     }
     const cmd = ALIASED_CMDs[kps.src]["exists"](kps.val);
     let out: string;

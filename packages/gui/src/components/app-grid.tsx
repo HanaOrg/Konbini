@@ -6,7 +6,11 @@ import type { MANIFEST_WITH_ID } from "../routes/home";
 export default function AppGrid({ apps, title }: { apps: MANIFEST_WITH_ID[]; title: string }) {
     return (
         <>
-            <h2 className="hide_on_no_results">{title}</h2>
+            <h2 className="text-3xl font-semibold mb-2 text-white hide_on_no_results">{title}</h2>
+            <p className="mb-2 hide_on_no_results">
+                Since the amount of packages is very low, for now we just place them all here. As we
+                grow the amount we'll more specifically classify them.
+            </p>
             <div className="app-grid hide_on_no_results">
                 {apps.map((app) => (
                     <a
