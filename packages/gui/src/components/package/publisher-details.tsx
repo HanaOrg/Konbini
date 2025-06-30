@@ -71,7 +71,9 @@ export default function PublisherDetails({ usr }: { usr: KONBINI_AUTHOR }) {
             <div className="flex flex-row gap-1 mb-2">
                 {usr.email && <Badge color="#ffffff0f" text={usr.email} link="mailto:" />}
                 {usr.website && <Badge color="#ffffff0f" text={usr.website} link="https://" />}
-                {/* TODO: make the link clickable if the org is a Konbini one */}
+                {/* TODO: make the link clickable if the org is a Konbini one
+                implies
+                TODO: make user pages */}
                 {usr.org && <Badge color="#ffffff1a" text={`Working at ${usr.org}`} />}
                 {usr.for_hire ? (
                     <Badge color="#30ff801a" text="Currently for hire" />

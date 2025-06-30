@@ -10,20 +10,34 @@ import {
     getPkgManifest,
     constructKps,
     type KONBINI_PKG_SCOPE,
+    type KPS_SOURCE,
+    getPlatform,
 } from "shared";
 import { ALIASED_CMDs } from "./alias-cmds";
 import { PKG_PATH } from "shared/client";
 import { existsSync } from "fs";
 import { join } from "path";
 
-function noNewUpdates(errorMsg: string): boolean {
-    // TODO - the rest
+function isUpToDate(src: KPS_SOURCE, msg: string): boolean {
+    const messages = [
+        // winget
+        "No newer package versions are available from the configured sources.",
+        // apt
+        "is already in the newest version",
+        // snap
+        "has no updates available",
+        // brew, brew-k - worth noting this is ambiguous,
+        "already installed",
+        // flatpak
+        "Nothing to do",
+        // scoop
+        "Latest versions for all apps are installed!",
+    ];
 
-    // WinGet
-    if (errorMsg.includes("No newer package versions are available from the configured sources."))
-        return true;
-
-    return false;
+    // nix returns an empty string if it's already up to date
+    if (src === "nix" && msg.trim().length === 0) return true;
+    if (messages.every((s) => !msg.includes(s))) return false;
+    return true;
 }
 
 export function installAliasedPackage(params: {
@@ -52,13 +66,34 @@ export function installAliasedPackage(params: {
         return "needsPkgMgr";
     }
 
-    try {
-        execSync(ALIASED_CMDs[kps.src][method](kps.val));
-    } catch (error) {
-        if (noNewUpdates((error as any).stdout)) {
-            konsole.suc(`${manifest.name} is already up to date!`);
-            return "upToDate";
+    // very specific workaround
+    // i've been testing all package managers konbini supports
+    // apparently chocolatey is the only idiot that cannot work without elevation
+    // apparently windows is the only idiot that doesn't let you do "sudo x" to elevate on the fly
+    // so what we have to do is:
+    // IF IT'S A WINDOWS USER
+    if (getPlatform() == "win64") {
+        try {
+            // if "net session" fails, we're not an administrator
+            execSync("net session");
+        } catch {
+            // RUNNING WITHOUT ELEVATION
+            if (kps.src === "cho") {
+                // AND DOWNLOADING FROM CHOCOLATEY
+                // show a warning
+                const conf = konsole.ask(
+                    `Since this aliased package comes from Chocolatey (package manager that pretty much doesn't work without administrator permissions) and this terminal session is not elevated (or doesn't look like), we recommend you switch to an administrator session and re-run the install command.\nProceed with installation anyway?`,
+                );
+                if (!conf) return "no-op";
+            }
         }
+    }
+
+    try {
+        const out = execSync(ALIASED_CMDs[kps.src][method](kps.val));
+        if (isUpToDate(kps.src, out.toString())) return "upToDate";
+    } catch (error) {
+        if (isUpToDate(kps.src, (error as any).stdout)) return "upToDate";
         throw `Error installing package '${kps.val}' with ${name}: ${error}`;
     }
 
@@ -91,14 +126,18 @@ export async function packageExists(pkg: string): Promise<boolean> {
     let out: string;
 
     try {
-        out = execSync(cmd).toString();
+        out = execSync(cmd).toString().trim();
     } catch (error) {
         out = String(error);
     }
 
-    // TODO - review all pkg managers to ensure behavior is consistent
+    // chocolatey is stupid...
+    if (kps.src === "cho") return out.length === "1 packages installed.".length;
+    // NOTE - be sure to test all pkg managers to ensure behavior is consistent
     // (if someone returned 'pkg A not found' this code wouldn't work, that's what i mean)
-    // TESTED: wget, brew, brew-k
+    // except for chocolatey, I BELIEVE all packages do it the same way (tested it a while ago)
+    // if konbini starts messing around with whether a package is installed or not, maybe the solution
+    // is to add here a diff behavior for a specific pkg manager
     if (out.includes(kps.val)) return true;
     return false;
 }

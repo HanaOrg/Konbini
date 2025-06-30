@@ -150,7 +150,8 @@ export async function installPackage(
             manifest,
             method,
         });
-        if (ret === "installedOrUpdated")
+        if (ret === "upToDate") konsole.suc(`${manifest.name} is already up to date.`);
+        else if (ret === "installedOrUpdated")
             konsole.suc(
                 `Thanks for using Konbini, ${manifest.name} was successfully installed. Enjoy!`,
             );

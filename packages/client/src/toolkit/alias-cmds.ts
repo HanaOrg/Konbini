@@ -8,7 +8,7 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `sudo apt install -y ${pkg}`,
         reinstall: (pkg) => `sudo apt install -y --reinstall ${pkg}`,
         update: (pkg) => `sudo apt upgrade -y ${pkg}`,
-        exists: (pkg) => `dpkg -l | grep -w ${pkg}`,
+        exists: (pkg) => `sudo apt list | grep -w ${pkg}`,
         uninstall: (pkg) => `sudo apt remove -y ${pkg}`,
     },
 
@@ -21,11 +21,11 @@ export const ALIASED_CMDs: Record<
     },
 
     "snap": {
-        install: (pkg) => `sudo snap install ${pkg} --yes`,
-        reinstall: (pkg) => `sudo snap remove ${pkg} --yes && sudo snap install ${pkg} --yes`,
-        update: (pkg) => `sudo snap refresh ${pkg} --yes`,
+        install: (pkg) => `sudo snap install ${pkg}`,
+        reinstall: (pkg) => `sudo snap remove ${pkg} && sudo snap install ${pkg}`,
+        update: (pkg) => `sudo snap refresh ${pkg}`,
         exists: (pkg) => `snap list | grep -w ${pkg}`,
-        uninstall: (pkg) => `sudo snap remove ${pkg} --yes`,
+        uninstall: (pkg) => `sudo snap remove ${pkg}`,
     },
 
     "brew": {
@@ -76,7 +76,8 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `choco install ${pkg} -y`,
         reinstall: (pkg) => `choco install ${pkg} --force -y`,
         update: (pkg) => `choco upgrade ${pkg} -y`,
-        exists: (pkg) => `choco list --local-only --exact ${pkg}`,
+        // * see aliased.ts/installAliasedPackage() right after return "needsPkgMgr"
+        exists: (pkg) => `choco list --exact ${pkg} | findstr -e "1 packages installed."`,
         uninstall: (pkg) => `choco uninstall ${pkg} -y`,
     },
 } as const;

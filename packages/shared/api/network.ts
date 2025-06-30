@@ -21,7 +21,7 @@ function isNotTooOld(match: Response): boolean {
     const cacheDate = new Date(match.headers.get("x-cache-date") || Date.now());
     const now = new Date();
 
-    const expired = now.getTime() - cacheDate.getTime() > 21 * 24 * 60 * 60 * 1000; // 21 days, or 3 weeks
+    const expired = now.getTime() - cacheDate.getTime() > 48 * 60 * 60 * 1000; // 48 hours, or two days
 
     if (expired) return false;
 

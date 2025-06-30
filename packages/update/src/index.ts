@@ -1,8 +1,8 @@
 import { version } from "../package.json";
 import { konsole } from "shared/client";
-import { about } from "./commands/about";
 import { getPlatform } from "shared";
 import { updateKonbini } from "./commands/update";
+import { about } from "../../client/src/commands/about";
 
 const p = getPlatform();
 const platformString =
@@ -15,9 +15,6 @@ const platformString =
 async function main() {
     const args = process.argv.slice(2);
     const command = args[0];
-
-    // TODO - check for updates on the KBU itself
-    // if any, show link to sh/ps1 to update
 
     if (!command) {
         console.log(

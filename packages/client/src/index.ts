@@ -62,7 +62,8 @@ async function main() {
     switch (command) {
         case "install":
             if (!subcommand) throw "No package specified.";
-            if (validateAgainst(command, ["konbini", "kbi", "kbu"])) throw "To update Konbini";
+            if (validateAgainst(subcommand, ["konbini", "kbi", "kbu"]))
+                throw "To update Konbini, use 'kbu update'.";
             await installPackage(subcommand);
             break;
         case "list":
@@ -76,6 +77,8 @@ async function main() {
                 );
             break;
         case "update":
+            if (validateAgainst(subcommand, ["konbini", "kbi", "kbu"]))
+                throw "To update Konbini, use 'kbu update'.";
             await updatePackages();
             break;
         case "remove":

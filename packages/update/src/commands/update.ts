@@ -1,6 +1,7 @@
-import { konsole } from "shared/client";
+import { INSTALLATION_DIR, konsole } from "shared/client";
 import { version as kVersion } from "../../../client/package.json";
-import { fetchAPI, type RELEASE_GITHUB } from "shared";
+import { downloadHandler, fetchAPI, getPlatform, type RELEASE_GITHUB } from "shared";
+import { join } from "path";
 
 export async function updateKonbini() {
     konsole.adv("You're currently on Konbini", kVersion);
@@ -19,5 +20,16 @@ export async function updateKonbini() {
         `You're on an outdated (${kVersion}) version! Latest is ${res.tag_name}, updating now...`,
     );
 
-    // TODO - installer
+    const plat = getPlatform();
+    const asset = res.assets.find((a) => a.name === `kbi-${plat}`);
+
+    if (!asset)
+        throw "No executable for your platform. This is likely our fault for messing up somewhere when releasing our last update, please notify us.";
+
+    await downloadHandler({
+        remoteUrl: asset.browser_download_url,
+        filePath: join(INSTALLATION_DIR, plat === "win64" ? "kbi.exe" : "kbi"),
+    });
+
+    konsole.suc("There we go!");
 }
