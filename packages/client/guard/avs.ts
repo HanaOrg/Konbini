@@ -111,7 +111,7 @@ async function main() {
     const GUARD_FILE_PATH = "./guard.konbini";
     const GUARD_TEXT = ensureGuardFile(GUARD_FILE_PATH);
 
-    logSection(`Fetching manifests...`)
+    logSection(`Fetching manifests...`);
     const manifests = await fetchAllManifests();
     logSection(`Fetched manifests (${manifests.length})`);
 

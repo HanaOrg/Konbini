@@ -14,7 +14,7 @@ type tEntryPoint = {
     _links: {
         self: string;
     };
-}[];
+};
 
 export type MANIFEST_WITH_ID = KONBINI_MANIFEST & { id: string };
 
@@ -66,26 +66,31 @@ export function Home() {
     useEffect(() => {
         async function fetchApps() {
             const entryPoint = await (await fetchAPI(SRCSET.PKGsA)).json();
-            const points = (entryPoint as tEntryPoint).filter((i) => i.path.length == 2);
+            const points = (entryPoint as tEntryPoint[]).filter((i) => i.path.length == 2);
 
-            const manifestPoints: tEntryPoint[] = [];
+            const manifestPoints: tEntryPoint[][] = [];
 
-            for (const point of points) {
-                manifestPoints.push(await (await fetchAPI(point._links.self)).json());
-            }
+            manifestPoints.push(
+                ...(await Promise.all(
+                    points.map(async (point) => await (await fetchAPI(point._links.self)).json()),
+                )),
+            );
 
-            const manifestsTruePoints: tEntryPoint & { content: string }[] = [];
+            const manifestsTruePoints: (tEntryPoint & { content: string })[] = [];
+            const _tmp = [];
 
             const manifests: MANIFEST_WITH_ID[] = [];
 
             for (const point of manifestPoints) {
                 for (const p of point) {
                     if (!p.name.endsWith(".yaml")) continue;
-                    manifestsTruePoints.push(
-                        JSON.parse(await (await fetchAPI(p._links.self)).text()),
-                    );
+                    _tmp.push(p._links.self);
                 }
             }
+
+            manifestsTruePoints.push(
+                ...(await Promise.all(_tmp.map(async (i) => await (await fetchAPI(i)).json()))),
+            );
 
             for (const point of manifestsTruePoints) {
                 manifests.push({
