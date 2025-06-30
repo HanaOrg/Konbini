@@ -7,7 +7,6 @@ import { parse } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
 import {
     fetchAPI,
-    getCurrentPlatformKps,
     getPkgRemotes,
     isStdScope,
     parseKps,
@@ -112,11 +111,12 @@ async function main() {
     const GUARD_FILE_PATH = "./guard.konbini";
     const GUARD_TEXT = ensureGuardFile(GUARD_FILE_PATH);
 
+    logSection(`Fetching manifests...`)
     const manifests = await fetchAllManifests();
     logSection(`Fetched manifests (${manifests.length})`);
 
-    logSection("Initializing ClamAV Daemon");
-    execSync("sudo systemctl start clamav-daemon");
+    logSection("(TODO) Initializing ClamAV Daemon");
+    // execSync("sudo systemctl start clamav-daemon");
 
     for (const manifest of manifests) {
         try {
@@ -124,24 +124,7 @@ async function main() {
 
             if (!m.repository) continue;
 
-            const [owner, repo] = m.repository.split("/");
-            // TODO - update
-            const release = await fetchAPI(
-                `https://api.github.com/repos/${owner}/${repo}/releases`,
-            );
-            const releases = await release.json();
-            const ver = releases[0]?.tag_name;
-
-            console.log("[WRK] Seeking", `${m.name}@${ver}`);
-
-            if (
-                GUARD_TEXT.includes(`${m.name}@${ver}@${getCurrentPlatformKps(m.platforms)}=VALID`)
-            ) {
-                console.log("[SKP] KONBINI PKG", m.name, "ALREADY VALIDATED. CAN SKIP.");
-                continue;
-            } else {
-                console.log("[WRK] KONBINI PKG", m.name, "WILL BE SCANNED");
-            }
+            console.log("[WRK] Analyzing", m.name);
 
             let f;
             let r;
@@ -157,7 +140,7 @@ async function main() {
                     continue;
                 }
 
-                console.log("[>>>] ASSET", plat, "SCOPED", scope);
+                console.log("[>>>] ASSET", plat, "ON SCOPE", scope);
 
                 try {
                     r = await getPkgRemotes(scope, m);
@@ -166,6 +149,17 @@ async function main() {
                     console.debug("[>>>] REMOTE", r);
 
                     if (!existsSync("./guard/build")) mkdirSync("./guard/build");
+
+                    if (
+                        GUARD_TEXT.includes(
+                            `${m.name}@${r.pkgVersion}@${parseKps(scope).src}=VALID`,
+                        )
+                    ) {
+                        console.log("[SKP] KONBINI PKG", m.name, "ALREADY VALIDATED. CAN SKIP.");
+                        continue;
+                    } else {
+                        console.log("[WRK] KONBINI PKG", m.name, "WILL BE SCANNED");
+                    }
 
                     await writeFileIfNotExists(f.core, r.coreAsset);
                 } catch (error) {

@@ -26,7 +26,7 @@
         "bld:web": "cd packages/gui && bun run build",
         "launch:web": "cd packages/gui && bun run prod",
         "launch:web:bld": "bun run bld:web && cd packages/gui && bun run prod",
-        "guard": "bun packages/client/guard/avs.ts"
+        "guard": "cd packages/client/guard && bun avs.ts"
     },
     "dependencies": {
         "eslint": "^9.30.0",
