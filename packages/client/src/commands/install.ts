@@ -22,7 +22,7 @@ import {
     getUsrSignature,
     isStdLockfile,
 } from "shared";
-import { isStdScope } from "shared/types/manifest";
+import { isKps, isStdScope, type KONBINI_MANIFEST } from "shared/types/manifest";
 
 async function installSingleExecutable(params: {
     filePath: string;
@@ -116,6 +116,35 @@ export async function installPackage(
     pkgName: string,
     method: "install" | "update" | "reinstall" = "install",
 ) {
+    if (pkgName.startsWith("grab:")) {
+        const possiblyKps = pkgName.split("grab:")[1];
+        if (!isKps(possiblyKps))
+            throw `Cannot grab "${possiblyKps}", it's an invalid package scope.`;
+        const kps = parseKps(possiblyKps);
+        if (kps.src === "std")
+            throw `Cannot grab ${kps.value} - a Konbini scope will either point to a package already in the repo or a package that doesn't exist in any repo!`;
+        const conf = konsole.ask(`Are you sure you want to grab ${kps.value} from ${kps.name}?`);
+        if (!conf) return;
+        konsole.war(
+            "Be advised that grabbed packages aren't properly configured and may not correctly install.",
+        );
+        konsole.war("Proceeding...");
+        const ret = installAliasedPackage({
+            pkgName: kps.value,
+            manifest: {
+                name: kps.value,
+                author_id: "kbi.grabbed",
+            } as any as KONBINI_MANIFEST,
+            kps,
+            method,
+        });
+        if (ret === "needsPkgMgr")
+            throw `Cannot grab from ${kps.name} without it being installed locally.`;
+        if (ret === "upToDate") throw `Grabbed package ${kps.value} already up to date.`;
+        if (ret === "installedOrUpdated") konsole.suc(`Grabbed ${kps.value} successfully!`);
+        return;
+    }
+
     const manifest = await getPkgManifest(pkgName);
 
     const usrDir = USR_PATH({ author: manifest.author_id });

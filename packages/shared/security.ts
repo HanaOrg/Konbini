@@ -90,6 +90,7 @@ export function assertIntegritySHA(fileName: string, expectedB64URLhash: string)
 
 export async function genSignature(params: {
     passphrase_component: string;
+    author: string;
     signer_name: string;
     signer_email: `${string}@${string}.${string}`;
 }): Promise<{
@@ -97,7 +98,7 @@ export async function genSignature(params: {
     privateKey: string;
     passphrase: string;
 }> {
-    const { signer_name, signer_email, passphrase_component } = params;
+    const { signer_name, signer_email, passphrase_component, author } = params;
 
     const passphrase = passphrase_component + Buffer.from(randomBytes(64)).toString("base64");
 
@@ -107,6 +108,9 @@ export async function genSignature(params: {
         userIDs: [{ name: signer_name, email: signer_email }],
         passphrase: passphrase,
         format: "armored",
+        config: {
+            commentString: `Konbini-generated signature for ${author}.`,
+        },
     });
 
     return {

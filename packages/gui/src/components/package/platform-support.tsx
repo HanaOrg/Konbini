@@ -13,28 +13,7 @@ export default function PlatformSupport({
     function supported(plat: KONBINI_PKG_SCOPE | null): string {
         if (!plat) return "unsupported";
         if (isStdScope(plat)) return "supported";
-
-        const src = parseKps(plat).src;
-        const aliasing =
-            src === "cho"
-                ? "Chocolatey"
-                : src === "scp"
-                  ? "Scoop"
-                  : src === "fpak"
-                    ? "Flatpak"
-                    : src === "wget"
-                      ? "WinGet"
-                      : src === "brew"
-                        ? "Homebrew"
-                        : src === "brew-k"
-                          ? "Homebrew"
-                          : src === "apt"
-                            ? "DPKG"
-                            : src === "nix"
-                              ? "Nix"
-                              : "SnapCraft";
-
-        return `aliased to ${aliasing}`;
+        return `aliased to ${parseKps(plat).name}`;
     }
 
     const linux64 = supported(platforms.linux64);

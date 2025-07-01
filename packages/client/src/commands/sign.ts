@@ -32,17 +32,18 @@ async function newSignature() {
         (s) => validate(s) && s.length > 30,
         "Enter a valid string. Make it at least 30 characters.",
     );
-    const signature = await genSignature({
-        signer_name,
-        signer_email,
-        passphrase_component,
-    });
-    console.log("");
     const author = await prompt(
         "Now, enter the Konbini author ID (usr.* or org.*) you want to link this signature to.",
         isAuthorId,
         "Enter a valid author ID.",
     );
+    const signature = await genSignature({
+        signer_name,
+        signer_email,
+        passphrase_component,
+        author,
+    });
+    console.log("");
     const signaturesPath = join(SIGNATURE_DIR, author.toLowerCase());
     if (!existsSync(signaturesPath)) mkdirSync(signaturesPath, { recursive: true });
     writeFileSync(join(signaturesPath, "passphrase"), signature.passphrase, {

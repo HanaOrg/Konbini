@@ -10,6 +10,7 @@
         "dotenv",
         "DPKG",
         "eslintcache",
+        "findstr",
         "flathub",
         "fpak",
         "Hana",

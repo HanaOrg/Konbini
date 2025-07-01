@@ -19,22 +19,23 @@ export function parseKps(scope: unknown): PARSED_KPS {
     }
 
     const src = splitted[0];
-    const val = splitted[1];
+    const value = splitted[1];
 
     if (!src) throw `Invalid KPS (no prefix): ${scope}`;
-    if (!val) throw `Invalid KPS (no suffix): ${scope}`;
+    if (!value) throw `Invalid KPS (no suffix): ${scope}`;
     if (!validateAgainst(src, KPS_SOURCES)) {
         throw `Invalid KPS (prefix does not match specification): ${scope}`;
     }
     if (src === "std")
         return {
             src,
-            val,
+            value,
             cmd: null,
+            name: "Konbini",
         };
     return {
         src,
-        val,
+        value,
         cmd:
             src === "apt"
                 ? "apt"
@@ -53,12 +54,30 @@ export function parseKps(scope: unknown): PARSED_KPS {
                             : src === "cho"
                               ? "choco"
                               : "scoop",
+        name:
+            src === "cho"
+                ? "Chocolatey"
+                : src === "scp"
+                  ? "Scoop"
+                  : src === "fpak"
+                    ? "Flatpak"
+                    : src === "wget"
+                      ? "WinGet"
+                      : src === "brew"
+                        ? "Homebrew"
+                        : src === "brew-k"
+                          ? "Homebrew"
+                          : src === "apt"
+                            ? "DPKG"
+                            : src === "nix"
+                              ? "Nix"
+                              : "SnapCraft",
     };
 }
 
 /** Constructor for parsed Konbini Package Scopes */
 export function constructKps(scope: PARSED_KPS): KONBINI_PKG_SCOPE {
-    return `${scope.src}:${scope.val}`;
+    return `${scope.src}:${scope.value}`;
 }
 
 /** Gets the Konbini Package Scope relevant to the user's current platform. */
@@ -92,20 +111,10 @@ export function getCurrentPlatformKps(
 /** Resolves to the `index[key]` of the Konbini hashfile required for this platform. */
 export function getCurrentPlatformShaKey(): keyof KONBINI_HASHFILE {
     const plat = getPlatform();
-    if (plat === "linux64") {
-        return "linux_64_sha";
-    }
-    if (plat === "linuxArm") {
-        return "linux_arm_sha";
-    }
-    if (plat === "mac64") {
-        return "mac_64_sha";
-    }
-    if (plat === "macArm") {
-        return "mac_arm_sha";
-    }
-    if (plat === "win64") {
-        return "win64_sha";
-    }
+    if (plat === "linux64") return "linux_64_sha";
+    if (plat === "linuxArm") return "linux_arm_sha";
+    if (plat === "mac64") return "mac_64_sha";
+    if (plat === "macArm") return "mac_arm_sha";
+    if (plat === "win64") return "win64_sha";
     throw "this error should never throw and only exists to avoid a TS type error";
 }

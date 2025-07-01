@@ -50,18 +50,22 @@ export type PARSED_KPS =
     | {
           /** Source. All of them are self-descriptive. */
           src: KPS_SOURCE;
-          /** Value. Package name for non-Konbini hosts, filename for Konbini. */
-          val: string;
+          /** Value. Package ID for the non-Konbini host. */
+          value: string;
           /** Command to be executed  */
           cmd: string;
+          /** Name of the package manager this package is aliased to. */
+          name: string;
       }
     | {
-          /** Source. All of them are self-descriptive. */
+          /** Source. Std = Standard = Konbini itself. */
           src: "std";
-          /** Value. Package name for non-Konbini hosts, filename for Konbini. */
-          val: string;
+          /** Value. Filename to look for in the Konbini release. */
+          value: string;
           /** (null) */
           cmd: null;
+          /** (Konbini) */
+          name: "Konbini";
       };
 
 export const LICENSES = [

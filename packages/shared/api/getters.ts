@@ -54,7 +54,7 @@ export async function getPkgRemotes(
         url.startsWith("gl") ? (release as RELEASE_GITLAB).assets.links : release.assets
     ) as ({ url: string; name: string } | { browser_download_url: string; name: string })[];
 
-    const versionedName = replace(kv.val, {
+    const versionedName = replace(kv.value, {
         "[[VER]]": release.tag_name,
     });
 
@@ -68,7 +68,7 @@ export async function getPkgRemotes(
         throw "The author of this package did NOT include a hashfile on the latest version of the package. Without a hashfile we cannot validate download integrity, so we did not install the package, for your safety. Please inform the Konbini team, or, preferably, the package author.";
     }
 
-    const asc = assets.find((a) => a.name === kv.val + ".asc");
+    const asc = assets.find((a) => a.name === kv.value + ".asc");
     if (!asc) {
         throw "The author of this package did NOT include a PGP signature on the latest version of the package. Without a PGP signature we cannot validate download authenticity, so we did not install the package, for your safety. Please inform the Konbini team, or, preferably, the package author.";
     }
