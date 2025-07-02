@@ -26,7 +26,7 @@ export async function showPkgInfo(pkg: string) {
                   .join(" & ")}`
             : "";
     const homepage = manifest.homepage
-        ? `More info at ${konsole.clr("lightblue", manifest.homepage)}.`
+        ? `Website at ${konsole.clr("lightblue", manifest.homepage)}.`
         : "";
     const docs = manifest.docs
         ? `Documentation at ${konsole.clr("lightblue", manifest.docs)}.`
@@ -42,7 +42,16 @@ export async function showPkgInfo(pkg: string) {
             : "";
     const platforms = `Works on ${[windows, macOS, linux].filter(Boolean).join(", ")}.`;
     konsole.adv(
-        [name, categories, authors, maintainers, homepage, docs, platforms]
+        [
+            name,
+            categories,
+            authors,
+            maintainers,
+            homepage,
+            docs,
+            platforms,
+            `Learn more at ${konsole.clr("lightblue", `https://konbini.vercel.app/package/${pkg}`)}.`,
+        ]
             .filter(Boolean)
             .join("\n      "),
     );
@@ -86,9 +95,10 @@ export async function showUserInfo(usr: string) {
     const website = author.website
         ? konsole.clr("lightblue", "https://" + author.website)
         : "(No website provided)";
-    const socials = Object.entries(author.socials || {}).map(
-        (k, v) => `${k} ${konsole.clr("lightblue", `@${v}`)}`,
-    );
+    const socials: string[] = [];
+    for (const social of Object.entries(author.socials || {})) {
+        socials.push(`${social[0]} ${konsole.clr("lightblue", `@${social[1]}`)}`);
+    }
     konsole.adv([name, email, website].filter(Boolean).join(" · "));
     konsole.adv(socials.filter(Boolean).join(" · "));
 

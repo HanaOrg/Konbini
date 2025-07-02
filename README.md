@@ -1,4 +1,4 @@
-# Konbini &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue)](https://github.com/hanaorg/konbini/blob/master/CONTRIBUTING.md) &middot; [![CLI-ready](https://img.shields.io/badge/CLI-ready-white)](#command-line-interface) &middot; [![GUI-ready](https://img.shields.io/badge/GUI-ready-white)](#graphical-user-interface) &middot; [![Cross-platform](https://img.shields.io/badge/Cross_platform_support-white)](#cross-platform)
+# Konbini &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue)](https://github.com/hanaorg/konbini/blob/master/CONTRIBUTING.md) &middot; [![CLI-ready](https://img.shields.io/badge/CLI-ready-white)](#command-line-interface) &middot; [![GUI-ready](https://img.shields.io/badge/GUI-ready-white)](#graphical-user-interface) &middot; [![Cross-platform](https://img.shields.io/badge/Cross_platform-ready-white)](#cross-platform)
 
 > Konbini, Your convenience store.
 
@@ -38,8 +38,10 @@ Developers must compile (via `bun run build`) Konbini before execution - this is
 
 ### Graphical User Interface
 
-Head to `https://konbini.vercel.app`. It requires the [CLI to be installed](#command-line-interface) anyway.
+Head to `https://konbini.vercel.app`. It's just a frontend, similar to Flathub, you'll still need the [CLI to be installed](#command-line-interface) anyway.
 
 ## Credits
 
 Konbini is brought to you by [@ZakaHaceCosas](https://github.com/ZakaHaceCosas) and published under the name of "Hana" (this GitHub organization and a yet-to-be-born company).
+
+A huge "thank you" to [MrSerge01](https://github.com/MrSerge01), [Dimkauzh](https://github.com/dimkauzh), and especially [pico190](https://github.com/pico190) for helping out.

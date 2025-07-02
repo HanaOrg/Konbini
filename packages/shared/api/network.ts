@@ -57,7 +57,12 @@ export async function fetchAPI(_url: string, method?: "GET"): Promise<Response> 
     const clone = res.clone();
     const clone2 = res.clone();
     const json = await clone.json().catch((e) => {
-        if (String(e).includes("Failed to parse JSON") || String(e).includes("is not valid JSON"))
+        const err = String(e);
+        if (
+            err.includes("Failed to parse JSON") ||
+            err.includes("is not valid JSON") ||
+            err.includes("JSON Parse error")
+        )
             return {};
         throw e;
     });
