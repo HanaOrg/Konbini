@@ -9,6 +9,9 @@ import { getPkgManifest } from "shared/api/core";
 import { parseKps } from "shared/api/manifest";
 import { FILENAMES } from "shared/constants";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
+import { logAction } from "shared/api/telemetry";
+import { getPkgRemotes } from "shared/api/getters";
+import { getPlatform } from "shared/api/platform";
 
 function findPackage(pkg: string): string | null {
     for (const entry of readdirSync(PACKAGES_DIR)) {
@@ -35,9 +38,9 @@ export async function removePackage(pkg: string) {
         return;
     }
 
-    const { author_id: author } = await getPkgManifest(pkg);
+    const m = await getPkgManifest(pkg);
     konsole.suc("At your orders. Consider them out.");
-    const removePath = PKG_PATH({ pkg, author });
+    const removePath = PKG_PATH({ pkg, author: m.author_id });
     const lockfile: KONBINI_LOCKFILE = parse(
         readFileSync(join(removePath, FILENAMES.lockfile), { encoding: "utf-8" }),
     );
@@ -48,6 +51,13 @@ export async function removePackage(pkg: string) {
     }
     konsole.dbg(`Applying rm -rf at ${removePath}.`);
     rmSync(removePath, { force: true, recursive: true });
+
+    await logAction({
+        app: pkg,
+        version: (await getPkgRemotes(m.platforms[getPlatform()]!, m)).pkgVersion,
+        action: "remove",
+    });
+
     konsole.suc(`Successfully said goodbye to ${pkg}.`);
 }
 

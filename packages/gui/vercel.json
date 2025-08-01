@@ -1,6 +1,5 @@
 {
     "outputDirectory": "dist",
-    "builds": [],
     "ignoreCommand": "echo 'skip build'",
     "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }

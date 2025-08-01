@@ -1,7 +1,10 @@
 import { INSTALLATION_DIR, konsole } from "shared/client";
 import { version as kVersion } from "../../../client/package.json";
-import { downloadHandler, fetchAPI, getPlatform, type RELEASE_GITHUB } from "shared";
 import { join } from "path";
+import { getPlatform } from "shared/api/platform";
+import type { RELEASE_GITHUB } from "shared/types/git";
+import { fetchAPI } from "shared/api/network";
+import { downloadHandler } from "shared/api/download";
 
 export async function updateKonbini() {
     konsole.adv("You're currently on Konbini", kVersion);

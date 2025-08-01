@@ -1,6 +1,6 @@
 import { version } from "../package.json";
 import { konsole } from "shared/client";
-import { getPlatform } from "shared";
+import { getPlatform } from "shared/api/platform";
 import { updateKonbini } from "./commands/update";
 import { about } from "../../client/src/commands/about";
 

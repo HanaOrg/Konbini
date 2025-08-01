@@ -25,14 +25,14 @@ for (const [name, platform] of Object.entries(platforms)) {
         `--target=${platform}`,
         src,
     ];
-    console.log(cmd);
+
     const exec = Bun.spawnSync({
         cmd,
         cwd: process.cwd(),
     });
 
     if (exec.exitCode !== 0) {
-        console.error(`Error building ${name}.`);
+        console.error(`Error building ${name}: ${exec.stderr} + ${exec.stdout}.`);
         process.exit(1);
     } else {
         console.log(`${name} built successfully.`);

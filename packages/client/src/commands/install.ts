@@ -15,6 +15,7 @@ import { parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import { FILENAMES } from "shared/constants";
 import { assertIntegritySHA, konbiniHash, assertIntegrityPGP } from "shared/security";
+import { logAction } from "shared/api/telemetry";
 
 async function installSingleExecutable(params: {
     filePath: string;
@@ -273,6 +274,13 @@ export async function installPackage(
     chmodSync(outputPath, statSync(outputPath).mode | 0o111);
     konsole.dbg("Made the executable actually runnable.");
 
+    // if its a new installation, log it
+    if (method === "install")
+        await logAction({
+            app: pkgName,
+            version: remotes.pkgVersion,
+            action: "download",
+        });
     konsole.suc(`Thanks for using Konbini, ${manifest.name} was successfully installed. Enjoy!`);
     return;
 }
