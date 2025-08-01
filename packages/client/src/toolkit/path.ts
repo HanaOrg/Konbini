@@ -3,7 +3,8 @@ import { homedir } from "os";
 import { join } from "path";
 import { konsole } from "shared/client";
 import { execSync } from "child_process";
-import { normalizer, getPlatform } from "shared";
+import { normalizer } from "shared/constants";
+import { getPlatform } from "shared/api/platform";
 
 export function addToUserPathEnvVariable(dir: string) {
     // windows behavior

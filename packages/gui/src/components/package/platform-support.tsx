@@ -1,4 +1,4 @@
-import { isStdScope, type KONBINI_MANIFEST, type KONBINI_PKG_SCOPE } from "shared/types/manifest";
+import { isKbiScope, type KONBINI_MANIFEST, type KONBINI_PKG_SCOPE } from "shared/types/manifest";
 import IconMac from "../../assets/mac";
 import IconTux from "../../assets/tux";
 import IconWin from "../../assets/win";
@@ -12,14 +12,14 @@ export default function PlatformSupport({
 }) {
     function supported(plat: KONBINI_PKG_SCOPE | null): string {
         if (!plat) return "unsupported";
-        if (isStdScope(plat)) return "supported";
+        if (isKbiScope(plat)) return "supported";
         return `aliased to ${parseKps(plat).name}`;
     }
 
     const linux64 = supported(platforms.linux64);
-    const linuxARM = supported(platforms.linuxARM);
+    const linuxArm = supported(platforms.linuxArm);
     const mac64 = supported(platforms.mac64);
-    const macARM = supported(platforms.macARM);
+    const macArm = supported(platforms.macArm);
     const win = supported(platforms.win64);
 
     const platformsToRender = [
@@ -31,7 +31,7 @@ export default function PlatformSupport({
         {
             plat: "Linux",
             arch: "ARM",
-            support: linuxARM,
+            support: linuxArm,
         },
         {
             plat: "macOS",
@@ -41,7 +41,7 @@ export default function PlatformSupport({
         {
             plat: "macOS",
             arch: "ARM",
-            support: macARM,
+            support: macArm,
         },
         {
             plat: "Windows",
@@ -52,7 +52,7 @@ export default function PlatformSupport({
 
     return (
         <>
-            {[linux64, linuxARM, mac64, macARM, win].includes("aliased") && (
+            {[linux64, linuxArm, mac64, macArm, win].includes("aliased") && (
                 <p>
                     <i>
                         "Aliased" means it is supported, but not via Konbini itself. Konbini is both

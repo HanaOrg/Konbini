@@ -6,23 +6,15 @@ import { parse } from "yaml";
 import { destroyPkg } from "../toolkit/remove";
 import { installAliasedPackage, packageExists } from "../toolkit/aliased";
 import { writeLaunchpadShortcut, writeLockfile } from "../toolkit/write";
-import {
-    type KONBINI_LOCKFILE,
-    downloadHandler,
-    type KONBINI_HASHFILE,
-    getPkgManifest,
-    getCurrentPlatformKps,
-    parseKps,
-    getPkgRemotes,
-    FILENAMES,
-    getCurrentPlatformShaKey,
-    assertIntegritySHA,
-    konbiniHash,
-    assertIntegrityPGP,
-    getUsrSignature,
-    isStdLockfile,
-} from "shared";
-import { isKps, isStdScope, type KONBINI_MANIFEST } from "shared/types/manifest";
+import { isKbiScope, isKps, type KONBINI_MANIFEST } from "shared/types/manifest";
+import { isKbiLockfile, type KONBINI_HASHFILE, type KONBINI_LOCKFILE } from "shared/types/files";
+import { getPkgManifest } from "shared/api/core";
+import { downloadHandler } from "shared/api/download";
+import { getPkgRemotes, getUsrSignature } from "shared/api/getters";
+import { parseKps } from "shared/api/manifest";
+import { getPlatform } from "shared/api/platform";
+import { FILENAMES } from "shared/constants";
+import { assertIntegritySHA, konbiniHash, assertIntegrityPGP } from "shared/security";
 
 async function installSingleExecutable(params: {
     filePath: string;
@@ -59,9 +51,8 @@ async function downloadSafetyRelatedFiles(params: {
     ascPath: string;
     shaRemote: string;
     shaPath: string;
-    shaPlatform: keyof KONBINI_HASHFILE;
 }): Promise<{ shaHash: string }> {
-    const { ascPath, ascRemote, shaPath, shaRemote, shaPlatform } = params;
+    const { ascPath, ascRemote, shaPath, shaRemote } = params;
 
     konsole.dbg(`Downloading GNU Privacy Guard signature first...`);
     try {
@@ -97,14 +88,14 @@ async function downloadSafetyRelatedFiles(params: {
 
     const hashfile = parse(readFileSync(shaPath, { encoding: "utf-8" })) as KONBINI_HASHFILE;
 
-    const shaHash = hashfile[shaPlatform];
+    const shaHash = hashfile[getPlatform()];
 
     if (!shaHash) {
         konsole.err(
             "Something (we don't know what) went wrong finding the SHA3-512 hash for this download.",
         );
         konsole.dbg(
-            `Perhaps you should check the ${shaPath} file to see if it's wrong. It should contain several hashes, seek your platforms one (PLATFORM: ${shaPlatform}).`,
+            `Perhaps you should check the ${shaPath} file to see if it's wrong. It should contain several hashes, seek your platforms one (PLATFORM: ${getPlatform()}).`,
         );
         process.exit(1);
     }
@@ -121,7 +112,7 @@ export async function installPackage(
         if (!isKps(possiblyKps))
             throw `Cannot grab "${possiblyKps}", it's an invalid package scope.`;
         const kps = parseKps(possiblyKps);
-        if (kps.src === "std")
+        if (kps.src === "kbi")
             throw `Cannot grab ${kps.value} - a Konbini scope will either point to a package already in the repo or a package that doesn't exist in any repo!`;
         const conf = konsole.ask(`Are you sure you want to grab ${kps.value} from ${kps.name}?`);
         if (!conf) return;
@@ -166,13 +157,13 @@ export async function installPackage(
         }
     }
 
-    const platform = getCurrentPlatformKps(manifest.platforms);
+    const platform = manifest.platforms[getPlatform()];
     if (!platform) {
         konsole.err(`${manifest.name} is not supported on your platform. Sorry.`);
         process.exit(1);
     }
     const kps = parseKps(platform);
-    if (!isStdScope(platform)) {
+    if (!isKbiScope(platform)) {
         const ret = installAliasedPackage({
             kps,
             pkgName,
@@ -197,7 +188,7 @@ export async function installPackage(
             readFileSync(prevLockfilePath, { encoding: "utf-8" }),
         ) as KONBINI_LOCKFILE;
 
-        if (isStdLockfile(prevLockfile) && prevLockfile.version === remotes.pkgVersion) {
+        if (isKbiLockfile(prevLockfile) && prevLockfile.version === remotes.pkgVersion) {
             konsole.suc(`${pkgName} is already up to date.`);
             return;
         }
@@ -224,7 +215,6 @@ export async function installPackage(
         ascPath,
         shaRemote: remotes.shaAsset,
         ascRemote: remotes.ascAsset,
-        shaPlatform: getCurrentPlatformShaKey(),
     });
 
     const authorAscPath = await getUsrSignature(manifest.author_id, usrDir);

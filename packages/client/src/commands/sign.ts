@@ -1,10 +1,10 @@
-import { assertIntegrityPGP, genSignature, useSignature } from "shared";
 import { prompt } from "../toolkit/input";
 import { isValidEmail, validate } from "@zakahacecosas/string-utils";
 import { konsole, SIGNATURE_DIR } from "shared/client";
 import { isAuthorId } from "shared/types/author";
 import { join } from "path";
 import { existsSync, mkdirSync, readFileSync, realpathSync, statSync, writeFileSync } from "fs";
+import { assertIntegrityPGP, genSignature, useSignature } from "shared/security";
 
 async function newSignature() {
     konsole.adv(

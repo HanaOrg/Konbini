@@ -25,7 +25,7 @@ for (const [name, platform] of Object.entries(platforms)) {
         `--target=${platform}`,
         src,
     ];
-    console.debug(cmd);
+    console.log(cmd);
     const exec = Bun.spawnSync({
         cmd,
         cwd: process.cwd(),

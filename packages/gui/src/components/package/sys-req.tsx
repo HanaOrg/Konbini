@@ -5,14 +5,14 @@ export default function SystemRequirementsTable({
 }: {
     requirements: KONBINI_MANIFEST["sys_requirements"];
 }) {
-    const reqs = requirements!;
-    const osVer = reqs.os_ver ? parseOsVer(reqs.os_ver) : null;
+    const req = requirements!;
+    const osVer = req.os_ver ? parseOsVer(req.os_ver) : null;
 
     return (
         <>
             <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">System requirements</h2>
             <div className="flex flex-row gap-12">
-                {reqs.os_ver && osVer && osVer !== "Invalid OS requirements." && (
+                {req.os_ver && osVer && osVer !== "Invalid OS requirements." && (
                     <div className="flex flex-col gap-1">
                         <b className="mb-2">OS</b>
                         {osVer.win && (
@@ -32,16 +32,16 @@ export default function SystemRequirementsTable({
                         )}
                     </div>
                 )}
-                {reqs.ram_mb && (
+                {req.ram_mb && (
                     <div className="flex flex-col gap-1">
                         <b className="mb-2">RAM</b>
-                        {reqs.ram_mb} MB
+                        {req.ram_mb} MB
                     </div>
                 )}
-                {reqs.disk_mb && (
+                {req.disk_mb && (
                     <div className="flex flex-col gap-1">
                         <b className="mb-2">Storage</b>
-                        {reqs.disk_mb} MB
+                        {req.disk_mb} MB
                     </div>
                 )}
             </div>

@@ -8,25 +8,25 @@ The following document explains in detail how to publish your package to Konbini
 
 Both profile registration and package registration are GitHub Pull Request-based. You open a single PR on the registry repository, and if it merges, you are automatically in. We manually review PRs to ensure only legitimate developers (and no scammers) join Konbini.
 
-**Your Pull Request MUST comply with the following criteria**, where `USER` is your unique author name:
+**Your Pull Request MUST comply with the following criteria**, where `USER` is your (unique) author name:
 
-- **Includes a `USER.yaml` file.** This is your "author manifest" and includes relevant info about you, following [this specification](#author-manifest-specification).
-- **Includes a `USER.asc` file.** _**Developers are required to provide a public PGP key.**_ This signature will be used to validate binaries of your package against it. Each binary you distribute must be signed with this PGP key.
-- **Is properly routed.** Both files you made should be in a `/SCOPE/LEVEL/` directory.
-    - The root of the repo contains two directories: `org/` and `usr/`. These are the two SCOPE directories; use `usr/` if you are publishing software by yourself or `org/` if you are publishing software by an organization (does not need to be legally established whatsoever; a "collab org" you and your friends made, for example, should use the `org/` directory).
-    - Inside `org/` or `usr/`, you'll find subdirectories named using the first two letters of your username, used to group entries by initials and optimize HTTP queries. These are the LEVEL directories, and use THE INITIALS of the content that lives inside. In other words: if your `USER` is called "foobar", for example, you should contribute your files to `fo/foobar.*` (well, `usr/fo/foobar.*` more precisely).
-- **Uses lowercase for all filenames.** UNIX systems differentiate `foobar.file` and `Foobar.file` - and we use filenames to define usernames. This could lead to `usr.foobar` and `usr.Foobar` existing as separate users, therefore your filenames must be entirely lowercase.
+- Your PR **must include a `USER.yaml` file.** This is your "author manifest" and includes relevant info about you, following [this specification](#author-manifest-specification).
+- Your PR **must include a `USER.asc` file IF publishing directly to Konbini.** This signature will be used to validate binaries of your package against it. **Each binary you distribute must be signed with this PGP key.**
+    - If you **do not publish directly to Konbini**, meaning all your packages are aliased, you still need an author manifest but not a PGP signature.
+    - For convenience, Konbini can automatically generate a compliant PGP signature, and make it faster to sign your executables with it. Run `kbi learn sign` from the Konbini CLI to learn to use it.
+- Your PR **must be properly routed.** Files you make should be in a `/SCOPE/LEVEL/` directory.
+    - The root of the repo contains two "scope" directories: `org/` and `usr/`. Use `usr/` if you are publishing software by yourself or `org/` if you are publishing software by an organization.
+    - Inside `org/` or `usr/`, you'll find "level" subdirectories named using the first two letters of any existing username. If your `USER` is called "foobar", for example, you should contribute your files to `fo/foobar.*` (well, `usr/fo/foobar.*` or `org/fo/foobar.*`, more precisely).
+- Your PR **must use lowercase for all filenames.** Unix systems differentiate `foobar.file` and `Foobar.file` - and we use filenames to define usernames. This could lead to `usr.foobar` and `usr.Foobar` existing as separate users, therefore your filenames must be entirely lowercase.
 
 ### Author manifest specification
 
-Depending on whether the manifest is for a USER or an ORGANIZATION, two different specifications apply. Below proceed both specifications in the format of YAML files - same format you'll use to create them. After each key, the data type (as in JavaScript) is displayed.
+Depending on whether the manifest is for a USER or an ORGANIZATION, two different specifications apply. Below proceed both specifications in the format of YAML files - **same format you'll use to create them**. After each key, the data type is provided.
 
-> [!IMPORTANT] > **In both manifest files**, `name` defines your DISPLAY name, not username. Your username is filesystem based and follows a `scope.username` format. If your manifest file is called `foobar.yaml` and exists in the `org/` directory, your unique `author_id` is `org.foobar`; and if your package's manifest file is `foo.yaml`, your package's unique ID is `foo`.
+> [!IMPORTANT]
+> **In both manifest files**, `name` defines your DISPLAY name, not username. Your username is filesystem based and follows a `scope.username` format. If your manifest file is called `foobar.yaml` and exists in the `org/` directory, your unique author ID is `org.foobar`; and if your package's manifest file is `foo.yaml`, your package's unique ID is `foo`.
 >
 > **Manifest filenames (and thus package and user IDs) must be of at least two characters.**
-
-> [!NOTE]
-> You must use YAML format for the manifest file.
 
 #### User manifest
 
@@ -39,7 +39,7 @@ org: string # (optional)
 email: string # (optional)
 # A link to your personal website of choice.
 website: string # (optional)
-# Your biography - a text they visible inside your profile.
+# Your biography - a text visible inside your profile.
 biography: string # (optional)
 # Whether you're for hire or not.
 for_hire: boolean # (optional)
@@ -47,8 +47,14 @@ for_hire: boolean # (optional)
 socials: # (optional - inner props are all optional too)
     # Twitter handle, without the AT (@) symbol.
     twitter: string
+    # Bluesky handle, without the AT (@) symbol.
+    bluesky: string
+    # Instagram handle, without the AT (@) symbol.
+    instagram: string
     # GitHub username
     github: string
+    # GitLab username
+    gitlab: string
 ```
 
 #### Organization manifest
@@ -56,19 +62,25 @@ socials: # (optional - inner props are all optional too)
 ```yaml
 # Your organization's name.
 name: string
-# Your organization's website. Required for transparency and verification purposes. Publicly visible.
+# Your organization's website.
 website: string
-# Your organization's email. Required for transparency and verification purposes. Publicly visible.
+# Your organization's email.
 email: string
 # Whether it's a private, non profit, public, or collab organization. Required for transparency purposes.
 # For other types of organizations, use `OTHER`, as some organizations are hard to catalog.
 type: "PRIVATE_CORP" OR "NON_PROFIT" OR "GOVT_ORG" OR "COLLAB_ORG" OR "OTHER"
-# Your organization's socials, if any. Optional - inner props are all optional too.
-socials:
+# Your organization's biography - a text visible inside your profile.
+socials: # Your organization's socials, if any. Optional - inner props are all optional too.
     # Twitter handle, without the AT (@) symbol.
     twitter: string
+    # Bluesky handle, without the AT (@) symbol.
+    bluesky: string
+    # Instagram handle, without the AT (@) symbol.
+    instagram: string
     # GitHub username
     github: string
+    # GitLab username
+    gitlab: string
 ```
 
 ## Registering a package
@@ -87,11 +99,11 @@ platforms:
     # 64-bit Linux KPS.
     linux64: null | KPS
     # ARM Linux KPS.
-    linuxARM: null | KPS
+    linuxArm: null | KPS
     # 64-bit / Intel macintoshOS KPS.
     mac64: null | KPS
     # ARM / Apple Silicon macintoshOS KPS.
-    macARM: null | KPS
+    macArm: null | KPS
     # 64-bit Microsoft Windows KPS.
     win64: null | KPS
 
@@ -153,7 +165,7 @@ age_rating:
     violence: false
 ```
 
-Where `AUTHOR_ID` is your author ID as previously defined (`scope.username`), `LICENSE` is one of the following codes:
+Where `AUTHOR_ID` is your author ID as previously defined (`scope.username`), `KPS` is a [Konbini Package Scope](./kps.md), and `LICENSE` is one of the following codes:
 
 ```ts
 | "MIT"
@@ -171,33 +183,6 @@ Where `AUTHOR_ID` is your author ID as previously defined (`scope.username`), `L
 | "PublicDomain"
 ```
 
-and `KPS` is the following:
-
-## Konbini Package Scope (KPS)
-
-A scope is defined in the `SOURCE:VALUE` format, where `SOURCE` can be one of the following:
-
-- `std` (Konbini)
-- `apt` (DPKG)
-- `nix` (Nix)
-- `brew` (Homebrew)
-- `brew-k` (Homebrew, packages that need `--cask`)
-- `fpak` (Flatpak)
-- `wget` (WinGet)
-
-and `VALUE` is:
-
-**_IF `SOURCE` EQUALS `std`_**: **the FILENAME of the binary associated with that scope.** Since we grab binaries from your GitHub/GitLab/Codeberg release, you specify on each scope (you define a scope for each platform) the filename we should look for.
-
-**If you write version codes in your file names**, you don't need to modify the manifest each time, don't worry. Use `[[VER]]` in the manifest to reference the place where it appears (we assume your naming is consistent, as it should be). Be sure the version is equal to your release's `tag_name`.
-
-> [!TIP]
-> If your executable is called `my-program-v2.0.0.exe`, the scope should be `std:my-program-[[VER]].exe` and your release's tag name should be exactly "`v2.0.0`". Do this for every platform scope you plan to add.
-
-**_IF `SOURCE` EQUALS ANYTHING ELSE_**: **the PACKAGE NAME as defined in the package manager denoted by the SOURCE itself**. This must be the same unique name used for identifying the package when using the corresponding package manager.
-
-By supporting all scopes, Konbini instantly becomes a superset of `apt`, `nix`, `brew`, `flatpak`, and `winget` at the same time, including packages from all registries _without needing additional setup_ - as they're trusted, and we thus do not require signatures or extra overhead.
-
 ## Releasing your package
 
 To avoid making a PR for each version, we use GitHub/GitLab/Codeberg releases for package publishing. Once your manifest is uploaded, if the GitHub/GitLab/Codeberg repository was properly specified and you have at least one public (Konbini compliant) release, your package becomes instantly downloadable.
@@ -209,13 +194,13 @@ This means, once you PR the manifest file, you do not need to make changes to it
 
 ## Safety requirements for publishing
 
-> [!IMPORTANT] > **This is NOT required for aliased packages (those with a non-`std` source).**
+> [!IMPORTANT] > **This is NOT required for aliased packages (those with a non-`kbi` source).**
 
 Suppose a normal release of your package comes with these files attached:
 
 ```txt
 my-app.linux64.AppImage
-my-app.linuxARM.AppImage
+my-app.linuxArm.AppImage
 my-app.macOs64
 my-app.macOsARM
 my-app.exe
@@ -226,8 +211,8 @@ Now you will need to add the following files to it:
 ```diff
  my-app.linux64.AppImage
 +my-app.linux64.AppImage.asc
- my-app.linuxARM.AppImage
-+my-app.linuxARM.AppImage.asc
+ my-app.linuxArm.AppImage
++my-app.linuxArm.AppImage.asc
  my-app.macOS64
 +my-app.macOS64.asc
  my-app.macOsARM
@@ -243,15 +228,15 @@ Now you will need to add the following files to it:
 **You also need a konbini.hash.yaml file (a "hashfile") that looks like this** (but with real hashes, obviously):
 
 ```yaml
-linux_64_sha: >-
+linux64: >-
     SOME-HASH-abcdefghijk...
-linux_arm_sha: >-
+linuxArm: >-
     SOME-HASH-abcdefghijk...
-mac_64_sha: >-
+mac64: >-
     SOME-HASH-abcdefghijk...
-mac_arm_sha: >-
+macArm: >-
     SOME-HASH-abcdefghijk...
-win64_sha: >-
+win64: >-
     SOME-HASH-abcdefghijk...
 ```
 

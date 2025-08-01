@@ -2,6 +2,9 @@
 
 To request a verification badge, make a Pull Request to the authors registry, adding a `verified: true` field to your author manifest.
 
+> [!TIP]
+> If all criteria is already met at the moment of making your 1st registration PR, you can set `verified: true` from that moment.
+
 Once received, we'll check that you meet the following criteria:
 
 - At least one update has been released to any of your published packages within the last 90 days.

@@ -2,10 +2,13 @@ import { readdirSync, statSync, rmSync, readFileSync } from "fs";
 import { join } from "path";
 import { PACKAGES_DIR, PKG_PATH } from "shared/client";
 import { konsole } from "shared/client";
-import { FILENAMES, getPkgManifest, parseKps, type KONBINI_LOCKFILE } from "shared";
 import { parse } from "yaml";
 import { execSync } from "child_process";
 import { ALIASED_CMDs } from "./alias-cmds";
+import { getPkgManifest } from "shared/api/core";
+import { parseKps } from "shared/api/manifest";
+import { FILENAMES } from "shared/constants";
+import type { KONBINI_LOCKFILE } from "shared/types/files";
 
 function findPackage(pkg: string): string | null {
     for (const entry of readdirSync(PACKAGES_DIR)) {
@@ -39,7 +42,7 @@ export async function removePackage(pkg: string) {
         readFileSync(join(removePath, FILENAMES.lockfile), { encoding: "utf-8" }),
     );
     const kps = parseKps(lockfile.scope);
-    if (kps.src !== "std") {
+    if (kps.src !== "kbi") {
         konsole.dbg(`Invoking aliased (${kps.cmd}) uninstallation command.`);
         execSync(ALIASED_CMDs[kps.src]["uninstall"](lockfile.pkg));
     }

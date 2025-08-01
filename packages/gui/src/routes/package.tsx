@@ -13,7 +13,7 @@ import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 import { type KONBINI_AUTHOR } from "shared/types/author";
 import PublisherDetails from "../components/package/publisher-details";
 import ScreenshotSlideshow from "../components/package/screenshots";
-import SystemRequirementsTable from "../components/package/sys-reqs";
+import SystemRequirementsTable from "../components/package/sys-req";
 import MaintainersList from "../components/package/maintainers";
 import PackageDetails from "../components/package/details";
 
@@ -59,13 +59,13 @@ export default function PackagePage() {
     const isSupported =
         (plat.plat == "Windows" && app.platforms.win64) ||
         (plat.plat == "macOS" && plat.arch == "64" && app.platforms.mac64) ||
-        (plat.plat == "macOS" && plat.arch == "ARM" && app.platforms.macARM) ||
+        (plat.plat == "macOS" && plat.arch == "ARM" && app.platforms.macArm) ||
         (plat.plat == "Linux" && plat.arch == "64" && app.platforms.linux64) ||
-        (plat.plat == "Linux" && plat.arch == "ARM" && app.platforms.linuxARM);
+        (plat.plat == "Linux" && plat.arch == "ARM" && app.platforms.linuxArm);
     /** for when we don't know the arch but know the OS */
     const isPossiblySupported =
-        (plat.plat == "macOS" && (app.platforms.mac64 || app.platforms.macARM)) ||
-        (plat.plat == "Linux" && (app.platforms.linux64 || app.platforms.linuxARM));
+        (plat.plat == "macOS" && (app.platforms.mac64 || app.platforms.macArm)) ||
+        (plat.plat == "Linux" && (app.platforms.linux64 || app.platforms.linuxArm));
 
     const supportString = isSupported
         ? "Works on your device"

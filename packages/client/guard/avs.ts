@@ -5,14 +5,10 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { globSync } from "glob";
 import { parse } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
-import {
-    fetchAPI,
-    getPkgRemotes,
-    isStdScope,
-    parseKps,
-    type KONBINI_MANIFEST,
-    type KONBINI_PKG_SCOPE,
-} from "shared";
+import { isKbiScope, type KONBINI_MANIFEST, type KONBINI_PKG_SCOPE } from "shared/types/manifest";
+import { getPkgRemotes } from "shared/api/getters";
+import { parseKps } from "shared/api/manifest";
+import { fetchAPI } from "shared/api/network";
 
 type gh_elem =
     | { type: "dir"; url: string; download_url: null }
@@ -28,7 +24,7 @@ function logBlock(title: string) {
 
 function buildFilenames(scope: KONBINI_PKG_SCOPE, version: string) {
     const n = (s: string) => normalize(s, { preserveCase: true });
-    const { src: platform, val: pkgName } = parseKps(scope);
+    const { src: platform, value: pkgName } = parseKps(scope);
     const base = `./guard/build/PKG__${n(pkgName)}`;
     const core = `${base}__SRC__${n(platform)}__V__${n(version)}`;
     return {
@@ -108,15 +104,15 @@ function scanBuildFiles() {
 async function main() {
     logBlock("KONBINI GUARD ClamAV SCAN BEGINS");
 
-    const GUARD_FILE_PATH = "./guard.konbini";
+    const GUARD_FILE_PATH = "./guard.txt";
     const GUARD_TEXT = ensureGuardFile(GUARD_FILE_PATH);
 
     logSection(`Fetching manifests...`);
     const manifests = await fetchAllManifests();
     logSection(`Fetched manifests (${manifests.length})`);
 
-    logSection("(TODO) Initializing ClamAV Daemon");
-    // execSync("sudo systemctl start clamav-daemon");
+    logSection("Initializing ClamAV Daemon");
+    execSync("sudo systemctl start clamav-daemon");
 
     for (const manifest of manifests) {
         try {
@@ -135,7 +131,7 @@ async function main() {
                     console.log("[<<<] ASSET", plat, "SKIPPED");
                     continue;
                 }
-                if (!isStdScope(scope)) {
+                if (!isKbiScope(scope)) {
                     console.log("[<<<] ASSET", plat, "TRUSTED");
                     continue;
                 }

@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 import { validate, validateAgainst } from "@zakahacecosas/string-utils";
 import { parseKps } from "../api/manifest.ts";
 import type { KONBINI_AUTHOR_ID } from "./author.ts";
@@ -30,20 +29,31 @@ export const KPS_SOURCES = [
     "fpak",
     "scp",
     "cho",
-    "std",
+    "kbi",
 ] as const;
 
 /** A KPS source. */
 export type KPS_SOURCE = (typeof KPS_SOURCES)[number];
 
-/** A Konbini Package Scope (KPS). It follows this format:
+/** A Konbini Package Scope (KPS). It follows either one of these formats:
  *
  *  `manager:pkg_name`
+ *
+ *  `manager:pkg_name@url.somewhere/source`
+ *
+ *  `manager:pkg_name@url.somewhere/source#src-name`
+ *
+ *  `manager:pkg_name@-#src-name`
  *
  * For a non-Konbini package, the **prefix** represents the package manager and the ***suffix*** the name of the package within that manager.
  * For a Konbini package, the **prefix** declares this as a Konbini package and the ***suffix*** indicates the filename to search for within the release.
  */
-export type KONBINI_PKG_SCOPE = `${KPS_SOURCE}:${string}`;
+export type KONBINI_PKG_SCOPE =
+    | `${KPS_SOURCE}:${string}`
+    | `apt:${string}@${string}`
+    | `cho:${string}@${string}#${string}`
+    | `scp:${string}@${string}#${string}`
+    | `fpak:${string}@${string}#${string}`;
 
 /** A parsed KPS. */
 export type PARSED_KPS =
@@ -58,8 +68,8 @@ export type PARSED_KPS =
           name: string;
       }
     | {
-          /** Source. Std = Standard = Konbini itself. */
-          src: "std";
+          /** Source. Konbini itself. */
+          src: "kbi";
           /** Value. Filename to look for in the Konbini release. */
           value: string;
           /** (null) */
@@ -67,6 +77,24 @@ export type PARSED_KPS =
           /** (Konbini) */
           name: "Konbini";
       };
+
+export type PARSED_SPECIFIC_KPS = {
+    /** Source. */
+    src: "apt" | "scp" | "cho" | "fpak";
+    /** Value. Package ID for the non-Konbini host. */
+    value: string;
+    /** Command to be executed  */
+    cmd: string;
+    /** Name of the package manager this package is aliased to. */
+    name: string;
+    /** @source. */
+    at: {
+        /** URL of the sourced repo. */
+        url: string | null;
+        /** If the pkg manager requires it, name of the source. */
+        name: string | null;
+    };
+};
 
 export const LICENSES = [
     "MIT",
@@ -113,11 +141,11 @@ export interface KONBINI_MANIFEST {
         /** 64-bit Linux KPS. */
         linux64: null | KONBINI_PKG_SCOPE;
         /** ARM Linux KPS. */
-        linuxARM: null | KONBINI_PKG_SCOPE;
+        linuxArm: null | KONBINI_PKG_SCOPE;
         /** 64-bit / Intel macintoshOS KPS. */
         mac64: null | KONBINI_PKG_SCOPE;
         /** ARM / Apple Silicon macintoshOS KPS. */
-        macARM: null | KONBINI_PKG_SCOPE;
+        macArm: null | KONBINI_PKG_SCOPE;
         /** 64-bit Microsoft Windows KPS. */
         win64: null | KONBINI_PKG_SCOPE;
     };
@@ -200,10 +228,17 @@ export function isKps(kps: any): kps is KONBINI_PKG_SCOPE {
     }
 }
 
-/** Validates if the given scope is a `std:` one. */
-export function isStdScope(kps: KONBINI_PKG_SCOPE): kps is `std:${string}` {
-    if (kps.startsWith("std:")) return true;
+/** Validates if the given scope is a `kbi:` one. */
+export function isKbiScope(kps: KONBINI_PKG_SCOPE): kps is `kbi:${string}` {
+    if (kps.startsWith("kbi:")) return true;
     return false;
+}
+
+/** Validates if the given parsed scope is a specific (`@`-ed) one. */
+export function isSpecificParsedKps(
+    kps: PARSED_KPS | PARSED_SPECIFIC_KPS,
+): kps is PARSED_SPECIFIC_KPS {
+    return typeof (kps as any).at === "object";
 }
 
 export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
@@ -224,9 +259,9 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
         typeof m.platforms === "object" &&
         m.platforms !== null &&
         isPlatform(m.platforms.linux64) &&
-        isPlatform(m.platforms.linuxARM) &&
+        isPlatform(m.platforms.linuxArm) &&
         isPlatform(m.platforms.mac64) &&
-        isPlatform(m.platforms.macARM) &&
+        isPlatform(m.platforms.macArm) &&
         isPlatform(m.platforms.win64);
 
     const allStrings = [m.name, m.slogan, m.desc, m.author_id].every(validate);

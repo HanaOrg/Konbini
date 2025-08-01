@@ -6,7 +6,7 @@ import { stringify } from "yaml";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { prompt, promptBinary, promptScope } from "../toolkit/input";
-import { type KONBINI_AUTHOR_ID, type KONBINI_MANIFEST, isKps } from "shared";
+import { type KONBINI_AUTHOR_ID, type KONBINI_MANIFEST } from "shared";
 import type { REPOSITORY_SCOPE } from "shared/types/manifest";
 
 export async function generateManifest() {
@@ -75,11 +75,11 @@ export async function generateManifest() {
         "Got it, no data sharing. That's actually nice!",
     );
 
-    const platLinux64 = await promptScope("Linux64");
-    const platLinuxARM = await promptScope("LinuxARM");
-    const platMac64 = await promptScope("mac64");
-    const platMacARM = await promptScope("macARM");
-    const platWin64 = await promptScope("Windows64");
+    const linux64 = await promptScope("Linux64");
+    const linuxArm = await promptScope("LinuxARM");
+    const mac64 = await promptScope("mac64");
+    const macArm = await promptScope("macArm");
+    const win64 = await promptScope("Windows64");
 
     const repository: REPOSITORY_SCOPE = (await prompt(
         'Repository? (in the provider:author/repo format, being provider "gh", "gl", or "cb")',
@@ -106,11 +106,11 @@ export async function generateManifest() {
         categories: [],
         license: null,
         platforms: {
-            linux64: isKps(platLinux64) ? platLinux64 : null,
-            linuxARM: isKps(platLinuxARM) ? platLinuxARM : null,
-            mac64: isKps(platMac64) ? platMac64 : null,
-            macARM: isKps(platMacARM) ? platMacARM : null,
-            win64: isKps(platWin64) ? platWin64 : null,
+            linux64,
+            linuxArm,
+            mac64,
+            macArm,
+            win64,
         },
     };
 

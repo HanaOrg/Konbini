@@ -1,9 +1,9 @@
-import { getPkgManifest, getUsrManifest } from "shared";
-import { isOrganization } from "shared";
 import { PKG_PATH } from "shared/client";
 import { konsole } from "shared/client";
 import { existsSync } from "fs";
 import { truncate } from "@zakahacecosas/string-utils";
+import { getPkgManifest, getUsrManifest } from "shared/api/core";
+import { isOrganization } from "shared/types/author";
 
 export async function showPkgInfo(pkg: string) {
     const manifest = await getPkgManifest(pkg);
@@ -33,11 +33,11 @@ export async function showPkgInfo(pkg: string) {
         : "";
     const windows = manifest.platforms.win64 ? konsole.clr("#00A4EF", "Windows", true) : "";
     const macOS =
-        manifest.platforms.mac64 || manifest.platforms.macARM
+        manifest.platforms.mac64 || manifest.platforms.macArm
             ? konsole.clr("#A2AAAD", "macintoshOS", true)
             : "";
     const linux =
-        manifest.platforms.linux64 || manifest.platforms.linuxARM
+        manifest.platforms.linux64 || manifest.platforms.linuxArm
             ? konsole.clr("#FFCC00", "Linux", true)
             : "";
     const platforms = `Works on ${[windows, macOS, linux].filter(Boolean).join(", ")}.`;

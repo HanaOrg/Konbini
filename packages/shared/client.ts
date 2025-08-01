@@ -1,7 +1,7 @@
 import { normalize } from "@zakahacecosas/string-utils";
 import { join } from "path";
 import { homedir } from "os";
-import { getPlatform } from "shared";
+import { getPlatform } from "./api/platform";
 
 const ROOT = getPlatform() === "win64" ? join(homedir(), "kbi") : "/usr/local/kbi";
 

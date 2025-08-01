@@ -1,7 +1,7 @@
-import type { KPS_SOURCE } from "shared";
+import type { KPS_SOURCE } from "shared/types/manifest";
 
 export const ALIASED_CMDs: Record<
-    Exclude<KPS_SOURCE, "std">,
+    Exclude<KPS_SOURCE, "kbi">,
     Record<"install" | "reinstall" | "update" | "exists" | "uninstall", (pkg: string) => string>
 > = {
     "apt": {

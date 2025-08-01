@@ -1,5 +1,5 @@
-import { konbiniHash } from "shared";
 import { konsole } from "shared/client";
+import { konbiniHash } from "shared/security";
 import { fileURLToPath } from "url";
 
 export function learn(subcommand: string | undefined) {

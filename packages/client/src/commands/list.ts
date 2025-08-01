@@ -3,8 +3,10 @@ import { join } from "path";
 import { PACKAGES_DIR } from "shared/client";
 import { parse } from "yaml";
 import { konsole } from "shared/client";
-import { isStdScope, FILENAMES, type KONBINI_LOCKFILE, type KPS_SOURCE } from "shared";
 import { packageExists } from "../toolkit/aliased";
+import { FILENAMES } from "shared/constants";
+import type { KONBINI_LOCKFILE } from "shared/types/files";
+import { type KPS_SOURCE, isKbiScope } from "shared/types/manifest";
 
 function findLockFiles(dir: string, filename = FILENAMES.lockfile): string[] {
     const results: string[] = [];
@@ -24,8 +26,8 @@ function findLockFiles(dir: string, filename = FILENAMES.lockfile): string[] {
 }
 
 type EXTENDED_LOCKFILE =
-    | (Extract<KONBINI_LOCKFILE, { scope: `std:${string}` }> & { path: string })
-    | (Extract<KONBINI_LOCKFILE, { scope: Exclude<KPS_SOURCE, `std:${string}`> }> & {
+    | (Extract<KONBINI_LOCKFILE, { scope: `kbi:${string}` }> & { path: string })
+    | (Extract<KONBINI_LOCKFILE, { scope: Exclude<KPS_SOURCE, `kbi:${string}`> }> & {
           path: string;
       });
 
@@ -54,7 +56,7 @@ export async function listPackages(
     if (verbosity === "SILENT") return pkgsToList.sort();
 
     for (const pkg of pkgsToList) {
-        if (!isStdScope(pkg.scope)) {
+        if (!isKbiScope(pkg.scope)) {
             konsole.suc(
                 pkg.pkg,
                 konsole.clr("grey", "from"),

@@ -5,7 +5,7 @@ import { join } from "path";
 import type { RELEASE_CODEBERG, RELEASE_GITHUB, RELEASE_GITLAB } from "../types/git.ts";
 import { FILENAMES, normalizer } from "../constants.ts";
 import {
-    isStdScope,
+    isKbiScope,
     parseRepositoryScope,
     type KONBINI_MANIFEST,
     type KONBINI_PKG_SCOPE,
@@ -26,7 +26,7 @@ export async function getPkgRemotes(
     ascAsset: string;
 }> {
     const kv = parseKps(kps);
-    if (!isStdScope(kps)) {
+    if (!isKbiScope(kps)) {
         throw `KPI attempt to fetch remotes for a non-Konbini package (KPS: ${kps}). Aliased scopes don't work this way.\nThis is likely a bug in Konbini's code.`;
     }
     if (!manifest.repository) {

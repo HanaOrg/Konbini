@@ -11,10 +11,10 @@ import { addToUserPathEnvVariable } from "./toolkit/path";
 import { updatePackages } from "./commands/update";
 import { generateManifest } from "./commands/manifest-pkg";
 import { about } from "./commands/about";
-import { getPlatform } from "shared";
-import { konbiniHash } from "shared";
 import { validateAgainst } from "@zakahacecosas/string-utils";
 import { sign } from "./commands/sign";
+import { getPlatform } from "shared/api/platform";
+import { konbiniHash } from "shared/security";
 
 const p = getPlatform();
 const platformString =

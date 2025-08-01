@@ -6,16 +6,16 @@ interface KONBINI_ALI_LOCKFILE {
     /** Exact timestamp of the installation. */
     installation_ts: string;
     /** Package scope. */
-    scope: Exclude<KONBINI_PKG_SCOPE, `std:${string}`>;
+    scope: Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>;
 }
 
-interface KONBINI_STD_LOCKFILE {
+interface KONBINI_KBI_LOCKFILE {
     /** Package name. */
     pkg: string;
     /** Exact timestamp of the installation. */
     installation_ts: string;
     /** Package scope. */
-    scope: `std:${string}`;
+    scope: `kbi:${string}`;
     /** Version of the package. */
     version: string;
     /** Package remote URL. */
@@ -25,11 +25,11 @@ interface KONBINI_STD_LOCKFILE {
 }
 
 /** A Konbini lockfile that accompanies each package. */
-export type KONBINI_LOCKFILE = KONBINI_ALI_LOCKFILE | KONBINI_STD_LOCKFILE;
+export type KONBINI_LOCKFILE = KONBINI_ALI_LOCKFILE | KONBINI_KBI_LOCKFILE;
 
 /** Checks if a lockfile belongs to a Konbini package. */
-export function isStdLockfile(lockfile: KONBINI_LOCKFILE): lockfile is KONBINI_STD_LOCKFILE {
-    return lockfile.scope.startsWith("std:");
+export function isKbiLockfile(lockfile: KONBINI_LOCKFILE): lockfile is KONBINI_KBI_LOCKFILE {
+    return lockfile.scope.startsWith("kbi:");
 }
 
 /**
@@ -44,29 +44,29 @@ export interface KONBINI_HASHFILE {
      *
      * @type {?string}
      */
-    linux_64_sha?: string;
+    linux64?: string;
     /**
      * ARM Linux executable hash.
      *
      * @type {?string}
      */
-    linux_arm_sha?: string;
+    linuxArm?: string;
     /**
      * 64-bits (INTEL) macOS executable hash.
      *
      * @type {?string}
      */
-    mac_64_sha?: string;
+    mac64?: string;
     /**
      * ARM (SILICON) macOS executable hash.
      *
      * @type {?string}
      */
-    mac_arm_sha?: string;
+    macArm?: string;
     /**
      * 64-bits Microsoft Windows executable hash.
      *
      * @type {?string}
      */
-    win64_sha?: string;
+    win64?: string;
 }

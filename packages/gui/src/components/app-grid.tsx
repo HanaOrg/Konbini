@@ -43,8 +43,8 @@ export default function AppGrid({ apps, title }: { apps: MANIFEST_WITH_ID[]; tit
                         <p className="text-white text-lg/[105%] font-normal">{app.slogan}</p>
                         <div className="mt-auto flex flex-row gap-2 items-center">
                             {app.platforms.win64 && <IconWin />}
-                            {(app.platforms.linux64 || app.platforms.linuxARM) && <IconTux />}
-                            {(app.platforms.mac64 || app.platforms.macARM) && <IconMac />}
+                            {(app.platforms.linux64 || app.platforms.linuxArm) && <IconTux />}
+                            {(app.platforms.mac64 || app.platforms.macArm) && <IconMac />}
                         </div>
                     </a>
                 ))}

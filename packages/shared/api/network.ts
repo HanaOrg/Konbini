@@ -4,7 +4,6 @@ import { bearer } from "../../gui/src/tkn";
 // whether we're on web or not, because the CLI cannot use the web cache API
 const isWeb = typeof window !== "undefined" && typeof document !== "undefined";
 
-// TODO - implement hand-made caching for CLI
 const cacheAPI = isWeb
     ? caches
     : {

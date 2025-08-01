@@ -1,22 +1,22 @@
 import { konsole } from "shared/client";
 import { execSync } from "child_process";
 import { writeLockfile } from "./write";
-import {
-    type KONBINI_LOCKFILE,
-    type PARSED_KPS,
-    type KONBINI_MANIFEST,
-    parseKps,
-    getCurrentPlatformKps,
-    getPkgManifest,
-    constructKps,
-    type KONBINI_PKG_SCOPE,
-    type KPS_SOURCE,
-    getPlatform,
-} from "shared";
 import { ALIASED_CMDs } from "./alias-cmds";
 import { PKG_PATH } from "shared/client";
 import { existsSync } from "fs";
 import { join } from "path";
+import {
+    isSpecificParsedKps,
+    type KONBINI_MANIFEST,
+    type KONBINI_PKG_SCOPE,
+    type KPS_SOURCE,
+    type PARSED_KPS,
+} from "shared/types/manifest";
+import { normalize } from "@zakahacecosas/string-utils";
+import { getPkgManifest } from "shared/api/core";
+import { constructKps, parseKps } from "shared/api/manifest";
+import { getPlatform } from "shared/api/platform";
+import type { KONBINI_LOCKFILE } from "shared/types/files";
 
 function isUpToDate(src: KPS_SOURCE, msg: string): boolean {
     const messages = [
@@ -49,7 +49,7 @@ export function installAliasedPackage(params: {
     const { kps, manifest, pkgName, method } = params;
 
     // no-op
-    if (kps.src === "std") return "no-op";
+    if (kps.src === "kbi") return "no-op";
 
     konsole.adv(
         `${manifest.name} is using ${kps.name}, a non-Konbini remote. We'll ${method} the package for you using '${kps.cmd}'.`,
@@ -84,6 +84,26 @@ export function installAliasedPackage(params: {
         }
     }
 
+    if (isSpecificParsedKps(kps)) {
+        let cmd: ((n: string, u: string) => string) | null = null;
+        if (kps.src === "apt") cmd = (n: string) => `sudo add-apt-repository ppa:${n}`;
+        if (kps.src === "scp") cmd = (n: string, u: string) => `scoop bucket add ${n} ${u}`;
+        if (kps.src === "cho") cmd = (n: string, u: string) => `choco source add -n=${n} -s="${u}"`;
+        if (kps.src === "fpak")
+            cmd = (n: string, u: string) => `flatpak remote-add --if-not-exists ${n} ${u}`;
+
+        if (typeof cmd !== "function" || !cmd)
+            throw `Impossible error, cmd used to handle package's srcset wasn't assigned. Something's wrong (and it's not you).`;
+
+        try {
+            const exec = cmd(kps.at.name ?? "", kps.at.url ?? "");
+            execSync(normalize(exec));
+        } catch (error) {
+            konsole.err("Error adding srcset for this package:", error);
+            process.exit(1);
+        }
+    }
+
     try {
         const out = execSync(ALIASED_CMDs[kps.src][method](kps.value), {
             // so the user see's what's up
@@ -100,11 +120,11 @@ export function installAliasedPackage(params: {
     );
 
     const scope = constructKps(kps);
-    if (scope.startsWith("std:")) throw `Impossible error? Non-std scope became std.`;
+    if (scope.startsWith("kbi:")) throw `Impossible error? Non-kbi scope became kbi.`;
 
     const lockfile: KONBINI_LOCKFILE = {
         pkg: pkgName,
-        scope: scope as Exclude<KONBINI_PKG_SCOPE, `std:${string}`>,
+        scope: scope as Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>,
         installation_ts: new Date().toString(),
     };
     writeLockfile(lockfile, pkgName, manifest.author_id);
@@ -114,9 +134,9 @@ export function installAliasedPackage(params: {
 export async function packageExists(pkg: string): Promise<boolean> {
     const manifest = await getPkgManifest(pkg);
     const { author_id } = manifest;
-    const currentKps = getCurrentPlatformKps(manifest.platforms)!;
+    const currentKps = manifest.platforms[getPlatform()];
     const kps = parseKps(currentKps);
-    if (kps.src === "std") {
+    if (kps.src === "kbi") {
         const pkgPath = PKG_PATH({ author: author_id, pkg });
         return existsSync(join(pkgPath, kps.value));
     }
