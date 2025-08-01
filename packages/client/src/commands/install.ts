@@ -275,12 +275,18 @@ export async function installPackage(
     konsole.dbg("Made the executable actually runnable.");
 
     // if its a new installation, log it
-    if (method === "install")
-        await logAction({
+    if (method === "install") {
+        konsole.dbg("Telemetry data written.");
+        const res = await logAction({
             app: pkgName,
             version: remotes.pkgVersion,
             action: "download",
         });
+        if (res.status == 429)
+            konsole.dbg(
+                "Uhh... You're using Konbini a bit too much. Your actions won't count towards download counts for a while (HTTP 429).",
+            );
+    }
     konsole.suc(`Thanks for using Konbini, ${manifest.name} was successfully installed. Enjoy!`);
     return;
 }

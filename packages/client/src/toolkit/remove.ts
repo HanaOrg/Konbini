@@ -1,8 +1,8 @@
-import { readdirSync, statSync, rmSync, readFileSync } from "fs";
-import { join } from "path";
-import { PACKAGES_DIR, PKG_PATH } from "shared/client";
+import { readdirSync, rmSync, readFileSync } from "fs";
+import { join, parse } from "path";
+import { LAUNCHPAD_FILE_PATH, PACKAGES_DIR, PKG_PATH } from "shared/client";
 import { konsole } from "shared/client";
-import { parse } from "yaml";
+import { parse as parseYaml } from "yaml";
 import { execSync } from "child_process";
 import { ALIASED_CMDs } from "./alias-cmds";
 import { getPkgManifest } from "shared/api/core";
@@ -14,13 +14,17 @@ import { getPkgRemotes } from "shared/api/getters";
 import { getPlatform } from "shared/api/platform";
 
 function findPackage(pkg: string): string | null {
+    const entries = [];
     for (const entry of readdirSync(PACKAGES_DIR)) {
         const fullPath = join(PACKAGES_DIR, entry);
-        const stats = statSync(fullPath);
+        entries.push(fullPath);
+    }
 
-        if (stats.isDirectory() && fullPath.endsWith(pkg)) {
-            return fullPath;
-        }
+    for (const entry of entries) {
+        const paths = readdirSync(entry);
+        const result = paths.find((s) => parse(s).name == pkg);
+        if (result) return result;
+        continue;
     }
     return null;
 }
@@ -41,7 +45,7 @@ export async function removePackage(pkg: string) {
     const m = await getPkgManifest(pkg);
     konsole.suc("At your orders. Consider them out.");
     const removePath = PKG_PATH({ pkg, author: m.author_id });
-    const lockfile: KONBINI_LOCKFILE = parse(
+    const lockfile: KONBINI_LOCKFILE = parseYaml(
         readFileSync(join(removePath, FILENAMES.lockfile), { encoding: "utf-8" }),
     );
     const kps = parseKps(lockfile.scope);
@@ -51,6 +55,7 @@ export async function removePackage(pkg: string) {
     }
     konsole.dbg(`Applying rm -rf at ${removePath}.`);
     rmSync(removePath, { force: true, recursive: true });
+    rmSync(LAUNCHPAD_FILE_PATH({ pkg, author: m.author_id }), { force: true, recursive: true });
 
     await logAction({
         app: pkg,

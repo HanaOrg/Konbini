@@ -1,4 +1,4 @@
-import { validate, validateAgainst } from "@zakahacecosas/string-utils";
+import { isValidEmail, validate, validateAgainst } from "@zakahacecosas/string-utils";
 import { parseKps } from "../api/manifest.ts";
 import type { KONBINI_AUTHOR_ID } from "./author.ts";
 
@@ -268,18 +268,21 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const splitAuthor = (m.author_id || "").split(".");
     const validAuthorId =
-        m.author_id &&
+        validate(m.author_id) &&
         splitAuthor.length == 2 &&
         validateAgainst(splitAuthor[0], ["org", "usr"]) &&
         validate(splitAuthor[1]);
 
+    const repoPrefix = (m.repository || "").split(":")[0];
+    const validRepoPrefix = validateAgainst(repoPrefix, ["gh", "gl", "cb"]);
     const splitRepo = (m.repository || "").split("/");
     const validRepository =
         m.repository === null ||
         (validate(m.repository) &&
             splitRepo.length == 2 &&
             validate(splitRepo[0]) &&
-            validate(splitRepo[1]));
+            validate(splitRepo[1]) &&
+            validRepoPrefix);
 
     const validLicense = m.license === null || validateAgainst(m.license, LICENSES);
 
@@ -293,8 +296,13 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
                     typeof p === "object" &&
                     p !== null &&
                     validate(p.name) &&
-                    (p.email === undefined || validate(p.email)),
+                    (!p.email || isValidEmail(p.email)) &&
+                    (!p.link || validate(p.link)) &&
+                    (!p.github || validate(p.github)),
             ));
+
+    // TODO - im lazy rn
+    const validSysReq = true;
 
     const validScreenshots =
         m.screenshot_urls === undefined ||
@@ -311,17 +319,24 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
             (k) => typeof ar?.[k as keyof typeof ar] === "boolean",
         );
 
+    const validHomepage = isURL(m.homepage) || m.homepage === undefined;
+
+    const validDocs = isURL(m.docs) || m.docs === undefined;
+
     return (
-        (allPlatformsValid &&
-            allStrings &&
-            validRepository &&
-            validLicense &&
-            validIcon &&
-            validMaintainers &&
-            validAuthorId &&
-            isURL(m.homepage)) ||
-        (m.homepage === undefined && isURL(m.docs)) ||
-        (m.docs === undefined && validScreenshots && validCategories && validAgeRating)
+        allPlatformsValid &&
+        allStrings &&
+        validRepository &&
+        validLicense &&
+        validIcon &&
+        validMaintainers &&
+        validAuthorId &&
+        validSysReq &&
+        validScreenshots &&
+        validCategories &&
+        validAgeRating &&
+        validHomepage &&
+        validDocs
     );
 }
 

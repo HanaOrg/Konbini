@@ -19,6 +19,8 @@ import { getPlatform } from "shared/api/platform";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 
 function isUpToDate(src: KPS_SOURCE, msg: string): boolean {
+    // TODO - WAIT WHAT ABOUT INTERNATIONAL USERS
+    // as far as i know, AT LEAST APT returns translated messages :sob:
     const messages = [
         // winget
         "No newer package versions are available from the configured sources.",
