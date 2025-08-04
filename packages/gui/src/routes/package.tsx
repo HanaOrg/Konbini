@@ -16,11 +16,21 @@ import ScreenshotSlideshow from "../components/package/screenshots";
 import SystemRequirementsTable from "../components/package/sys-req";
 import MaintainersList from "../components/package/maintainers";
 import PackageDetails from "../components/package/details";
+import { getDownloads } from "shared/api/telemetry";
 
 export default function PackagePage() {
     const [app, setApp] = useState<KONBINI_MANIFEST>();
     const [author, setAuthor] = useState<KONBINI_AUTHOR>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [downloads, setDownloads] = useState<{
+        downloads: number;
+        removals: number;
+        product: number;
+    }>({
+        downloads: 0,
+        removals: 0,
+        product: 0,
+    });
 
     const route = window.location.pathname.split("/package/").filter(Boolean)[0]!;
     const manifestUrl =
@@ -34,9 +44,11 @@ export default function PackagePage() {
             try {
                 const manifest = await getPkgManifest(route, true);
                 const pkgAuthor = await getUsrManifest(manifest.author_id);
+                const downloads = await getDownloads(route);
                 setAuthor(pkgAuthor);
                 setApp(manifest);
                 setLoading(false);
+                setDownloads(downloads);
             } catch (error) {
                 if (String(error).includes("does NOT exist")) {
                     window.location.pathname = "/404";
@@ -94,6 +106,9 @@ export default function PackagePage() {
                     <div className="flex flex-col w-fit gap-0">
                         <h1 className="grad">{app.name}</h1>
                         <h2 className="text-xl text-white opacity-[0.7] mb-2">{app.slogan}</h2>
+                        <h2 className="text-lg text-white opacity-[0.5] mb-2">
+                            {downloads.product} active installs (est.)
+                        </h2>
                         <div className="flex flex-row gap-1">
                             <Badge text={`By ${app.author_id}`} color="#ffffff1a" />
                             {author.verified && (

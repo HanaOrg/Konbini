@@ -33,7 +33,11 @@ export async function fetchAPI(_url: string, method?: "GET"): Promise<Response> 
     // duplicating requests and cache, as /package/* does fetch without the "//"
     const url =
         _url.replaceAll("//", "/").replace("https:/", "https://") +
-        (_url.includes("?ref=main") ? "" : "?ref=main");
+        (_url.includes("?ref=main")
+            ? ""
+            : _url.includes("raw.github") || _url.includes("api.github")
+              ? "?ref=main"
+              : "");
 
     // whether to use github API token or not
     const useBearer = validate(bearer) && url.startsWith("https://api.github");
