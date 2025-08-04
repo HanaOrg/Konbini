@@ -7,9 +7,14 @@ export default function InstallDialog({ appName, appId }: { appName: string; app
             className="p-8 bg-[#0000000F] rounded-3xl backdrop-blur-[40px] border-1 border-[#FFFFFF2E] top-[50%] left-[50%] translate-[-50%]"
         >
             <div className="flex flex-row items-start justify-between mb-4">
-                <h1 style={{ fontWeight: 800, color: "#fff", fontSize: "2.5em" }}>
-                    Download {appName} from Konbini
-                </h1>
+                <div className="flex flex-col">
+                    <h1 style={{ fontWeight: 800, color: "#fff", fontSize: "2.5em" }}>
+                        Download {appName}
+                    </h1>
+                    <h2 style={{ fontWeight: 600, color: "#fff", fontSize: "1.5em" }}>
+                        from Konbini
+                    </h2>
+                </div>
                 <button
                     onClick={() => {
                         const m = document.querySelector("#install_dialog");

@@ -13,7 +13,7 @@ export default function PackageDetails({
     return (
         <>
             <h2 className="mt-12  mb-4 text-3xl text-white font-semibold">Package details</h2>
-            <div className="flex flex-row gap-3 flex-wrap">
+            <div className="flex flex-row gap-3 flex-wrap w-full">
                 <Detail>
                     {app.privacy ? (
                         <svg

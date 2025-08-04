@@ -1,8 +1,17 @@
-import { isOrganization, type KONBINI_AUTHOR } from "shared/types/author";
+import { isOrganization, type KONBINI_AUTHOR, type KONBINI_AUTHOR_ID } from "shared/types/author";
 import Badge from "../badge";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
+import type { MANIFEST_WITH_ID } from "../../routes/home";
 
-export default function PublisherDetails({ usr }: { usr: KONBINI_AUTHOR }) {
+export default function PublisherDetails({
+    authorId,
+    usr,
+    apps,
+}: {
+    authorId: KONBINI_AUTHOR_ID;
+    usr: KONBINI_AUTHOR;
+    apps: null | MANIFEST_WITH_ID[];
+}) {
     if (isOrganization(usr)) {
         const orgStr =
             usr.type === "PRIVATE_CORP"
@@ -18,7 +27,18 @@ export default function PublisherDetails({ usr }: { usr: KONBINI_AUTHOR }) {
         return (
             <>
                 <h2 className="mt-12  text-3xl text-white font-semibold">Publisher details</h2>
-                <p>This is an organization.</p>
+                <p>
+                    This is an organization.
+                    {apps !== null ? (
+                        ""
+                    ) : (
+                        <>
+                            {" "}
+                            See other apps from them{" "}
+                            <a href={`https://konbini.vercel.app/author/${authorId}`}>here</a>.
+                        </>
+                    )}
+                </p>
                 <div className="flex flex-row gap-1 mt-2 mb-1">
                     <Badge color="#ffffff3a" text={usr.name} />
 
@@ -56,6 +76,23 @@ export default function PublisherDetails({ usr }: { usr: KONBINI_AUTHOR }) {
                         </div>
                     </>
                 )}
+                {apps && (
+                    <>
+                        <h2 className="mt-12  text-3xl text-white font-semibold">
+                            All apps from {usr.name}
+                        </h2>
+                        {apps.map((app) => (
+                            <>
+                                <div className="p-4 rounded-xl mt-2 bg-[#ffffff20]">
+                                    <h3 className="text-xl text-white font-medium">{app.name}</h3>
+                                    <a href={`https://konbini.vercel.app/package/${app.id}`}>
+                                        See in Konbini
+                                    </a>
+                                </div>
+                            </>
+                        ))}
+                    </>
+                )}
             </>
         );
     }
@@ -71,9 +108,6 @@ export default function PublisherDetails({ usr }: { usr: KONBINI_AUTHOR }) {
             <div className="flex flex-row gap-1 mb-2">
                 {usr.email && <Badge color="#ffffff0f" text={usr.email} link="mailto:" />}
                 {usr.website && <Badge color="#ffffff0f" text={usr.website} link="https://" />}
-                {/* TODO: make the link clickable if the org is a Konbini one
-                implies
-                TODO: make user pages */}
                 {usr.org && <Badge color="#ffffff1a" text={`Working at ${usr.org}`} />}
                 {usr.for_hire ? (
                     <Badge color="#30ff801a" text="Currently for hire" />

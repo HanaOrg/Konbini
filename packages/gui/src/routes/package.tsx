@@ -61,7 +61,15 @@ export default function PackagePage() {
         getApp();
     }, []);
 
-    if ((!app || !author) && loading) return <h1>Loading package "{route}"...</h1>;
+    if ((!app || !author) && loading)
+        return (
+            <>
+                <div className="bg-[#8800FF] w-128 h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-50px] z-[-1]" />
+                <div className="bg-[#FF07EA] w-128 h-128 blur-[300px] opacity-[0.65] absolute bottom-[50px] right-[-300px] z-[-1]" />
+                <div className="bg-[#C23282] w-128 h-128 blur-[300px] opacity-[0.50] absolute top-[-150px] right-[-150px] z-[-1]" />
+                <h1>Loading package "{route}"...</h1>
+            </>
+        );
     if (!app) return <h1>Error loading {route}. Failed to load app.</h1>;
     if (!author)
         return <h1>Error loading {route}. The app itself loaded, but its author's data didn't.</h1>;
@@ -185,7 +193,7 @@ export default function PackagePage() {
                 {app.sys_requirements && (
                     <SystemRequirementsTable requirements={app.sys_requirements} />
                 )}
-                <PublisherDetails usr={author} />
+                <PublisherDetails authorId={app.author_id} usr={author} apps={null} />
                 {app.maintainers && (
                     <MaintainersList maintainers={app.maintainers} author={author.name} />
                 )}

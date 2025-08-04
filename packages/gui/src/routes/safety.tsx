@@ -1,7 +1,7 @@
 import Footer from "../components/footer";
 import Nav from "../components/nav";
 
-export function Safety() {
+export default function Safety() {
     return (
         <>
             <Nav />

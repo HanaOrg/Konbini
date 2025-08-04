@@ -18,7 +18,45 @@ type tEntryPoint = {
 
 export type MANIFEST_WITH_ID = KONBINI_MANIFEST & { id: string };
 
-export function Home() {
+export async function retrieveAllApps() {
+    const entryPoint = await (await fetchAPI(SRCSET.PKGsA)).json();
+    const points = (entryPoint as tEntryPoint[]).filter((i) => i.path.length == 2);
+
+    const manifestPoints: tEntryPoint[][] = [];
+
+    manifestPoints.push(
+        ...(await Promise.all(
+            points.map(async (point) => await (await fetchAPI(point._links.self)).json()),
+        )),
+    );
+
+    const manifestsTruePoints: (tEntryPoint & { content: string })[] = [];
+    const _tmp = [];
+
+    const manifests: MANIFEST_WITH_ID[] = [];
+
+    for (const point of manifestPoints) {
+        for (const p of point) {
+            if (!p.name.endsWith(".yaml")) continue;
+            _tmp.push(p._links.self);
+        }
+    }
+
+    manifestsTruePoints.push(
+        ...(await Promise.all(_tmp.map(async (i) => await (await fetchAPI(i)).json()))),
+    );
+
+    for (const point of manifestsTruePoints) {
+        manifests.push({
+            ...parse(atob(point.content)),
+            id: point.name.split(".")[0],
+        });
+    }
+
+    return manifests;
+}
+
+export default function Home() {
     const [apps, setApps] = useState<MANIFEST_WITH_ID[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -65,47 +103,13 @@ export function Home() {
 
     useEffect(() => {
         async function fetchApps() {
-            const entryPoint = await (await fetchAPI(SRCSET.PKGsA)).json();
-            const points = (entryPoint as tEntryPoint[]).filter((i) => i.path.length == 2);
-
-            const manifestPoints: tEntryPoint[][] = [];
-
-            manifestPoints.push(
-                ...(await Promise.all(
-                    points.map(async (point) => await (await fetchAPI(point._links.self)).json()),
-                )),
-            );
-
-            const manifestsTruePoints: (tEntryPoint & { content: string })[] = [];
-            const _tmp = [];
-
-            const manifests: MANIFEST_WITH_ID[] = [];
-
-            for (const point of manifestPoints) {
-                for (const p of point) {
-                    if (!p.name.endsWith(".yaml")) continue;
-                    _tmp.push(p._links.self);
-                }
-            }
-
-            manifestsTruePoints.push(
-                ...(await Promise.all(_tmp.map(async (i) => await (await fetchAPI(i)).json()))),
-            );
-
-            for (const point of manifestsTruePoints) {
-                manifests.push({
-                    ...parse(atob(point.content)),
-                    id: point.name.split(".")[0],
-                });
-            }
+            const manifests = await retrieveAllApps();
 
             setApps(manifests);
             setLoading(false);
         }
         fetchApps();
     }, []);
-
-    if (loading) return <h1>Konbini is loading, just one sec!</h1>;
 
     return (
         <>
@@ -128,7 +132,11 @@ export function Home() {
                         perhaps you're just too original.
                     </p>
                 </div>
-                <AppGrid title="All packages" apps={apps} />
+                {loading ? (
+                    <h1>Loading, just one sec!</h1>
+                ) : (
+                    <AppGrid title="All packages" apps={apps} />
+                )}
             </div>
             <Footer />
         </>

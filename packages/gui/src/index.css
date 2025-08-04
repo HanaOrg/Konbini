@@ -48,9 +48,8 @@ footer a:hover {
 
 hr {
     border: none;
-    width: 85%;
-    margin: 0px auto;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 body {
@@ -322,4 +321,23 @@ dialog::backdrop {
     footer {
         border-radius: 50px 50px 0px 0px;
     }
+}
+
+@keyframes fadeInDialog {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+dialog[open] {
+    animation: fadeInDialog 0.3s ease-out forwards;
+}
+
+dialog {
+    min-width: 40vw;
 }

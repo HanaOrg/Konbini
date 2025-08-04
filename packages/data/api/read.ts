@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import geoip from "geoip-lite";
 import { Redis } from "@upstash/redis";
 
 // things from zakahacecosas/string-utils that because of NodeJS we can't just bring here
@@ -25,9 +24,25 @@ function validate(str: any): str is string {
 }
 
 // actual API
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
+        const origin = req.headers.origin;
+
+        if (
+            origin &&
+            (origin.startsWith("http://localhost:") ||
+                ["https://konbini.vercel.app", "https://konbini-data.vercel.app"].includes(origin))
+        ) {
+            res.setHeader("Access-Control-Allow-Origin", origin);
+        }
+        res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+        if (req.method === "OPTIONS") {
+            res.status(200).end();
+            return;
+        }
+
         if (req.method !== "GET") {
             res.status(405).send("Only GET allowed");
             return;
@@ -50,12 +65,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             token,
         });
 
-        const downloads = (await db.lrange("downloads", 0, -1))
-            .map((s) => JSON.parse(s))
-            .filter((i) => i.app == app).length;
-        const removals = (await db.lrange("removals", 0, -1))
-            .map((s) => JSON.parse(s))
-            .filter((i) => i.app == app).length;
+        const downloads = (await db.lrange("downloads", 0, -1)).filter(
+            (i) => (i as any).app == app,
+        ).length;
+        const removals = (await db.lrange("removals", 0, -1)).filter(
+            (i) => (i as any).app == app,
+        ).length;
         const product = downloads - removals;
 
         res.status(200).json({

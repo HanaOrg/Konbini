@@ -1,7 +1,7 @@
 import Footer from "../components/footer";
 import Nav from "../components/nav";
 
-export function NotFound() {
+export default function NotFound() {
     return (
         <>
             <Nav />

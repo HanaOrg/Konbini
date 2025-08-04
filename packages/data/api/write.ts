@@ -28,6 +28,23 @@ function validate(str: any): str is string {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
+        const origin = req.headers.origin;
+
+        if (
+            origin &&
+            (origin.startsWith("http://localhost:") ||
+                ["https://konbini.vercel.app", "https://konbini-data.vercel.app"].includes(origin))
+        ) {
+            res.setHeader("Access-Control-Allow-Origin", origin);
+        }
+        res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+        if (req.method === "OPTIONS") {
+            res.status(200).end();
+            return;
+        }
+
         if (req.method !== "POST") {
             res.status(405).send("Only POST allowed");
             return;
