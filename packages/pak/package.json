@@ -1,0 +1,13 @@
+{
+    "name": "konpak",
+    "module": "index.ts",
+    "type": "module",
+    "private": true,
+    "devDependencies": {
+        "@types/adm-zip": "^0.5.7"
+    },
+    "dependencies": {
+        "adm-zip": "^0.5.16",
+        "yaml": "catalog:"
+    }
+}
