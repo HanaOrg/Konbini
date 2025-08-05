@@ -9,20 +9,20 @@ export default function Credits() {
                 <h1 className="mb-6">Credits and acknowledgments</h1>
                 <hr />
                 <p className="mt-6 text-xl">
-                    Creation and main development by{" "}
+                    Created and developed entirely by{" "}
                     <a
                         href="http://zakahacecosas.github.io/"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        Zaka
+                        ZakaHaceCosas
                     </a>
                     .<br />
-                    Website's beautiful designing by{" "}
+                    Thank you to{" "}
                     <a href="http://github.com/pico190" target="_blank" rel="noopener noreferrer">
-                        Pico
-                    </a>
-                    .
+                        Pico190
+                    </a>{" "}
+                    for helping A LOT with this website's beautiful design. .
                 </p>
                 <hr className="my-6" />
                 <p className="text-xl">
