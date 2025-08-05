@@ -16,6 +16,7 @@ import { getPlatform } from "shared/api/platform";
 import { FILENAMES } from "shared/constants";
 import { assertIntegritySHA, konbiniHash, assertIntegrityPGP } from "shared/security";
 import { logAction } from "shared/api/telemetry";
+import { Unpack } from "../../../konpak/src/unpack";
 
 async function installSingleExecutable(params: {
     filePath: string;
@@ -108,8 +109,8 @@ export async function installPackage(
     pkgName: string,
     method: "install" | "update" | "reinstall" = "install",
 ) {
-    if (pkgName.startsWith("grab:")) {
-        const possiblyKps = pkgName.split("grab:")[1];
+    if (pkgName.startsWith("grab+")) {
+        const possiblyKps = pkgName.split("grab+")[1];
         if (!isKps(possiblyKps))
             throw `Cannot grab "${possiblyKps}", it's an invalid package scope.`;
         const kps = parseKps(possiblyKps);
@@ -125,6 +126,7 @@ export async function installPackage(
             pkgName: kps.value,
             manifest: {
                 name: kps.value,
+                // idk man this needs a value in order not to fail
                 author_id: "kbi.grabbed",
             } as any as KONBINI_MANIFEST,
             kps,
@@ -266,6 +268,12 @@ export async function installPackage(
     };
     writeLockfile(lockfile, pkgName, manifest.author_id);
     konsole.dbg("Lockfile written.");
+
+    if (readFileSync(outputPath).slice(0, 4).toString() == "KPAK") {
+        konsole.dbg("This is a Konpak. Unpacking...");
+        Unpack(outputPath);
+        konsole.dbg("Konpak unpacked.");
+    }
 
     // generate launchpad shortcut
     writeLaunchpadShortcut(pkgName, manifest.author_id, outputPath);

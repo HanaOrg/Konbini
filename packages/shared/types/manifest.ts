@@ -35,6 +35,8 @@ export const KPS_SOURCES = [
 /** A KPS source. */
 export type KPS_SOURCE = (typeof KPS_SOURCES)[number];
 
+export type SPECIFIABLE_KPS_SOURCE = "cho" | "scp" | "fpak" | "brew" | "brew-k";
+
 /** A Konbini Package Scope (KPS). It follows either one of these formats:
  *
  *  `manager:pkg_name`
@@ -51,9 +53,7 @@ export type KPS_SOURCE = (typeof KPS_SOURCES)[number];
 export type KONBINI_PKG_SCOPE =
     | `${KPS_SOURCE}:${string}`
     | `apt:${string}@${string}`
-    | `cho:${string}@${string}#${string}`
-    | `scp:${string}@${string}#${string}`
-    | `fpak:${string}@${string}#${string}`;
+    | `${SPECIFIABLE_KPS_SOURCE}:${string}@${string}#${string}`;
 
 /** A parsed KPS. */
 export type PARSED_KPS =
@@ -81,7 +81,7 @@ export type PARSED_KPS =
 /** A parsed KPS containing a srcset.  */
 export type PARSED_SPECIFIC_KPS = {
     /** Source. */
-    src: "apt" | "scp" | "cho" | "fpak";
+    src: "apt" | SPECIFIABLE_KPS_SOURCE;
     /** Value. Package ID for the non-Konbini host. */
     value: string;
     /** Command to be executed  */

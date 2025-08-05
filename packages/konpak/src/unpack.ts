@@ -42,7 +42,7 @@ export function Unpack(filepath: string) {
         try {
             renameSync(src, dst);
         } catch (e) {
-            console.error(`Error moving ${src} to ${dst}:`, e);
+            throw new Error(`Error moving ${src} to ${dst}: ${e}`);
         }
     }
 

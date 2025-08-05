@@ -11,7 +11,7 @@ import {
     type KONBINI_PARSED_SCOPE,
     type KONBINI_PKG_SCOPE,
 } from "shared/types/manifest";
-import { normalize } from "@zakahacecosas/string-utils";
+import { normalize, validateAgainst } from "@zakahacecosas/string-utils";
 import { getPkgManifest } from "shared/api/core";
 import { constructKps, parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
@@ -83,6 +83,8 @@ export function installAliasedPackage(params: {
         if (kps.src === "cho") cmd = (n: string, u: string) => `choco source add -n=${n} -s="${u}"`;
         if (kps.src === "fpak")
             cmd = (n: string, u: string) => `flatpak remote-add --if-not-exists ${n} ${u}`;
+        if (validateAgainst(kps.src, ["brew", "brew-k"]))
+            cmd = (n: string, u: string) => `brew tap ${n}/${u}`;
 
         if (typeof cmd !== "function" || !cmd)
             throw `Impossible error, cmd used to handle package's srcset wasn't assigned. Something's wrong (and it's not you).`;
