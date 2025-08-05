@@ -17,8 +17,8 @@ The `SOURCE` (prefix to the scope) can be any of these strings:
 | `kbi`    | **Konbini**                           | Not needed              |
 | `apt`    | DPKG                                  | Only PPAs               |
 | `nix`    | Nix                                   | No                      |
-| `brew`   | Homebrew                              | No                      |
-| `brew-k` | Homebrew, packages that need `--cask` | No                      |
+| `brew`   | Homebrew                              | Yes                     |
+| `brew-k` | Homebrew, packages that need `--cask` | Yes                     |
 | `fpak`   | Flatpak                               | Yes                     |
 | `wget`   | WinGet                                | No                      |
 | `scp`    | Scoop                                 | Yes                     |
@@ -56,4 +56,6 @@ They're supported for the following sources:
 
 ![KPS Valid Source sets](./srcsets.png)
 
-You can specify a srcset for PPAs, and a srcset+srcname for Flatpak remotes, Scoop buckets, and Chocolatey repos.
+You can specify a srcset for PPAs, and a srcset+srcname for Flatpak remotes, Scoop buckets, Homebrew taps, and Chocolatey repos.
+
+If you only need the name (like, for example, for the `extras` Scoop bucket which lacks a URL), just set the URL to a dash (`-`) and it'll be ignored.
