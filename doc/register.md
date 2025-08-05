@@ -236,7 +236,7 @@ win64: SOME-HASH-abcdefghijk...
 
 Each platform you make a release for (you do not need to specify hashes for platforms you do not build for) should get its binary hashed, to assert its integrity upon download.
 
-For generating a file hash, you should **use Konbini's builtin hasher (via `kbi kbd-hash <filepath>`), or any other tool capable of generating a `SHA3-512` hash**. SHA3-512 is not too widely used as of now (thus we ship Konbini with a builtin hasher), however it is the strongest SHA algorithm made yet, which is why we enforce its usage.
+For generating a file hash, you should **use Konbini's builtin hasher (via `kbi hash <filepath>`), or any other tool capable of generating a `SHA3-512` hash**. SHA3-512 is not too widely used as of now (thus we ship Konbini with a builtin hasher), however it is the strongest SHA algorithm made yet, which is why we enforce its usage.
 
 ---
 

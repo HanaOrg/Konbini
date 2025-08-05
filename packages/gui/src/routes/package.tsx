@@ -118,10 +118,13 @@ export default function PackagePage() {
                             {downloads.product} active installs (est.)
                         </h2>
                         <div className="flex flex-row gap-1">
-                            <Badge text={`By ${app.author_id}`} color="#ffffff1a" />
-                            {author.verified && (
-                                <Badge text="Verified developer" color="#c232826a" />
-                            )}
+                            <Badge color="#ffffff1a">
+                                By{" "}
+                                <a href={`https://konbini.vercel.app/author/${app.author_id}`}>
+                                    {app.author_id}
+                                </a>
+                            </Badge>
+                            {author.verified && <Badge color="#c232826a">Verified developer</Badge>}
                         </div>
                         <div className="flex flex-row gap-1 mt-1">
                             <Badge
@@ -134,21 +137,22 @@ export default function PackagePage() {
                                             ? "#FF6C002A"
                                             : "#FF1C003A"
                                 }
-                                text={
-                                    age === "everyone"
-                                        ? "For everyone"
-                                        : age === "mid"
-                                          ? "May be inappropriate for kids"
-                                          : age === "high"
-                                            ? "Inappropriate for kids"
-                                            : "Inappropriate for young users"
-                                }
-                            />
+                            >
+                                {age === "everyone"
+                                    ? "For everyone"
+                                    : age === "mid"
+                                      ? "May be inappropriate for kids"
+                                      : age === "high"
+                                        ? "Inappropriate for kids"
+                                        : "Inappropriate for young users"}
+                            </Badge>
                             {app.telemetry && (
-                                <Badge text="Shares telemetry data" color="#FF8C001A" />
+                                <Badge color="#FF8C001A">Shares telemetry data</Badge>
                             )}
                             {app.categories.map((c) => (
-                                <Badge text={toUpperCaseFirst(c)} color="#FFE8BF1A" />
+                                <Badge key={c} color="#FFE8BF1A">
+                                    {toUpperCaseFirst(c)}
+                                </Badge>
                             ))}
                         </div>
                     </div>

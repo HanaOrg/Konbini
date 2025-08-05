@@ -3,9 +3,6 @@ import { konbiniHash } from "shared/security";
 import { fileURLToPath } from "url";
 
 export function learn(subcommand: string | undefined) {
-    if (!subcommand) {
-        konsole.war('Available topics for learning are: "hash", "sign".');
-    }
     if (subcommand === "hash") {
         const filePath = fileURLToPath(import.meta.url);
         konsole.adv("Here's an example Konbini HASH, for the Konbini binary itself.");
@@ -42,5 +39,31 @@ export function learn(subcommand: string | undefined) {
         konsole.dbg("Be advised that aliased packages do not undergo this check.");
         return;
     }
-    konsole.err('Invalid item. Available topics for learning are: "hash", "sign".');
+    if (subcommand === "konpak") {
+        [
+            "A Konpak is a distribution format, similar to DEB files, made for Konbini.",
+            "It's our recommended method for distributing:",
+            "- apps with dependencies (DLLs, media files, etc...)",
+            "- programs that should integrate with the OS (be listed as programs, appear in Start menu...)",
+            "Just like a DEB file they require an unpacker program (Konbini).",
+            "Konpaks are based on ZIP archives, providing a degree of compression.",
+        ].map((s) => konsole.adv(s));
+        konsole.suc("Konpaks are very easy to use for Konbini distribution.");
+        konsole.dbg("Be advised that they don't work with macOS, and aren't well tested on Linux.");
+        console.log("-----");
+        [
+            "When running 'kbi konpak <dir>' on a directory, a Konpak will be made out of it.",
+            "- you'll be asked the package ID and the version of it you're konpaking",
+            "- you'll also be asked if it's a Windows or a Linux Konpak (they behave differently)",
+            "- and you'll also be asked the name of the main binary",
+            "The directory is expected to contain:",
+            "- a manifest.yaml file",
+            "- a .png/.ico icon file with the same name as your package ID",
+            "- any other file inside of it will be treated as a regular asset",
+            "A Konpak will be immediately generated and saved to the CWD.",
+        ].map((s) => konsole.adv(s));
+        return;
+    }
+    konsole.err('Invalid item. Available topics for learning are: "hash", "sign", "konpak".');
+    return;
 }

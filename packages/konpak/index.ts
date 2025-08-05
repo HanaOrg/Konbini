@@ -5,6 +5,7 @@ export function debug(...args: string[]) {
     if (true) console.log(args);
 }
 
+// TODO - this is kinda useless, should move this over to KBI exe
 function pack() {
     const appId = prompt("App ID?");
     const version = prompt("App version to be konpak'd?");

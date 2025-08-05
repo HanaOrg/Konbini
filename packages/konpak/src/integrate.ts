@@ -11,12 +11,7 @@ function runElevatedScript(scriptContent: string) {
 
     const command = `Start-Process powershell -Verb runAs -Wait -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', '${tmpFile}'`;
 
-    const proc = spawnSync("powershell", ["-NoProfile", "-Command", command], { stdio: "inherit" });
-
-    console.log(proc.stderr);
-    console.log(proc.stdout);
-    console.log(proc.error);
-    console.log(proc.output);
+    spawnSync("powershell", ["-NoProfile", "-Command", command], { stdio: "inherit" });
 
     setTimeout(() => {
         try {

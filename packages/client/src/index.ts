@@ -15,6 +15,8 @@ import { validateAgainst } from "@zakahacecosas/string-utils";
 import { sign } from "./commands/sign";
 import { getPlatform } from "shared/api/platform";
 import { konbiniHash } from "shared/security";
+import { konpakFromDir } from "./commands/konpak";
+import { parseArgs } from "util";
 
 const p = getPlatform();
 const platformString =
@@ -49,11 +51,12 @@ async function main() {
                 `> about                  ${konsole.clr("grey", "// shows some info about Konbini")}`,
                 `> -v, --version          ${konsole.clr("grey", "// shows current Konbini version")}`,
                 "",
-                `- "kbd" prefixed commands are for developers. ${konsole.clr("grey", "// KonBini Dev, KBD, get it?")}`,
+                `- for developers         ${konsole.clr("grey", "// commands for package maintainers")}`,
                 "",
-                `> kbd-hash <file>        ${konsole.clr("grey", "// generates a Konbini compliant SHA hash for the given file")}`,
-                `> kbd-sign <mode> [...]  ${konsole.clr("grey", "// works around PGP signatures, run it for more info")}`,
-                `> kbd-manifest-pkg       ${konsole.clr("grey", "// guides you and creates a manifest for a Konbini package")}`,
+                `> hash <file>            ${konsole.clr("grey", "// generates a Konbini compliant hash for the given file")}`,
+                `> sign <mode> [...]      ${konsole.clr("grey", "// works around PGP signatures, run it for more info")}`,
+                `> manifest               ${konsole.clr("grey", "// guides you and creates a manifest for a Konbini package")}`,
+                `> konpak <dir>           ${konsole.clr("grey", "// turns the specified directory into a Konpak")}`,
             ].join("\n"),
         );
         return;
@@ -104,7 +107,7 @@ async function main() {
                 await showUserInfo(subcommand);
             else await showPkgInfo(subcommand);
             break;
-        case "kbd-hash":
+        case "hash":
             if (!subcommand) throw "No file specified.";
             if (args.includes("--porcelain")) {
                 console.log(konbiniHash(subcommand));
@@ -116,13 +119,28 @@ async function main() {
             );
             konsole.suc(konbiniHash(subcommand));
             break;
-        case "kbd-sign":
+        case "sign":
             if (!validateAgainst(subcommand, ["new", "apply"]))
                 throw `No action specified. Available options are 'new' (to make a new signature) or 'apply' (to sign an executable).\n      To learn further, run 'learn sign'`;
             await sign(subcommand);
             break;
-        case "kbd-manifest-pkg":
+        case "manifest":
             generateManifest();
+            break;
+        case "konpak":
+            if (!subcommand)
+                throw "No directory specified. Specify one.\n      To learn more, run 'learn konpak'.";
+            const { platform, id, binary, version, icon } = parseArgs({
+                args: args.slice(2),
+                options: {
+                    platform: { type: "string" },
+                    id: { type: "string" },
+                    binary: { type: "string" },
+                    version: { type: "string" },
+                    icon: { type: "string" },
+                },
+            }).values;
+            konpakFromDir(subcommand, platform, id, binary, version, icon);
             break;
         case "learn":
             learn(subcommand);

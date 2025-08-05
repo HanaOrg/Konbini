@@ -140,6 +140,8 @@ export interface KONBINI_MANIFEST {
      * Can be null, because of closed-source software.
      */
     repository: REPOSITORY_SCOPE | null;
+    /** Whether the app is a CLI, a graphical app, or has support for both things. */
+    app_type: "cli" | "gui" | "both";
     /** Supported platforms for the package, with their Konbini Package Scope (KPS). */
     platforms: {
         /** 64-bit Linux KPS. */
@@ -259,7 +261,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const isImageURL = (s?: any) =>
         validate(s) && s.startsWith("https://") && (s.endsWith(".webp") || s.endsWith(".png"));
 
-    const allPlatformsValid =
+    const validPlatforms =
         typeof m.platforms === "object" &&
         m.platforms !== null &&
         isPlatform(m.platforms.linux64) &&
@@ -268,7 +270,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
         isPlatform(m.platforms.macArm) &&
         isPlatform(m.platforms.win64);
 
-    const allStrings = [m.name, m.slogan, m.desc, m.author_id].every(validate);
+    const validStrings = [m.name, m.slogan, m.desc].every(validate);
 
     const splitAuthor = (m.author_id || "").split(".");
     const validAuthorId =
@@ -305,8 +307,17 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
                     (!p.github || validate(p.github)),
             ));
 
-    // TODO - im lazy rn
-    const validSysReq = true;
+    const validSysReq =
+        !m.sys_requirements ||
+        m.sys_requirements == undefined ||
+        ([m.sys_requirements.ram_mb, m.sys_requirements.disk_mb].every(
+            (s) => !s || s == undefined || typeof s == "number",
+        ) &&
+            (!m.sys_requirements.os_ver ||
+                m.sys_requirements.os_ver == undefined ||
+                parseOsVer(m.sys_requirements.os_ver) !== "Invalid OS requirements."));
+
+    const validType = validate(m.app_type) && validateAgainst(m.app_type, ["cli", "gui", "both"]);
 
     const validScreenshots =
         m.screenshot_urls === undefined ||
@@ -328,8 +339,8 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const validDocs = isURL(m.docs) || m.docs === undefined;
 
     return (
-        allPlatformsValid &&
-        allStrings &&
+        validPlatforms &&
+        validStrings &&
         validRepository &&
         validLicense &&
         validIcon &&
@@ -340,7 +351,8 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
         validCategories &&
         validAgeRating &&
         validHomepage &&
-        validDocs
+        validDocs &&
+        validType
     );
 }
 

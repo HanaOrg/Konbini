@@ -40,20 +40,28 @@ export default function PublisherDetails({
                     )}
                 </p>
                 <div className="flex flex-row gap-1 mt-2 mb-1">
-                    <Badge color="#ffffff3a" text={usr.name} />
+                    <Badge color="#ffffff3a">{usr.name}</Badge>
 
                     {usr.verified && (
-                        <Badge text="This organization got verified" color="#c232826a" />
+                        <Badge color="#c232826a">This organization got verified</Badge>
                     )}
                 </div>
                 <div className="flex flex-row gap-1 mb-2">
-                    {usr.email && <Badge color="#ffffff0f" text={usr.email} link="mailto:" />}
-                    {usr.website && <Badge color="#ffffff0f" text={usr.website} link="https://" />}
-                    <Badge color="#ffffff1a" text={orgStr} />
+                    {usr.email && (
+                        <Badge color="#ffffff0f">
+                            <a href={`mailto:${usr.email}`}>{usr.email}</a>
+                        </Badge>
+                    )}
+                    {usr.website && (
+                        <Badge color="#ffffff0f">
+                            <a href={`https://:${usr.website}`}>{usr.website}</a>
+                        </Badge>
+                    )}
+                    <Badge color="#ffffff1a">{orgStr}</Badge>
                     {usr.hiring ? (
-                        <Badge color="#30ff801a" text="Currently hiring" />
+                        <Badge color="#30ff801a">Currently hiring</Badge>
                     ) : (
-                        <Badge color="#ffc8301a" text="Not currently hiring" />
+                        <Badge color="#ffc8301a">Not currently hiring</Badge>
                     )}
                 </div>
                 <p>About {usr.name}:</p>
@@ -102,17 +110,25 @@ export default function PublisherDetails({
             <h2 className="mt-12  text-3xl text-white font-semibold">Publisher details</h2>
             <p>This is a regular user.</p>
             <div className="flex flex-row gap-1 mt-2 mb-1">
-                <Badge color="#ffffff3a" text={usr.name} />
-                {usr.verified && <Badge text="This user got verified" color="#c232826a" />}
+                <Badge color="#ffffff3a">{usr.name}</Badge>
+                {usr.verified && <Badge color="#c232826a">This user got verified</Badge>}
             </div>
             <div className="flex flex-row gap-1 mb-2">
-                {usr.email && <Badge color="#ffffff0f" text={usr.email} link="mailto:" />}
-                {usr.website && <Badge color="#ffffff0f" text={usr.website} link="https://" />}
-                {usr.org && <Badge color="#ffffff1a" text={`Working at ${usr.org}`} />}
+                {usr.email && (
+                    <Badge color="#ffffff0f">
+                        <a href={`mailto:${usr.email}`}>{usr.email}</a>
+                    </Badge>
+                )}
+                {usr.website && (
+                    <Badge color="#ffffff0f">
+                        <a href={`https://${usr.website}`}>{usr.website}</a>
+                    </Badge>
+                )}
+                {usr.org && <Badge color="#ffffff1a">Working at {usr.org}</Badge>}
                 {usr.for_hire ? (
-                    <Badge color="#30ff801a" text="Currently for hire" />
+                    <Badge color="#30ff801a">Currently for hire</Badge>
                 ) : (
-                    <Badge color="#ffc8301a" text="Not currently for hire" />
+                    <Badge color="#ffc8301a">Not currently for hire</Badge>
                 )}
             </div>
             <p>About {usr.name}:</p>

@@ -58,7 +58,7 @@ export function LAUNCHPAD_FILE_PATH(p: { pkg: string; author: string }): string 
     return join(LAUNCHPAD_DIR, `${normalize(p.pkg)}.${getPlatform() === "win64" ? "ps1" : "sh"}`);
 }
 
-const R = Bun.color("white", "ansi-16m");
+const R = "\x1b[0m";
 
 /** Konbini's beautiful console logging. */
 export const konsole = {
@@ -76,7 +76,7 @@ export const konsole = {
     },
     /** Logs an information / "debug" message. */
     dbg(...stuff: any[]): void {
-        console.debug(this.clr("grey", "[ D ]", false), ...stuff, R);
+        console.log(this.clr("grey", "[ D ]", false), ...stuff, R);
     },
     /** Logs a success message. */
     suc(...stuff: any[]): void {
@@ -84,7 +84,7 @@ export const konsole = {
     },
     /** Logs an advancement message (signaling a step out of many on whatever process is going on). */
     adv(...stuff: any[]): void {
-        console.log("[ > ]", ...stuff, R);
+        console.log(this.clr("#DEDEDE", "[ > ]", false), ...stuff, R);
     },
     /** Asks the user for confirmation. */
     ask(question: string): boolean {
