@@ -31,13 +31,7 @@ function isNotTooOld(match: Response): boolean {
 export async function fetchAPI(_url: string, method?: "GET"): Promise<Response> {
     // somewhere, idk where, manifests are fetched with a "//" in middle of the URL
     // duplicating requests and cache, as /package/* does fetch without the "//"
-    const url =
-        _url.replaceAll("//", "/").replace("https:/", "https://") +
-        (_url.includes("?ref=main")
-            ? ""
-            : _url.includes("raw.github") || _url.includes("api.github")
-              ? "?ref=main"
-              : "");
+    const url = _url.replaceAll("//", "/").replace("https:/", "https://").replace("?ref=main", "");
 
     // whether to use github API token or not
     const useBearer = validate(bearer) && url.startsWith("https://api.github");

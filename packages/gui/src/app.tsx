@@ -8,6 +8,7 @@ import NotFound from "./routes/not-found";
 import Safety from "./routes/safety";
 import Credits from "./routes/credits";
 import AuthorPage from "./routes/author";
+import Privacy from "./routes/privacy";
 
 export function App() {
     return (
@@ -18,6 +19,7 @@ export function App() {
                     <Route path="/author/:id" component={AuthorPage} />
                     <Route path="/package/:id" component={PackagePage} />
                     <Route path="/safety" component={Safety} />
+                    <Route path="/privacy" component={Privacy} />
                     <Route path="/credits" component={Credits} />
                     <Route default component={NotFound} />
                 </Router>

@@ -19,7 +19,7 @@ export default function Footer() {
                 </div>
                 <div className="flex flex-col gap-4 items-end justify-start">
                     <a href="/safety" className="text-lg font-medium">
-                        How we keep our apps safe
+                        How we keep Konbini apps safe
                     </a>
                     <a href="/credits" className="text-lg font-medium">
                         Credits and acknowledgments
@@ -30,7 +30,10 @@ export default function Footer() {
                         rel="noopener noreferrer"
                         className="text-lg font-medium"
                     >
-                        Publish your app
+                        How to publish your app
+                    </a>
+                    <a href="/privacy" className="text-lg font-medium">
+                        Privacy Policy
                     </a>
                     <div className="bg-[#FFCF574D] flex flex-col gap-2 p-4 rounded-xl border-2 border-[#FFFFFF33]">
                         <h3 className="text-xl font-semibold text-[#FFCC96]">
