@@ -8,9 +8,8 @@ import { join } from "path";
 import {
     isSpecificParsedKps,
     type KONBINI_MANIFEST,
+    type KONBINI_PARSED_SCOPE,
     type KONBINI_PKG_SCOPE,
-    type KPS_SOURCE,
-    type PARSED_KPS,
 } from "shared/types/manifest";
 import { normalize } from "@zakahacecosas/string-utils";
 import { getPkgManifest } from "shared/api/core";
@@ -18,33 +17,24 @@ import { constructKps, parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 
-function isUpToDate(src: KPS_SOURCE, msg: string): boolean {
-    // TODO - WAIT WHAT ABOUT INTERNATIONAL USERS
-    // as far as i know, AT LEAST APT returns translated messages :sob:
-    const messages = [
-        // winget
-        "No newer package versions are available from the configured sources.",
-        // apt
-        "is already in the newest version",
-        // snap
-        "has no updates available",
-        // brew, brew-k - worth noting this is ambiguous,
-        "already installed",
-        // flatpak
-        "Nothing to do",
-        // scoop
-        "Latest versions for all apps are installed!",
-    ];
-
-    // nix returns an empty string if it's already up to date
-    if (src === "nix" && msg.trim().length === 0) return true;
-    if (messages.every((s) => !msg.includes(s))) return false;
-    return true;
+/** true if it IS up to date, false if it NEEDS to update */
+function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
+    if (scope.src === "kbi")
+        throw new Error("You should not be able to see this (KBI KPS over alias-only func).");
+    const out = execSync(ALIASED_CMDs[scope.src]["exists"](scope.value)).toString();
+    // 7.0.0 < 7.0.1
+    if (scope.src === "nix") return !out.includes("<");
+    // outdated packages:
+    // foobar (7.0.1)
+    return !out
+        .split("\n")
+        .map((line) => line.trim())
+        .some((line) => line.includes(scope.value));
 }
 
 export function installAliasedPackage(params: {
     pkgName: string;
-    kps: PARSED_KPS;
+    kps: KONBINI_PARSED_SCOPE;
     manifest: KONBINI_MANIFEST;
     method: "install" | "update" | "reinstall";
 }): "upToDate" | "no-op" | "needsPkgMgr" | "installedOrUpdated" {
@@ -106,14 +96,14 @@ export function installAliasedPackage(params: {
         }
     }
 
+    if (isUpToDate(kps)) return "upToDate";
+
     try {
-        const out = execSync(ALIASED_CMDs[kps.src][method](kps.value), {
+        execSync(ALIASED_CMDs[kps.src][method](kps.value), {
             // so the user see's what's up
             stdio: "inherit",
         });
-        if (isUpToDate(kps.src, out.toString())) return "upToDate";
     } catch (error) {
-        if (isUpToDate(kps.src, (error as any).stdout)) return "upToDate";
         throw `Error installing package '${kps.value}' with ${kps.name}: ${error}`;
     }
 

@@ -78,6 +78,7 @@ export type PARSED_KPS =
           name: "Konbini";
       };
 
+/** A parsed KPS containing a srcset.  */
 export type PARSED_SPECIFIC_KPS = {
     /** Source. */
     src: "apt" | "scp" | "cho" | "fpak";
@@ -95,6 +96,9 @@ export type PARSED_SPECIFIC_KPS = {
         name: string | null;
     };
 };
+
+/** A parsed Konbini Package Scope. */
+export type KONBINI_PARSED_SCOPE = PARSED_KPS | PARSED_SPECIFIC_KPS;
 
 export const LICENSES = [
     "MIT",
