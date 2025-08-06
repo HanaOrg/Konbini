@@ -13,8 +13,8 @@
     "dependencies": {
         "@zakahacecosas/number-utils": "catalog:",
         "@zakahacecosas/string-utils": "catalog:",
-        "glob": "^11.0.2",
-        "openpgp": "^6.1.1",
+        "glob": "^11.0.3",
+        "openpgp": "^6.2.0",
         "yaml": "catalog:",
         "shared": "workspace:*"
     }

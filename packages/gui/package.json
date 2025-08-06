@@ -16,15 +16,15 @@
         "@zakahacecosas/string-utils": "catalog:",
         "dompurify": "^3.2.6",
         "micromark": "^4.0.2",
-        "preact": "^10.26.5",
+        "preact": "^10.27.0",
         "preact-iso": "^2.9.2",
         "tailwindcss": "^4.1.11",
         "yaml": "catalog:"
     },
     "devDependencies": {
         "@preact/preset-vite": "^2.10.1",
-        "@types/node": "^24.0.3",
+        "@types/node": "^24.2.0",
         "typescript": "catalog:",
-        "vite": "^6.3.5"
+        "vite": "^7.0.6"
     }
 }
