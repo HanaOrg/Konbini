@@ -4,6 +4,7 @@ import { existsSync } from "fs";
 import { truncate } from "@zakahacecosas/string-utils";
 import { getPkgManifest, getUsrManifest } from "shared/api/core";
 import { isOrganization } from "shared/types/author";
+import { humanLicense } from "shared/types/manifest";
 
 export async function showPkgInfo(pkg: string) {
     const manifest = await getPkgManifest(pkg);
@@ -16,7 +17,7 @@ export async function showPkgInfo(pkg: string) {
             ? "Categories: " + manifest.categories.join(", ")
             : "Unspecified categories",
     );
-    const authors = `${konsole.clr("grey", manifest.license ?? "Unspecified license")} · Brought to you by ${author.name}${author.verified ? konsole.clr("deeppink", " [ √ ]", true) : ""} (${konsole.clr("lightgray", manifest.author_id)})`;
+    const authors = `${konsole.clr("grey", manifest.license ? humanLicense(manifest.license) : "Unspecified license")} · Brought to you by ${author.name}${author.verified ? konsole.clr("deeppink", " [ √ ]", true) : ""} (${konsole.clr("lightgray", manifest.author_id)})`;
     const maintainers =
         manifest.maintainers && manifest.maintainers.length > 0
             ? `${konsole.clr("lightgray", "Maintained by")} ${manifest.maintainers

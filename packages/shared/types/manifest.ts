@@ -120,6 +120,40 @@ export const LICENSES = [
 /** These are license _codes_ used by us to identify and define licenses. They should not be used in the UI. */
 export type LICENSE = (typeof LICENSES)[number];
 
+/** Turns a license code into a readable string. */
+export function humanLicense(license: LICENSE): string {
+    switch (license) {
+        case "MIT":
+            return "MIT License";
+        case "GPLv3":
+            return "GNU General Public License v3.0";
+        case "GPLv2":
+            return "GNU General Public License v2.0";
+        case "Apache2":
+            return "Apache License 2.0";
+        case "BSD2Clause":
+            return "BSD 2-Clause License";
+        case "BSD3Clause":
+            return "BSD 3-Clause License";
+        case "ISC":
+            return "ISC License";
+        case "MPLv2":
+            return "Mozilla Public License 2.0";
+        case "LGPLv3":
+            return "GNU Lesser General Public License v3.0";
+        case "EPLv2":
+            return "Eclipse Public License 2.0";
+        case "Unlicense":
+            return "The Unlicense";
+        case "Zlib":
+            return "zlib License";
+        case "PublicDomain":
+            return "Public domain";
+        case "ProprietaryLicense":
+            return "Proprietary license";
+    }
+}
+
 /** A Git repository scope. */
 export type REPOSITORY_SCOPE = `${"gh" | "gl" | "cb"}:${string}/${string}`;
 
@@ -254,7 +288,9 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const m = manifest as Partial<KONBINI_MANIFEST>;
 
-    const isPlatform = (p: any) => p === null || isKps(p);
+    const is = (i: any): i is NonNullable<any> => i !== null && i !== undefined;
+
+    const isPlatform = (p: any) => !p || isKps(p);
 
     const isURL = (s?: any) => validate(s) && s.startsWith("https://");
 
@@ -263,7 +299,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const validPlatforms =
         typeof m.platforms === "object" &&
-        m.platforms !== null &&
+        is(m.platforms) &&
         isPlatform(m.platforms.linux64) &&
         isPlatform(m.platforms.linuxArm) &&
         isPlatform(m.platforms.mac64) &&
@@ -283,16 +319,16 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const validRepoPrefix = validateAgainst(repoPrefix, ["gh", "gl", "cb"]);
     const splitRepo = (m.repository || "").split("/");
     const validRepository =
-        m.repository === null ||
+        !m.repository ||
         (validate(m.repository) &&
             splitRepo.length == 2 &&
             validate(splitRepo[0]) &&
             validate(splitRepo[1]) &&
             validRepoPrefix);
 
-    const validLicense = m.license === null || validateAgainst(m.license, LICENSES);
+    const validLicense = !is(m.license) || validateAgainst(m.license, LICENSES);
 
-    const validIcon = m.icon === undefined || m.icon === null || isImageURL(m.icon);
+    const validIcon = !is(m.icon) || isImageURL(m.icon);
 
     const validMaintainers =
         m.maintainers === undefined ||
@@ -308,14 +344,14 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
             ));
 
     const validSysReq =
-        !m.sys_requirements ||
-        m.sys_requirements == undefined ||
-        ([m.sys_requirements.ram_mb, m.sys_requirements.disk_mb].every(
-            (s) => !s || s == undefined || typeof s == "number",
-        ) &&
-            (!m.sys_requirements.os_ver ||
-                m.sys_requirements.os_ver == undefined ||
-                parseOsVer(m.sys_requirements.os_ver) !== "Invalid OS requirements."));
+        !is(m.sys_requirements) ||
+        (is(m.sys_requirements) &&
+            [m.sys_requirements!.ram_mb, m.sys_requirements!.disk_mb].every(
+                (s) => !s || s == undefined || typeof s == "number",
+            ) &&
+            (!m.sys_requirements!.os_ver ||
+                m.sys_requirements!.os_ver == undefined ||
+                parseOsVer(m.sys_requirements!.os_ver) !== "Invalid OS requirements."));
 
     const validType = validate(m.app_type) && validateAgainst(m.app_type, ["cli", "gui", "both"]);
 
@@ -329,7 +365,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const ar = m.age_rating;
     const validAgeRating =
         typeof ar === "object" &&
-        ar !== null &&
+        is(ar) &&
         ["money", "social", "substances", "violence"].every(
             (k) => typeof ar?.[k as keyof typeof ar] === "boolean",
         );
@@ -379,12 +415,12 @@ export function parseOsVer(
 ): { win: string | null; mac: string | null; lin: string | null } | "Invalid OS requirements." {
     const splitted = ver.split(",");
 
-    if (splitted.length !== 3) return "Invalid OS requirements.";
+    // note: this could (and should) be stricter
 
     try {
-        const winContent = splitted[0]!.split("win=")[1]!;
-        const macContent = splitted[1]!.split("mac=")[1]!;
-        const linContent = splitted[2]!.split("lin=")[1]!;
+        const winContent = (splitted[0] ?? "win=x").split("win=")[1]!;
+        const macContent = (splitted[1] ?? "mac=x").split("mac=")[1]!;
+        const linContent = (splitted[2] ?? "lin=x").split("lin=")[1]!;
 
         const win =
             winContent === "x"

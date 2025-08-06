@@ -1,4 +1,4 @@
-import { parseRepositoryScope, type KONBINI_MANIFEST } from "shared/types/manifest";
+import { humanLicense, parseRepositoryScope, type KONBINI_MANIFEST } from "shared/types/manifest";
 import Detail from "../detail";
 
 export default function PackageDetails({
@@ -90,9 +90,13 @@ export default function PackageDetails({
                             fill="#ffffff"
                         />
                     </svg>
-                    <p>
-                        Licensed under <b>{app.license}</b>
-                    </p>
+                    {app.license ? (
+                        <p>
+                            Licensed under <b>{humanLicense(app.license)}</b>
+                        </p>
+                    ) : (
+                        <p>No license specified</p>
+                    )}
                 </Detail>
                 <Detail>
                     <svg

@@ -81,12 +81,13 @@ export default function PublisherDetails({
                 {usr.socials && (
                     <>
                         <p>Follow them</p>
-                        <div className="flex flex-col gap-1 mt-2 mb-1">
+                        <div className="flex flex-row gap-1 mt-2 mb-1">
                             {Object.entries(usr.socials!).map((e) => (
                                 <a
                                     href={`https://${e[0]}.com/${e[1]}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    className="py-2 px-4 bg-[#00000030] rounded-xl hover:bg-[#00000060]"
                                 >
                                     {toUpperCaseFirst(e[0])} @{e[1]}
                                 </a>
