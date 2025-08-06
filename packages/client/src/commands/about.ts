@@ -8,11 +8,11 @@ export function about() {
         '"Your convenience store", which is, by the way, what "konbini" stands for in japanese.',
     );
     konsole.adv(
-        "It's a *store* for software packages made for *convenience*, with the easiest to use app,\n      non-bureaucratic publishing, actually beautiful TUI and GUI, and multi-platform support.",
+        "It's a *store* for software packages made for *convenience*, with the easiest to use app,\nnon-bureaucratic publishing, actually beautiful TUI and GUI, and multi-platform support.",
     );
     konsole.que("Who made this?");
     konsole.adv(
-        '"The Hana Organization". It is basically just me working on it as a solo developer at the moment, tho.',
+        '"The Hana Organization". It\'s just me working on it as a solo developer at the moment, tho.',
     );
     konsole.adv(
         `Founded, developed, and maintained by ${konsole.clr("gray", "https://")}${konsole.clr("lime", "ZakaHaceCosas")}${konsole.clr("gray", ".github.io/")}.`,

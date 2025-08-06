@@ -67,7 +67,7 @@ try {
 } catch (e) {
     if (String(e).includes("EACCES")) {
         konsole.err(
-            "Please run Konbini Updater using 'sudo'; we need permission to write data to protected directories.\n      (Installs are global).",
+            "Please run Konbini Updater using 'sudo'; we need permission to write data to protected directories.\n(Installs are global).",
         );
     } else {
         konsole.err(e as string);

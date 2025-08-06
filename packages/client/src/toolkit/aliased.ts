@@ -110,7 +110,7 @@ export function installAliasedPackage(params: {
     }
 
     konsole.dbg(
-        `Because ${kps.name} is a trusted registry, we don't perform PGP or SHA checks.\n      Keep that in mind.`,
+        `Because ${kps.name} is a trusted registry, we don't perform PGP or SHA checks.\nKeep that in mind.`,
     );
 
     const scope = constructKps(kps);

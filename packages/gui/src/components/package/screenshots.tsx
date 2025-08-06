@@ -28,33 +28,28 @@ export default function ScreenshotSlideshow({
             <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">Screenshots</h2>
             <div className="slideshow-container">
                 {ss.map((s, i) => (
-                    <div
-                        className="slides"
-                        style={{
-                            display: i === slideIndex ? "flex" : "none",
-                        }}
-                    >
+                    <div className={`slides ${i === slideIndex ? "flex" : "hidden"}`}>
                         <div className="number-text">{i + 1 + "/" + ss.length}</div>
                         <img src={s.link} alt={s.text} />
-                        <div className="text">{s.text}</div>
+                        <div className="w-[80%] text-base min-h-18 mx-auto flex items-center justify-center text-center">
+                            {s.text}
+                        </div>
+                        <div className="flex flex-row gap-1 items-center justify-center">
+                            {ss.map((_, i) => (
+                                <div
+                                    className={i == slideIndex ? "dot active" : "dot"}
+                                    onClick={() => moveSlideIndex(i)}
+                                ></div>
+                            ))}
+                        </div>
                     </div>
                 ))}
-
                 <a className="prev" onClick={() => moveSlideIndex(slideIndex - 1)}>
                     &#10094;
                 </a>
                 <a className="next" onClick={() => moveSlideIndex(slideIndex + 1)}>
                     &#10095;
                 </a>
-            </div>
-
-            <div style={{ textAlign: "center" }}>
-                {ss.map((_, i) => (
-                    <span
-                        className={i == slideIndex ? "dot active" : "dot"}
-                        onClick={() => moveSlideIndex(i)}
-                    ></span>
-                ))}
             </div>
         </>
     );

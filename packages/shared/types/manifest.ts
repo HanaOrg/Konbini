@@ -62,7 +62,7 @@ export type PARSED_KPS =
           src: KPS_SOURCE;
           /** Value. Package ID for the non-Konbini host. */
           value: string;
-          /** Command to be executed  */
+          /** Command to be executed. */
           cmd: string;
           /** Name of the package manager this package is aliased to. */
           name: string;
@@ -78,13 +78,13 @@ export type PARSED_KPS =
           name: "Konbini";
       };
 
-/** A parsed KPS containing a srcset.  */
+/** A parsed KPS containing a srcset. */
 export type PARSED_SPECIFIC_KPS = {
     /** Source. */
     src: "apt" | SPECIFIABLE_KPS_SOURCE;
     /** Value. Package ID for the non-Konbini host. */
     value: string;
-    /** Command to be executed  */
+    /** Command to be executed. */
     cmd: string;
     /** Name of the package manager this package is aliased to. */
     name: string;

@@ -60,6 +60,10 @@ export function LAUNCHPAD_FILE_PATH(p: { pkg: string; author: string }): string 
 
 const R = "\x1b[0m";
 
+function nl(stuff: any[]) {
+    return stuff.map((s) => (typeof s === "string" ? s.replaceAll("\n", "\n      ") : s));
+}
+
 /** Konbini's beautiful console logging. */
 export const konsole = {
     /** Colors a CLI string. */
@@ -68,23 +72,23 @@ export const konsole = {
     },
     /** Logs an error. */
     err(...stuff: any[]): void {
-        console.error(this.clr("crimson", "[ X ]", false), ...stuff, R);
+        console.error(this.clr("crimson", "[ X ]", false), ...nl(stuff), R);
     },
     /** Logs a warning. */
     war(...stuff: any[]): void {
-        console.warn(this.clr("yellow", "[ ~ ]", false), ...stuff, R);
+        console.warn(this.clr("yellow", "[ ~ ]", false), ...nl(stuff), R);
     },
     /** Logs an information / "debug" message. */
     dbg(...stuff: any[]): void {
-        console.log(this.clr("grey", "[ D ]", false), ...stuff, R);
+        console.log(this.clr("grey", "[ D ]", false), ...nl(stuff), R);
     },
     /** Logs a success message. */
     suc(...stuff: any[]): void {
-        console.log(this.clr("lightgreen", "[ ✓ ]", false), ...stuff, R);
+        console.log(this.clr("lightgreen", "[ ✓ ]", false), ...nl(stuff), R);
     },
     /** Logs an advancement message (signaling a step out of many on whatever process is going on). */
     adv(...stuff: any[]): void {
-        console.log(this.clr("#DEDEDE", "[ > ]", false), ...stuff, R);
+        console.log(this.clr("#DEDEDE", "[ > ]", false), ...nl(stuff), R);
     },
     /** Asks the user for confirmation. */
     ask(question: string): boolean {
@@ -92,10 +96,10 @@ export const konsole = {
     },
     /** Logs a question message (without actually asking anything). */
     que(...stuff: string[]): void {
-        console.log(this.clr("gold", "[ ? ]", false), ...stuff, R);
+        console.log(this.clr("gold", "[ ? ]", false), ...nl(stuff), R);
     },
     /** Logs a heads up message. */
     out(...stuff: string[]): void {
-        console.log(this.clr("gold", "[ ! ]", false), ...stuff, R);
+        console.log(this.clr("gold", "[ ! ]", false), ...nl(stuff), R);
     },
 };

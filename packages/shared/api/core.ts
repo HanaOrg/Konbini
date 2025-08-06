@@ -1,6 +1,6 @@
 import { validateAgainst } from "@zakahacecosas/string-utils";
 import { parse } from "yaml";
-import { fetchAPI } from "./network.ts";
+import { b64toString, fetchAPI } from "./network.ts";
 import { normalizer, SRCSET } from "../constants.ts";
 import { isValidManifest, type KONBINI_MANIFEST } from "../types/manifest.ts";
 import type { KONBINI_AUTHOR } from "../types/author.ts";
@@ -83,7 +83,7 @@ export async function getPkgManifest(
     }
     const json = await response.json();
     const res = await (await fetchAPI(json.url)).json();
-    const packageInfoB = parse(atob(res.content));
+    const packageInfoB = parse(b64toString(res.content));
     if (!isValidManifest(packageInfoB)) {
         throw `The manifest for ${packageName} was invalidated. Its author has made a mistake, somewhere. Tell them to check it.`;
     }

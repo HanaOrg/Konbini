@@ -53,6 +53,9 @@ export default function AuthorPage() {
             <Nav />
             <div className="app-main-cont">
                 <h1 className="grad">{author.name}</h1>
+                {author.biography && (
+                    <p className="text-xl italic opacity-[0.9] text-[#FFF]">{author.biography}</p>
+                )}
                 <PublisherDetails authorId={route as KONBINI_AUTHOR_ID} usr={author} apps={apps} />
             </div>
             <Footer />

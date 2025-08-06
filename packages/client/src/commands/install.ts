@@ -25,7 +25,7 @@ async function installSingleExecutable(params: {
     const { filePath, remote } = params;
     konsole.adv(`Downloading executable from KBI remote`);
     konsole.war(
-        "We're still thinking about how to show a progressbar for this, until then just wait.\n      The process is NOT frozen. Downloads are timed out, so we won't hang for hours.",
+        "We're still thinking about how to show a progressbar for this, until then just wait.\nThe process is NOT frozen. Downloads are timed out, so we won't hang for hours.",
     );
 
     // download the package

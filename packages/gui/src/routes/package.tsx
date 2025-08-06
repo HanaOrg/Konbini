@@ -156,7 +156,7 @@ export default function PackagePage() {
                             ))}
                         </div>
                     </div>
-                    <div className="ml-auto h-fit text-xl flex flex-col items-end gap-4">
+                    <div className="ml-auto h-fit text-xl flex flex-col items-end gap-2">
                         <button
                             onClick={() => {
                                 const m = document.querySelector("#install_dialog");

@@ -121,7 +121,7 @@ async function main() {
             break;
         case "sign":
             if (!validateAgainst(subcommand, ["new", "apply"]))
-                throw `No action specified. Available options are 'new' (to make a new signature) or 'apply' (to sign an executable).\n      To learn further, run 'learn sign'`;
+                throw `No action specified. Available options are 'new' (to make a new signature) or 'apply' (to sign an executable).\nTo learn further, run 'learn sign'`;
             await sign(subcommand);
             break;
         case "manifest":
@@ -129,7 +129,7 @@ async function main() {
             break;
         case "konpak":
             if (!subcommand)
-                throw "No directory specified. Specify one.\n      To learn more, run 'learn konpak'.";
+                throw "No directory specified. Specify one.\nTo learn more, run 'learn konpak'.";
             const { platform, id, binary, version, icon } = parseArgs({
                 args: args.slice(2),
                 options: {
@@ -174,7 +174,7 @@ try {
 } catch (e) {
     if (String(e).includes("EACCES")) {
         konsole.err(
-            "Please run Konbini using 'sudo'; we need permission to write data to protected directories.\n      (Installs are global).",
+            "Please run Konbini using 'sudo'; we need permission to write data to protected directories.\n(Installs are global).",
         );
     } else {
         konsole.err(e as string);

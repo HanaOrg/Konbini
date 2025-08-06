@@ -1,7 +1,7 @@
 import { normalize, removeWhitespace } from "@zakahacecosas/string-utils";
 import { useEffect, useState } from "preact/hooks";
 import { parse } from "yaml";
-import { fetchAPI } from "shared/api/network";
+import { b64toString, fetchAPI } from "shared/api/network";
 import { SRCSET } from "shared/constants";
 import type { KONBINI_MANIFEST } from "shared/types/manifest";
 import AppGrid from "../components/app-grid";
@@ -48,7 +48,7 @@ export async function retrieveAllApps() {
 
     for (const point of manifestsTruePoints) {
         manifests.push({
-            ...parse(atob(point.content)),
+            ...parse(b64toString(point.content)),
             id: point.name.split(".")[0],
         });
     }

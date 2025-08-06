@@ -9,13 +9,11 @@ export default function MaintainersList({
 }) {
     return (
         <>
-            <h2 className="mt-12  text-3xl text-white font-semibold">
-                Maintainers of this package
-            </h2>
+            <h2 className="mt-12 text-3xl text-white font-semibold">Maintainers of this package</h2>
             <p className="mb-4">besides {author}</p>
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-row gap-4 flex-wrap">
                 {maintainers!.map((m) => (
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 flex-grow-1">
                         <h3 className="text-xl text-white">{m.name}</h3>
                         {m.email && <a href={`mailto:${m.email}`}>{m.email}</a>}
                         {m.github && (

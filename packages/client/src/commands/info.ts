@@ -54,7 +54,7 @@ export async function showPkgInfo(pkg: string) {
             `Learn more at ${konsole.clr("lightblue", `https://konbini.vercel.app/package/${pkg}`)}.`,
         ]
             .filter(Boolean)
-            .join("\n      "),
+            .join("\n"),
     );
     console.log("");
     if (existsSync(PKG_PATH({ pkg, author: manifest.author_id })))
@@ -67,7 +67,7 @@ export async function showPkgInfo(pkg: string) {
                 .split("\n")
                 .filter((s) => s.trim() != "")
                 .join("\n\n      "),
-            310,
+            350,
             true,
         ),
     );
@@ -118,10 +118,10 @@ export async function showUserInfo(usr: string) {
 
     konsole.adv([hire, place].filter(Boolean).join(" · "));
     console.log("");
-    console.log(
+    konsole.adv(
         (author.biography || "This author has no biography.")
             .split("\n")
             .filter((s) => s.trim() != "")
-            .join("\n\n      "),
+            .join("\n\n"),
     );
 }
