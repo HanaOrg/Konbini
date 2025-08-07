@@ -2,9 +2,20 @@ import { execSync, spawnSync } from "node:child_process";
 import { mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, normalize } from "node:path";
+import { getPlatform } from "shared/api/platform";
 import { INSTALLATION_DIR } from "shared/client";
 import type { KONBINI_MANIFEST } from "shared/types/manifest";
 
+// may it be stated:
+// this is peak windows developer experience
+
+/** Will show a UAC prompt.
+ * If accepted, we're able to write to the HKLM registry hive, which is needed.
+ *
+ * If rejected... **???** *The program shows a PowerShell error but keeps running.*
+ *
+ * TODO: Find out how to detect rejection to halt execution (and possibly show a proper error message).
+ */
 function runElevatedScript(scriptContent: string) {
     const tmpFile = normalize(join(tmpdir(), `temp_script_${Date.now()}.ps1`));
 
@@ -23,8 +34,14 @@ function runElevatedScript(scriptContent: string) {
     return true;
 }
 
-const exePath = join(INSTALLATION_DIR, "kbi");
-const script = `
+/** Registers .kpak files so they're opened with Konbini when used.
+ *
+ * It doesn't look "good", I mean: since Windows 10, if an app touches the default apps from the registry, a confirmation prompt appears first time, calling the app `"C:\Users\...\kbi" unpack "%1"` which is weird, but it gets the job done, so yeah.
+ */
+export function registerKonpakForWindows() {
+    if (getPlatform() !== "win64") return;
+    const exePath = join(INSTALLATION_DIR, "kbi");
+    const script = `
 # register the extension
 New-Item -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Force | Out-Null
 Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Name "(default)" -Value "konpak"
@@ -43,10 +60,9 @@ Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\DefaultIcon" -Name 
 New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open" -Force | Out-Null
 Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open" -Name "(default)" -Value "Install Konpak"
 New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open\\command" -Force | Out-Null
-Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open\\command" -Name "(default)" -Value "${exePath} unpack \\"%1\\""
+Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open\\command" -Name "(default)" -Value '"${exePath}" unpack "%1"'
 `;
 
-export function registerKonpakForWindows() {
     const path = join(tmpdir(), `temp_script_${Date.now()}.ps1`);
     writeFileSync(
         path,
@@ -62,7 +78,7 @@ try {
 
     const out = execSync(`powershell -File "${path}"`, { encoding: "utf-8" });
 
-    if (out.toString().trim() === "1") runElevatedScript(script);
+    if (out.toString().trim().includes("1")) runElevatedScript(script);
 }
 
 interface Params {
