@@ -200,8 +200,8 @@ Suppose a normal release of your package comes with these files attached:
 ```txt
 my-app.linux64.AppImage
 my-app.linuxArm.AppImage
-my-app.macOs64
-my-app.macOsARM
+my-app.mac64
+my-app.macArm
 my-app.exe
 ```
 
@@ -212,10 +212,10 @@ Now you will need to add the following files to it:
 +my-app.linux64.AppImage.asc
  my-app.linuxArm.AppImage
 +my-app.linuxArm.AppImage.asc
- my-app.macOS64
-+my-app.macOS64.asc
- my-app.macOsARM
-+my-app.macOsARM.asc
+ my-app.mac64
++my-app.mac64.asc
+ my-app.macArm
++my-app.macArm.asc
  my-app.exe
 +my-app.exe.asc
 
@@ -236,7 +236,8 @@ win64: SOME-HASH-abcdefghijk...
 
 Each platform you make a release for (you do not need to specify hashes for platforms you do not build for) should get its binary hashed, to assert its integrity upon download.
 
-For generating a file hash, you should **use Konbini's builtin hasher (via `kbi hash <filepath>`), or any other tool capable of generating a `SHA3-512` hash**. SHA3-512 is not too widely used as of now (thus we ship Konbini with a builtin hasher), however it is the strongest SHA algorithm made yet, which is why we enforce its usage.
+> [!TIP]
+> For generating hashes, **use Konbini's builtin hasher (via `kbi hash`)**, and for generating signatures, **use Konbini's builtin signer (via `kbi sign`)**.
 
 ---
 

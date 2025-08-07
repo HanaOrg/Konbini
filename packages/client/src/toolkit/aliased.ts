@@ -119,7 +119,7 @@ export function installAliasedPackage(params: {
     const lockfile: KONBINI_LOCKFILE = {
         pkg: pkgName,
         scope: scope as Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>,
-        installation_ts: new Date().toString(),
+        timestamp: new Date().toString(),
     };
     writeLockfile(lockfile, pkgName, manifest.author_id);
     return "installedOrUpdated";

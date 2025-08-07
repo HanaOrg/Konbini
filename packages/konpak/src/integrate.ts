@@ -2,6 +2,7 @@ import { execSync, spawnSync } from "node:child_process";
 import { mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, normalize } from "node:path";
+import { INSTALLATION_DIR } from "shared/client";
 import type { KONBINI_MANIFEST } from "shared/types/manifest";
 
 function runElevatedScript(scriptContent: string) {
@@ -20,6 +21,48 @@ function runElevatedScript(scriptContent: string) {
     }, 1500);
 
     return true;
+}
+
+const exePath = join(INSTALLATION_DIR, "kbi");
+const script = `
+# register the extension
+New-Item -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Force | Out-Null
+Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Name "(default)" -Value "konpak"
+Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Name "Content Type" -Value "application/x-kpak"
+Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Name "PerceivedType" -Value "compressed"
+
+# register the filetype
+New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak" -Force | Out-Null
+Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak" -Name "(default)" -Value "Konpak archive"
+
+# default icon
+New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\DefaultIcon" -Force | Out-Null
+Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\DefaultIcon" -Name "(default)" -Value "${exePath},0"
+
+# be able to install it from right click menu
+New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open" -Force | Out-Null
+Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open" -Name "(default)" -Value "Install Konpak"
+New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open\\command" -Force | Out-Null
+Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open\\command" -Name "(default)" -Value "${exePath} unpack \\"%1\\""
+`;
+
+export function registerKonpakForWindows() {
+    const path = join(tmpdir(), `temp_script_${Date.now()}.ps1`);
+    writeFileSync(
+        path,
+        `
+try {
+    Get-ItemPropertyValue -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Name "(default)" -ErrorAction Stop
+    Write-Output 0
+} catch {
+    Write-Output 1
+}
+`,
+    );
+
+    const out = execSync(`powershell -File "${path}"`, { encoding: "utf-8" });
+
+    if (out.toString().trim() === "1") runElevatedScript(script);
 }
 
 interface Params {

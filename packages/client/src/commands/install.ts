@@ -43,7 +43,7 @@ async function installSingleExecutable(params: {
     return {
         version: remote.version,
         remote_url: remote.asset,
-        installation_ts: new Date().toString(),
+        timestamp: new Date().toString(),
     };
 }
 
@@ -269,7 +269,7 @@ export async function installPackage(
     writeLockfile(lockfile, pkgName, manifest.author_id);
     konsole.dbg("Lockfile written.");
 
-    if (readFileSync(outputPath).slice(0, 4).toString() == "KPAK") {
+    if (readFileSync(outputPath).slice(0, 14).toString() == "KPAK__SIGNALER") {
         konsole.dbg("This is a Konpak. Unpacking...");
         Unpack(outputPath);
         konsole.dbg("Konpak unpacked.");

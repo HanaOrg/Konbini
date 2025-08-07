@@ -39,7 +39,7 @@ export function Konpak(p: {
 
     const bin = readFileSync(`./${appId}.kpak.zip`);
 
-    writeFileSync(`./${appId}.kpak`, Buffer.concat([Buffer.from("KPAK"), bin]));
+    writeFileSync(`./${appId}.kpak`, Buffer.concat([Buffer.from("KPAK__SIGNALER"), bin]));
 
     rmSync(`./${appId}.kpak.zip`);
 }

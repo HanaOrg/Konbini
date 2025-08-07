@@ -1,53 +1,23 @@
-import { Konpak } from "./src/pack";
+import { konsole } from "shared/client";
 import { Unpack } from "./src/unpack";
+import { readFileSync, statSync } from "fs";
 
-export function debug(...args: string[]) {
-    if (true) console.log(args);
-}
-
-// TODO - this is kinda useless, should move this over to KBI exe
-function pack() {
-    const appId = prompt("App ID?");
-    const version = prompt("App version to be konpak'd?");
-    const platform = prompt("Build a Konpak for 'windows' or 'linux'?");
-    if (platform !== "windows" && platform !== "linux")
-        throw new Error("Platform invalid. Either 'Windows' or 'Linux'.");
-    const pathToBinary = prompt("Path to main binary file.");
-    const pathToManifest = prompt("Path to manifest file.");
-    console.log(
-        "(You're supposed to store all dependencies (if any), libraries, and stuff for your app in the same folder.)",
-    );
-    const pathToDirected = prompt("Path to dependencies.");
-    if (!pathToDirected) console.log("No dependencies.");
-    const pathToIcon = prompt(
-        "Path to icon file (.ico for a Windows Konpak, .png for a Linux one).",
-    );
-
-    if (!appId || !version || !pathToBinary || !pathToManifest || !pathToIcon || !platform)
-        throw new Error("Missing required params.");
-
-    Konpak({
-        appId,
-        version,
-        platform,
-        pathToIcon,
-        pathToBinary,
-        pathToManifest,
-        pathToDirected,
-    });
-}
-
-function unpack() {
-    const path = prompt("Konpak to unpack");
-    if (!path) return;
-
-    Unpack(path);
-}
-
+/** ## Konpak self-extractor.
+ * This file only (well, and the modules it imports) are the entire KPAK SFX module. It works like any self extracting archive, it reads itself searching for an indicator (`KPAK__SIGNALER`), takes all the data after it, and extracts it using the code before it
+ */
 function main() {
-    if (process.argv[2] === "pack") pack();
-    else if (process.argv[2] === "unpack") unpack();
-    else console.error("Specify what to do.");
+    const self = readFileSync(process.execPath);
+    const kpakIndex = self.lastIndexOf(Buffer.from("KPAK__SIGNALER"));
+    if (kpakIndex === -1) throw new Error("No signaler header found.");
+
+    konsole.dbg("DEBUG INFO ---");
+    konsole.dbg("KPAK-SFX at", process.execPath);
+    konsole.dbg("konpak size", statSync(process.execPath).size);
+    konsole.dbg("1st 16bytes", self.slice(0, 16).toString("hex"));
+    konsole.dbg("signaler at", kpakIndex);
+
+    const kpak = self.slice(kpakIndex);
+    Unpack(kpak);
 }
 
 main();

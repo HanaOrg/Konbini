@@ -17,6 +17,8 @@ import { getPlatform } from "shared/api/platform";
 import { konbiniHash } from "shared/security";
 import { konpakFromDir } from "./commands/konpak";
 import { parseArgs } from "util";
+import { Unpack } from "../../konpak/src/unpack";
+import { registerKonpakForWindows } from "../../konpak/src/integrate";
 
 const p = getPlatform();
 const platformString =
@@ -33,6 +35,7 @@ async function main() {
 
     if (!existsSync(PACKAGES_DIR)) mkdirSync(PACKAGES_DIR, { recursive: true });
     if (!existsSync(LAUNCHPAD_DIR)) mkdirSync(LAUNCHPAD_DIR, { recursive: true });
+    registerKonpakForWindows();
     addToUserPathEnvVariable(LAUNCHPAD_DIR);
 
     if (!command) {
@@ -44,6 +47,7 @@ async function main() {
                 `> install <pkg>          ${konsole.clr("grey", "// installs a package")}`,
                 `> update [pkg]           ${konsole.clr("grey", "// updates a package, or all packages if none specified")}`,
                 `> remove <pkg>           ${konsole.clr("grey", "// removes a package")}`,
+                `> unpack <path>          ${konsole.clr("grey", "// manually installs a Konpak")}`,
                 `> info <pkg | user>      ${konsole.clr("grey", "// shows info for a specific package or publisher")}`,
                 `> list [-v]              ${konsole.clr("grey", "// lists all installed packages")}`,
                 `> learn <item>           ${konsole.clr("grey", "// shows helpful info about something specific")}`,
@@ -140,7 +144,11 @@ async function main() {
                     icon: { type: "string" },
                 },
             }).values;
-            konpakFromDir(subcommand, platform, id, binary, version, icon);
+            await konpakFromDir(subcommand, platform, id, binary, version, icon);
+            break;
+        case "unpack":
+            if (!subcommand) throw "No filepath specified!";
+            Unpack(subcommand);
             break;
         case "learn":
             learn(subcommand);

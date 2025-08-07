@@ -1,9 +1,19 @@
-import { existsSync, mkdirSync, readdirSync, renameSync } from "node:fs";
+import {
+    existsSync,
+    mkdirSync,
+    readdirSync,
+    readFileSync,
+    renameSync,
+    writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { Konpak } from "../../../konpak/src/pack";
-import { validate, validateAgainst } from "@zakahacecosas/string-utils";
+import { toUpperCaseFirst, validate, validateAgainst } from "@zakahacecosas/string-utils";
+import { konsole } from "shared/client";
+import { cwd } from "node:process";
+import { getKonpakSfx } from "../../../konpak/src/sfx";
 
-export function konpakFromDir(
+export async function konpakFromDir(
     dir: string,
     platform: string | undefined,
     appId: string | undefined,
@@ -37,6 +47,8 @@ export function konpakFromDir(
         renameSync(src, dst);
     }
 
+    konsole.dbg(`Konpaking ver ${version} of ${appId} for ${toUpperCaseFirst(platform)}...`);
+
     Konpak({
         appId,
         version,
@@ -46,4 +58,26 @@ export function konpakFromDir(
         pathToManifest,
         pathToDirected,
     });
+
+    const path = join(cwd(), `${appId}.kpak`);
+
+    konsole.suc(`Konpak'd ${appId} successfully! Find it at ${path}.`);
+    const sfx = konsole.ask(
+        "Make it a self-extracting Konpak?\nThis gives you a more versatile installer than users can execute directly, similar to an installer.\nThis advantage comes at the cost of an extra 100 MB as of now.",
+    );
+
+    if (sfx) {
+        const sfx = await getKonpakSfx();
+        if (!sfx) {
+            konsole.err("KPAK SFX not downloaded.");
+            return;
+        }
+        writeFileSync(
+            platform === "windows" ? path + ".exe" : path,
+            Buffer.concat([sfx, readFileSync(path)]),
+        );
+        konsole.suc("Your Konpak is ready for universal distribution.");
+    } else {
+        konsole.suc("Got it. Your Konpak is ready for Konbini-only distribution.");
+    }
 }

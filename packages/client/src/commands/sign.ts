@@ -109,7 +109,7 @@ async function applySignature() {
 
     writeFileSync(newSignaturePath, signature, { encoding: "utf-8" });
 
-    konsole.dbg("ASSERTING VALIDITY OF DETACHED SIGNATURE (just in case)");
+    konsole.dbg("ASSERTING INTEGRITY OF DETACHED SIGNATURE (just in case)");
 
     const a = await assertIntegrityPGP({
         executableFilePath: file,
@@ -117,8 +117,9 @@ async function applySignature() {
         authorAscFilePath: join(signaturePath, `${author.split(".")[1]!.toLowerCase()}.asc`),
     });
     if (a !== "valid") throw a;
+    konsole.dbg("INTEGRITY ASSERTED, SIGNATURE IS READY TO GO");
 
-    konsole.suc("Wrote file signature to", newSignaturePath, "!");
+    konsole.suc("Wrote file signature to", newSignaturePath, "successfully!");
 }
 
 export async function sign(cmd: "new" | "apply") {

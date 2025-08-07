@@ -4,7 +4,7 @@ interface KONBINI_ALI_LOCKFILE {
     /** Package name. */
     pkg: string;
     /** Exact timestamp of the installation. */
-    installation_ts: string;
+    timestamp: string;
     /** Package scope. */
     scope: Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>;
 }
@@ -13,7 +13,7 @@ interface KONBINI_KBI_LOCKFILE {
     /** Package name. */
     pkg: string;
     /** Exact timestamp of the installation. */
-    installation_ts: string;
+    timestamp: string;
     /** Package scope. */
     scope: `kbi:${string}`;
     /** Version of the package. */

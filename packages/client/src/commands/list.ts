@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, rmSync, statSync } from "fs";
+import { readdirSync, readFileSync, rmSync } from "fs";
 import { join } from "path";
 import { PACKAGES_DIR } from "shared/client";
 import { parse } from "yaml";
@@ -6,18 +6,17 @@ import { konsole } from "shared/client";
 import { packageExists } from "../toolkit/aliased";
 import { FILENAMES } from "shared/constants";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
-import { type KPS_SOURCE, isKbiScope } from "shared/types/manifest";
+import { type KPS_SOURCE } from "shared/types/manifest";
 
-function findLockFiles(dir: string, filename = FILENAMES.lockfile): string[] {
+function findLockFiles(dir: string, filename: string = FILENAMES.lockfile): string[] {
     const results: string[] = [];
 
-    for (const entry of readdirSync(dir)) {
-        const fullPath = join(dir, entry);
-        const stats = statSync(fullPath);
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const fullPath = join(dir, entry.name);
 
-        if (stats.isDirectory()) {
-            results.push(...findLockFiles(fullPath, filename)); // recursive
-        } else if (entry === filename) {
+        if (entry.isDirectory()) {
+            results.push(...findLockFiles(fullPath, filename));
+        } else if (entry.name === filename) {
             results.push(fullPath);
         }
     }
@@ -39,8 +38,8 @@ export async function listPackages(
 
     for (const lockfile of lockfiles) {
         const parsed = parse(readFileSync(lockfile, { encoding: "utf-8" }));
-        const exists = await packageExists(parsed.pkg);
-        if (!exists) {
+        const exists = await packageExists(parsed.pkg).catch(() => false);
+        if (!exists && parsed.scope !== "KPAK") {
             konsole.dbg("Asserted", parsed.pkg, "no longer is installed. Removed its lockfile.");
             rmSync(join(lockfile, "../"), { recursive: true, force: true });
         } else {
@@ -56,29 +55,28 @@ export async function listPackages(
     if (verbosity === "SILENT") return pkgsToList.sort();
 
     for (const pkg of pkgsToList) {
-        if (!isKbiScope(pkg.scope)) {
-            konsole.suc(
-                pkg.pkg,
-                konsole.clr("grey", "from"),
-                konsole.clr("cyan", pkg.scope),
-                konsole.clr("grey", "since"),
-                konsole.clr("plum", new Date(pkg.installation_ts).toUTCString()),
+        konsole.suc(
+            pkg.pkg,
+            konsole.clr("grey", "from"),
+            konsole.clr("cyan", (pkg.scope as any) === "KPAK" ? "a local Konpak" : pkg.scope),
+            konsole.clr("white", "|"),
+            konsole.clr("grey", "version"),
+            konsole.clr("cyan", pkg.version),
+            konsole.clr("white", "|"),
+            konsole.clr("grey", "installed"),
+            konsole.clr("plum", new Date(pkg.timestamp).toUTCString()),
+        );
+        if (verbosity === "VERBOSE") {
+            konsole.adv("PATH", konsole.clr("brown", pkg.path));
+            konsole.adv(
+                "SHA512",
+                konsole.clr(
+                    "red",
+                    (pkg.scope as any) === "KPAK"
+                        ? "None. Installed from a local Konpak."
+                        : pkg.installation_hash,
+                ),
             );
-            if (verbosity === "VERBOSE") {
-                konsole.adv("PATH", konsole.clr("brown", pkg.path));
-            }
-        } else {
-            konsole.suc(
-                pkg.pkg,
-                konsole.clr("grey", "version"),
-                konsole.clr("cyan", pkg.version),
-                konsole.clr("grey", "since"),
-                konsole.clr("plum", new Date(pkg.installation_ts).toUTCString()),
-            );
-            if (verbosity === "VERBOSE") {
-                konsole.adv("SHA512", konsole.clr("red", pkg.installation_hash));
-                konsole.adv("PATH", konsole.clr("brown", pkg.path));
-            }
         }
     }
 
