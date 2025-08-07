@@ -1,3 +1,5 @@
+import { konsole } from "shared/client";
+
 const platforms = {
     "kbi.exe": "bun-windows-x64",
     "kbi-linux-x64": "bun-linux-x64",
@@ -9,11 +11,16 @@ const platforms = {
     "kbu-linux-arm64": "bun-linux-arm64",
     "kbu-macos-x64": "bun-darwin-x64",
     "kbu-macos-arm64": "bun-darwin-arm64",
+    "kpak-sfx-win64.exe": "bun-windows-x64",
+    "kpak-sfx-linux-x64": "bun-linux-x64",
+    "kpak-sfx-linux-arm64": "bun-linux-arm64",
+    "kpak-sfx-macos-x64": "bun-darwin-x64",
+    "kpak-sfx-macos-arm64": "bun-darwin-arm64",
 };
 
 for (const [name, platform] of Object.entries(platforms)) {
-    console.log(`Building ${name} for platform ${platform}...`);
-    const src = name.startsWith("kbu") ? "../update/src/index.ts" : "./src/index.ts";
+    konsole.adv(`Building ${name} for platform ${platform}...`);
+    const src = name.startsWith("kbu") ? "../update/src/index.ts" : name.startsWith("kpak") ? "../konpak/index.ts" : "./src/index.ts";
     const cmd = [
         "bun",
         "build",
@@ -32,9 +39,9 @@ for (const [name, platform] of Object.entries(platforms)) {
     });
 
     if (exec.exitCode !== 0) {
-        console.error(`Error building ${name}: ${exec.stderr} + ${exec.stdout}.`);
+        konsole.err(`Error building ${name}: ${exec.stderr} + ${exec.stdout}.`);
         process.exit(1);
     } else {
-        console.log(`${name} built successfully.`);
+        konsole.suc(`${name} built successfully.`);
     }
 }

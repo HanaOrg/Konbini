@@ -24,7 +24,6 @@
         "bld": "echo 'Building the CLI...' && bun run bld:cli && echo 'Building the GUI...' && bun run bld:web && echo 'Built it all!'",
         "bld:cli": "cd packages/client && bun build.ts",
         "bld:web": "cd packages/gui && bun run build",
-        "bld:pak": "cd packages/konpak && bun build --compile --minify --sourcemap --outfile ./index.exe --target=bun-windows-x64 ./index.ts",
         "launch:web": "cd packages/gui && bun run prod",
         "launch:web:bld": "bun run bld:web && cd packages/gui && bun run prod",
         "launch:api": "cd packages/data && vercel --prod",
