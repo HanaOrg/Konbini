@@ -20,7 +20,11 @@ const platforms = {
 
 for (const [name, platform] of Object.entries(platforms)) {
     konsole.adv(`Building ${name} for platform ${platform}...`);
-    const src = name.startsWith("kbu") ? "../update/src/index.ts" : name.startsWith("kpak") ? "../konpak/index.ts" : "./src/index.ts";
+    const src = name.startsWith("kbu")
+        ? "../update/src/index.ts"
+        : name.startsWith("kpak")
+          ? "../konpak/index.ts"
+          : "./src/index.ts";
     const cmd = [
         "bun",
         "build",

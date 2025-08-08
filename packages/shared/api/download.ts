@@ -16,16 +16,9 @@ export async function downloadHandler(params: {
             method: "GET",
         });
 
-        if (!res.ok) {
-            throw `HTTP error: ${res.status}`;
-        }
-        if (!res.body) {
-            throw `Missing HTTP response body.`;
-        }
-
-        if (existsSync(filePath)) {
-            rmSync(filePath);
-        }
+        if (!res.ok) throw `HTTP error: ${res.status}`;
+        if (!res.body) throw `Missing HTTP response body.`;
+        if (existsSync(filePath)) rmSync(filePath);
 
         writeFileSync(filePath, new Uint8Array(await res.arrayBuffer()));
     } catch (e) {

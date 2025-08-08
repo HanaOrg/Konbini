@@ -192,13 +192,25 @@ export async function installPackage(
         ) as KONBINI_LOCKFILE;
 
         if (isKbiLockfile(prevLockfile) && prevLockfile.version === remotes.pkgVersion) {
-            konsole.suc(`${pkgName} is already up to date.`);
-            return;
+            if (method === "update") {
+                konsole.suc(`${pkgName} is already up to date.`);
+            }
+            if (method === "install") {
+                const conf = konsole.ask(`${pkgName} is already installed. Reinstall?`);
+                if (!conf) {
+                    konsole.suc("Got it. No actions taken.");
+                    return;
+                } else {
+                    konsole.suc("At your order, captain. Reinstalling this package.");
+                    // mutate this so it works when doing aliased install
+                    method = "reinstall";
+                }
+            }
         }
     }
 
     /** package pathname */
-    const outputPath = join(pkgDir, pkgName);
+    const outputPath = join(pkgDir, kps.value);
     /** hashfile pathname */
     const shaPath = join(pkgDir, FILENAMES.hashfile);
     /** signature pathname */

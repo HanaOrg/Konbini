@@ -6,7 +6,8 @@ import { konsole } from "shared/client";
 import { packageExists } from "../toolkit/aliased";
 import { FILENAMES } from "shared/constants";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
-import { type KPS_SOURCE } from "shared/types/manifest";
+import { parseKps } from "shared/api/manifest";
+import { isKbiScope } from "../../../shared/types/manifest";
 
 function findLockFiles(dir: string, filename: string = FILENAMES.lockfile): string[] {
     const results: string[] = [];
@@ -24,11 +25,7 @@ function findLockFiles(dir: string, filename: string = FILENAMES.lockfile): stri
     return results;
 }
 
-type EXTENDED_LOCKFILE =
-    | (Extract<KONBINI_LOCKFILE, { scope: `kbi:${string}` }> & { path: string })
-    | (Extract<KONBINI_LOCKFILE, { scope: Exclude<KPS_SOURCE, `kbi:${string}`> }> & {
-          path: string;
-      });
+type EXTENDED_LOCKFILE = KONBINI_LOCKFILE & { path: string };
 
 export async function listPackages(
     verbosity: "VERBOSE" | "STANDARD" | "SILENT",
@@ -55,17 +52,25 @@ export async function listPackages(
     if (verbosity === "SILENT") return pkgsToList.sort();
 
     for (const pkg of pkgsToList) {
-        konsole.suc(
+        const stuff = [
             pkg.pkg,
             konsole.clr("grey", "from"),
-            konsole.clr("cyan", (pkg.scope as any) === "KPAK" ? "a local Konpak" : pkg.scope),
-            konsole.clr("white", "|"),
-            konsole.clr("grey", "version"),
-            konsole.clr("cyan", pkg.version),
+            konsole.clr(
+                "cyan",
+                (pkg.scope as any) === "KPAK" ? "a local Konpak" : parseKps(pkg.scope).name,
+            ),
             konsole.clr("white", "|"),
             konsole.clr("grey", "installed"),
             konsole.clr("plum", new Date(pkg.timestamp).toUTCString()),
-        );
+        ];
+        if (isKbiScope(pkg.scope) && (pkg as any).version) {
+            stuff.push(
+                konsole.clr("white", "|"),
+                konsole.clr("grey", "version"),
+                konsole.clr("cyan", (pkg as any).version),
+            );
+        }
+        konsole.suc(...stuff);
         if (verbosity === "VERBOSE") {
             konsole.adv("PATH", konsole.clr("brown", pkg.path));
             konsole.adv(
@@ -74,7 +79,9 @@ export async function listPackages(
                     "red",
                     (pkg.scope as any) === "KPAK"
                         ? "None. Installed from a local Konpak."
-                        : pkg.installation_hash,
+                        : isKbiScope(pkg.scope)
+                          ? (pkg as any).installation_hash
+                          : "None. Installed from an aliased pkg manager.",
                 ),
             );
         }
