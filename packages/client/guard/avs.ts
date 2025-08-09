@@ -25,7 +25,7 @@ function logBlock(title: string) {
 function buildFilenames(scope: KONBINI_PKG_SCOPE, version: string) {
     const n = (s: string) => normalize(s, { preserveCase: true });
     const { src: platform, value: pkgName } = parseKps(scope);
-    const base = `./guard/build/PKG__${n(pkgName)}`;
+    const base = `./build/PKG__${n(pkgName)}`;
     const core = `${base}__SRC__${n(platform)}__V__${n(version)}`;
     return {
         base,
@@ -71,7 +71,7 @@ async function writeFileIfNotExists(filename: string, assetUrl: string) {
 }
 
 function scanBuildFiles() {
-    const matches = globSync("./guard/build/**").filter(
+    const matches = globSync("./build/**").filter(
         (s) => !s.endsWith("/build") && !s.endsWith("\\build"),
     );
     console.debug(matches);
@@ -90,7 +90,7 @@ function scanBuildFiles() {
             lines.find((line) => line.startsWith("Infected files:")) ?? "Infected files: 1"
         ).endsWith("0");
         console.log("[RES]", file, isSafe ? "SAFE." : "INFECTED.");
-        const splitted = file.split("./guard/build/").filter(Boolean).join("").split("__");
+        const splitted = file.split("./build/").filter(Boolean).join("").split("__");
         results.push({
             pkg: splitted[1]!,
             plat: splitted[3]!,
@@ -111,8 +111,8 @@ async function main() {
     const manifests = await fetchAllManifests();
     logSection(`Fetched manifests (${manifests.length})`);
 
-    logSection("Initializing ClamAV Daemon");
-    execSync("sudo systemctl start clamav-daemon");
+    logSection("NOT(TODO) Initializing ClamAV Daemon");
+    // execSync("sudo systemctl start clamav-daemon");
 
     for (const manifest of manifests) {
         try {
@@ -144,7 +144,7 @@ async function main() {
 
                     console.debug("[>>>] REMOTE", r);
 
-                    if (!existsSync("./guard/build")) mkdirSync("./guard/build");
+                    if (!existsSync("./build")) mkdirSync("./build");
 
                     if (
                         GUARD_TEXT.includes(
@@ -164,7 +164,7 @@ async function main() {
             }
 
             if (!f) {
-                console.error("[XXX] No valid assets found for", m.name);
+                console.warn("[XXX] No scannable assets for", m.name);
                 continue;
             }
 

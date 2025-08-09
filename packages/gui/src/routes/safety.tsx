@@ -58,7 +58,7 @@ export default function Safety() {
                 <p>
                     "Don't trust, verify" &mdash;{" "}
                     <b>
-                        we've setup our own local hardware to periodically fetch all binaries server
+                        we've setup our own local hardware to periodically fetch all binaries served
                         through Konbini and test them against antivirus software
                     </b>
                     . We use ClamAV, and a script that's open-source on Konbini's main repository.

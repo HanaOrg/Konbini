@@ -22,7 +22,7 @@ export default function Credits() {
                     <a href="http://github.com/pico190" target="_blank" rel="noopener noreferrer">
                         Pico190
                     </a>{" "}
-                    for helping A LOT with this website's beautiful design. .
+                    for helping A LOT with this website's beautiful design.
                 </p>
                 <hr className="my-6" />
                 <p className="text-xl">

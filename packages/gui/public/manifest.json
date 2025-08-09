@@ -1,0 +1,17 @@
+{
+    "name": "Konbini",
+    "short_name": "Konbini",
+    "start_url": "https://konbini.vercel.app/",
+    "scope": "https://konbini.vercel.app/",
+    "orientation": "landscape",
+    "display": "minimal-ui",
+    "description": "Your convenience store.",
+    "background_color": "#2b1622",
+    "icons": [
+        {
+            "src": "https://konbini.vercel.app/konicon.png",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#c23282"
+}
