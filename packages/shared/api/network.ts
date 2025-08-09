@@ -13,40 +13,40 @@ const cacheAPI = isWeb
           }),
       };
 
+/** 48 hours. */
+const CACHE_DURATION_MS = 48 * 60 * 60 * 1000;
+
 function isNotTooOld(match: Response): boolean {
     // lol
     if (!isWeb) return false;
 
-    const cacheDate = new Date(match.headers.get("x-cache-date") || Date.now());
-    const now = new Date();
+    const header = match.headers.get("x-cache-date");
+    if (!header) return false;
 
-    const expired = now.getTime() - cacheDate.getTime() > 48 * 60 * 60 * 1000; // 48 hours, or two days
+    const cacheDate = new Date(header);
+    if (Number.isNaN(cacheDate.getTime())) return false;
 
-    if (expired) return false;
-
-    return true;
+    return Date.now() - cacheDate.getTime() <= CACHE_DURATION_MS;
 }
 
 /** Safely fetch an API, handling rate limits and caching. */
-export async function fetchAPI(_url: string, method?: "GET"): Promise<Response> {
+export async function fetchAPI(_url: string, method: "GET" | "POST" = "GET"): Promise<Response> {
     // somewhere, idk where, manifests are fetched with a "//" in middle of the URL
     // duplicating requests and cache, as /package/* does fetch without the "//"
     const url = _url.replaceAll("//", "/").replace("https:/", "https://").replace("?ref=main", "");
-
-    // whether to use github API token or not
-    const useBearer = validate(bearer) && url.startsWith("https://api.github");
 
     const cache = await cacheAPI.open("kbi-cache");
     const match = await cache.match(url);
     if (match && isNotTooOld(match)) return match;
 
     const res = await fetch(url, {
-        headers: useBearer
-            ? {
-                  Authorization: bearer!,
-              }
-            : undefined,
-        method: method ?? undefined,
+        headers:
+            validate(bearer) && url.startsWith("https://api.github")
+                ? {
+                      Authorization: bearer,
+                  }
+                : undefined,
+        method,
     });
 
     // two clones because putting the res inside of the cache also counts as using it

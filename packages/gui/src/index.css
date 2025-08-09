@@ -193,6 +193,7 @@ dialog::backdrop {
 .slides {
     flex-direction: column;
     gap: 10px;
+    height: 500px;
 }
 
 /* Next & previous buttons */
@@ -262,8 +263,11 @@ dialog::backdrop {
 }
 
 .slides img {
-    height: 330px;
-    object-fit: scale-down;
+    width: 600px;
+    max-height: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    object-fit: contain;
     border-radius: 10px;
     animation: fade 1s;
 }
