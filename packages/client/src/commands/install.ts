@@ -296,7 +296,6 @@ export async function installPackage(
 
     // if its a new installation, log it
     if (method === "install") {
-        konsole.dbg("Telemetry data written.");
         const res = await logAction({
             app: pkgName,
             version: remotes.pkgVersion,
@@ -306,6 +305,7 @@ export async function installPackage(
             konsole.dbg(
                 "Uhh... You're using Konbini a bit too much. Your actions won't count towards download counts for a while (HTTP 429).",
             );
+        else konsole.dbg("Telemetry data written.");
     }
     konsole.suc(`Thanks for using Konbini, ${manifest.name} was successfully installed. Enjoy!`);
     return;
