@@ -129,8 +129,7 @@ describe("validates and handles IDs", () => {
         expect(locatePkg("org.hana.zaiko")).toEqual({
             manifest:
                 "https://raw.githubusercontent.com/HanaOrg/KonbiniPkgs/main/za/org.hana/zaiko.yaml",
-            manifestPub:
-                "https://github.com/HanaOrg/KonbiniPkgs/blob/main/za/org.hana/zaiko.yaml",
+            manifestPub: "https://github.com/HanaOrg/KonbiniPkgs/blob/main/za/org.hana/zaiko.yaml",
         });
     });
 

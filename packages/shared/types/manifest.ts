@@ -293,11 +293,8 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const m = manifest as Partial<KONBINI_MANIFEST>;
 
     const is = (i: any): i is NonNullable<any> => i !== null && i !== undefined;
-
     const isPlatform = (p: any) => !p || isKps(p);
-
     const isURL = (s?: any) => validate(s) && s.startsWith("https://");
-
     const isImageURL = (s?: any) =>
         validate(s) && s.startsWith("https://") && (s.endsWith(".webp") || s.endsWith(".png"));
 
@@ -355,7 +352,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
             ) &&
             (!m.requirements!.os_ver ||
                 m.requirements!.os_ver == undefined ||
-                Object.entries(m.requirements!.os_ver).every((s) => typeof s === "string")));
+                Object.values(m.requirements!.os_ver).every((s) => typeof s === "string")));
 
     const validType = validate(m.type) && validateAgainst(m.type, ["cli", "gui", "both"]);
 
@@ -377,22 +374,22 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const validDocs = isURL(m.docs) || m.docs === undefined;
 
-    return (
-        validPlatforms &&
-        validStrings &&
-        validRepository &&
-        validLicense &&
-        validIcon &&
-        validMaintainers &&
-        validAuthorId &&
-        validSysReq &&
-        validScreenshots &&
-        validCategories &&
-        validAgeRating &&
-        validHomepage &&
-        validDocs &&
-        validType
-    );
+    return [
+        validPlatforms,
+        validStrings,
+        validRepository,
+        validLicense,
+        validIcon,
+        validMaintainers,
+        validAuthorId,
+        validSysReq,
+        validScreenshots,
+        validCategories,
+        validAgeRating,
+        validHomepage,
+        validDocs,
+        validType,
+    ].every((i) => i == true);
 }
 
 /** Returns a string indicating the age rating of an app.

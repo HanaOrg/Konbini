@@ -49,7 +49,7 @@ export async function retrieveAllApps() {
     for (const point of manifestsTruePoints) {
         manifests.push({
             ...parse(b64toString(point.content)),
-            id: point.name.split(".")[0],
+            id: `${parse(b64toString(point.content)).author}.${point.name.split(".")[0]}`,
         });
     }
 

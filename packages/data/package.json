@@ -9,7 +9,7 @@
     },
     "devDependencies": {
         "@types/geoip-lite": "^1.4.4",
-        "@types/node": "^24.2.0"
+        "@types/node": "^24.2.1"
     },
     "packageManager": "pnpm@10.14.0"
 }

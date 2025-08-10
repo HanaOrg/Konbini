@@ -262,8 +262,8 @@ export async function installPackage(
         );
         konsole.dbg(
             pgpMatch === "error"
-                ? "Note: Its an unknown error that triggered this."
-                : "Note: Its an invalid signature (does NOT match at all) that triggered this.",
+                ? "Note: It's an unknown error that triggered this."
+                : "Note: It's an invalid signature (does NOT match at all) that triggered this.",
         );
         destroyPkg(pkgDir);
         process.exit(1);

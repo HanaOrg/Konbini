@@ -5,8 +5,8 @@ import { normalizer, SRCSET } from "../constants.ts";
 import { isValidManifest, type KONBINI_MANIFEST } from "../types/manifest.ts";
 import type { KONBINI_AUTHOR } from "../types/author.ts";
 
-/** Splits an ID. Throws if it's invalid. */
-function splitID(str: string): {
+/** Parses an ID and returns it. Throws if it's invalid. */
+export function parseID(str: string): {
     /** Prefix. USR or ORG. */
     pref: "usr" | "org";
     /** 2-char long delimiter. */
@@ -36,16 +36,11 @@ function splitID(str: string): {
 }
 
 /**
- * Given a package name, returns the root of its KPI SOURCE route.
+ * Given a package ID, returns an object with its KPI SOURCE routes and public routes to manifest file.
  *
- * @param {string} pkg Package name.
- * @example
- * ```ts
- * // imagine the KonbiniPkgs root URL is "konbini.sample/pkgs/"
- * KPI.locateUsr("Konbini");
- * // returns "https://konbini.samle/pkgs/ko"
- * ```
- * @returns {string} String URL.
+ * @param {string} pkg Package ID.
+ * @param {"R" | "A"} src Defaults to `R` (RAW). Sets the source to either RAW or API.
+ * @returns All URLs.
  */
 export function locatePkg(
     pkg: string,
@@ -56,16 +51,15 @@ export function locatePkg(
     /** Manifest public route, visible from GitHub's UI. */
     manifestPub: string;
 } {
-    const res = splitID(pkg);
+    const res = parseID(pkg);
     if (!res.package) throw `No package provided for supposedly package ID (${pkg})`;
     const root = [
         src === "R" ? SRCSET.PKGsR : SRCSET.PKGsA,
         res.delimiter,
         `${res.pref}.${res.user}`,
     ].join("/");
-    const manifest = [root, res.package+".yaml"].join("/");
-       console.debug("P", manifest);
- const manifestPub = manifest
+    const manifest = [root, res.package + ".yaml"].join("/");
+    const manifestPub = manifest
         .replace("raw.githubusercontent", "github")
         .replace("main", "blob/main");
     return {
@@ -75,16 +69,11 @@ export function locatePkg(
 }
 
 /**
- * Given a user / org name, returns the root of its KPI SOURCE route.
+ * Given a user / org ID, returns an object with its KPI SOURCE routes and public routes to manifest and signature files.
  *
- * @param {string} usr User / org name.
- * @example
- * ```ts
- * // imagine the AuthorsRegistry root URL is "konbini.sample/authors/"
- * KPI.locateUsr("org.hana");
- * // returns "https://konbini.samle/authors/org/ha"
- * ```
- * @returns {string} String URL.
+ * @param {string} usr User / org ID.
+ * @param {"R" | "A"} src Defaults to `R` (RAW). Sets the source to either RAW or API.
+ * @returns All URLs.
  */
 export function locateUsr(
     usr: string,
@@ -99,10 +88,9 @@ export function locateUsr(
     /** Signature public route, visible from GitHub's UI. */
     signaturePub: string;
 } {
-    const res = splitID(usr);
+    const res = parseID(usr);
     const root = [src === "R" ? SRCSET.USRsR : SRCSET.USRsA, res.pref, res.delimiter].join("/");
     const manifest = [root, res.user + ".yaml"].join("/");
-    console.debug("U", manifest);
     const manifestPub = manifest
         .replace("raw.githubusercontent", "github")
         .replace("main", "blob/main");
@@ -123,7 +111,7 @@ export function locateUsr(
  *
  * @async
  * @param {string} packageName
- * @returns {string}
+ * @returns {Promise<KONBINI_MANIFEST>}
  */
 export async function getPkgManifest(
     packageName: string,
@@ -143,7 +131,7 @@ export async function getPkgManifest(
         const packageData = await response.text();
         const packageInfo = parse(packageData);
         if (!isValidManifest(packageInfo)) {
-            throw `The manifest for ${packageName} was invalidated. Its author has made a mistake, somewhere. Tell them to check it.`;
+            throw `The manifest for ${packageName} was invalidated. Its author made a mistake somewhere. Notify them.`;
         }
         return packageInfo;
     }
@@ -151,16 +139,13 @@ export async function getPkgManifest(
     const res = await (await fetchAPI(json.url)).json();
     const packageInfoB = parse(b64toString(res.content));
     if (!isValidManifest(packageInfoB)) {
-        throw `The manifest for ${packageName} was invalidated. Its author has made a mistake, somewhere. Tell them to check it.`;
+        throw `The manifest for ${packageName} was invalidated. Its author made a mistake somewhere. Notify them.`;
     }
     return packageInfoB;
 }
 
 export async function getUsrManifest(authorId: string): Promise<KONBINI_AUTHOR> {
-    const manifestPath = [locateUsr(authorId), `${normalizer(authorId).split(".")[1]}.yaml`].join(
-        "/",
-    );
-    const response = await fetchAPI(manifestPath);
+    const response = await fetchAPI(locateUsr(authorId).manifest);
 
     if (response.status === 404) {
         throw `Author ${authorId} does NOT exist. Perhaps the author misspelled it on their manifest, or something else's not alright.`;

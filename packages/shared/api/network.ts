@@ -31,7 +31,6 @@ function isNotTooOld(match: Response): boolean {
 
 /** Safely fetch an API, handling rate limits and caching. */
 export async function fetchAPI(_url: string, method: "GET" | "POST" = "GET"): Promise<Response> {
-    console.debug(_url)
     // somewhere, idk where, manifests are fetched with a "//" in middle of the URL
     // duplicating requests and cache, as /package/* does fetch without the "//"
     const url = _url.replaceAll("//", "/").replace("https:/", "https://").replace("?ref=main", "");

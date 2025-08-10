@@ -19,6 +19,7 @@ import { konpakFromDir } from "./commands/konpak";
 import { parseArgs } from "util";
 import { Unpack } from "../../konpak/src/unpack";
 import { registerKonpakForWindows } from "../../konpak/src/integrate";
+import { parseID } from "shared/api/core";
 
 const p = getPlatform();
 const platformString =
@@ -78,7 +79,7 @@ async function main() {
             if (len.length > 0)
                 konsole.adv(
                     "Totalling",
-                    len.length,
+                    len.length.toString(),
                     "packages installed.",
                     len.length >= 169 ? "Isn't that a lot?" : "Nice!",
                 );
@@ -107,9 +108,8 @@ async function main() {
             break;
         case "info":
             if (!subcommand) throw "No package or user specified.";
-            if (subcommand.startsWith("usr.") || subcommand.startsWith("org."))
-                await showUserInfo(subcommand);
-            else await showPkgInfo(subcommand);
+            if (parseID(subcommand).package !== null) await showPkgInfo(subcommand);
+            else await showUserInfo(subcommand);
             break;
         case "hash":
             if (!subcommand) throw "No file specified.";
