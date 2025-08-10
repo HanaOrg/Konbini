@@ -4,10 +4,10 @@ import { stringify } from "yaml";
 import { USR_PATH, PKG_PATH, LAUNCHPAD_DIR, LAUNCHPAD_FILE_PATH } from "shared/client";
 import { FILENAMES } from "shared/constants";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
-import type { KONBINI_AUTHOR_ID } from "shared/types/author";
+import type { KONBINI_ID_USR } from "shared/types/author";
 import { getPlatform } from "shared/api/platform";
 
-export function writeLockfile(lockfile: KONBINI_LOCKFILE, pkg: string, author: KONBINI_AUTHOR_ID) {
+export function writeLockfile(lockfile: KONBINI_LOCKFILE, pkg: string, author: KONBINI_ID_USR) {
     const usrDir = USR_PATH({ author });
     const pkgDir = PKG_PATH({ pkg, author });
 
@@ -23,7 +23,7 @@ export function writeLockfile(lockfile: KONBINI_LOCKFILE, pkg: string, author: K
     );
 }
 
-export function writeLaunchpadShortcut(pkg: string, author: KONBINI_AUTHOR_ID, outputPath: string) {
+export function writeLaunchpadShortcut(pkg: string, author: KONBINI_ID_USR, outputPath: string) {
     if (!existsSync(LAUNCHPAD_DIR)) mkdirSync(LAUNCHPAD_DIR);
     writeFileSync(
         LAUNCHPAD_FILE_PATH({

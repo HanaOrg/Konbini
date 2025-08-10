@@ -118,7 +118,7 @@ desc: string
 license: LICENSE
 
 # Author's unique identifier.
-author_id: AUTHOR_ID
+author: AUTHOR_ID
 
 # A list of persons who have contributed to the development of this package.
 maintainers:

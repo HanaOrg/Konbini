@@ -121,17 +121,17 @@ export function installAliasedPackage(params: {
         scope: scope as Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>,
         timestamp: new Date().toString(),
     };
-    writeLockfile(lockfile, pkgName, manifest.author_id);
+    writeLockfile(lockfile, pkgName, manifest.author);
     return "installedOrUpdated";
 }
 
 export async function packageExists(pkg: string): Promise<boolean> {
     const manifest = await getPkgManifest(pkg);
-    const { author_id } = manifest;
+    const { author } = manifest;
     const currentKps = manifest.platforms[getPlatform()];
     const kps = parseKps(currentKps);
     if (kps.src === "kbi") {
-        const pkgPath = PKG_PATH({ author: author_id, pkg });
+        const pkgPath = PKG_PATH({ author, pkg });
         return existsSync(join(pkgPath, kps.value));
     }
     const cmd = ALIASED_CMDs[kps.src]["exists"](kps.value);

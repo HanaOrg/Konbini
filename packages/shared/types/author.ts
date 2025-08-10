@@ -61,10 +61,12 @@ export type KONBINI_AUTHOR = PERSON | ORGANIZATION;
  *
  * The prefix is `org.` for organizations and `usr.` for persons.
  */
-export type KONBINI_AUTHOR_ID = `${"org" | "usr"}.${string}`;
+export type KONBINI_ID_USR = `${"org" | "usr"}.${string}`;
+
+export type KONBINI_ID_PKG = `${KONBINI_ID_USR}.${string}`;
 
 /** Validates the given Konbini author ID. */
-export function isAuthorId(id: any): id is KONBINI_AUTHOR_ID {
+export function isAuthorId(id: any): id is KONBINI_ID_USR {
     return (
         validate(id) &&
         (id.startsWith("org.") || id.startsWith("usr.")) &&

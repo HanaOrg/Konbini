@@ -8,7 +8,7 @@ import { humanLicense } from "shared/types/manifest";
 
 export async function showPkgInfo(pkg: string) {
     const manifest = await getPkgManifest(pkg);
-    const author = await getUsrManifest(manifest.author_id);
+    const author = await getUsrManifest(manifest.author);
 
     const name = `${konsole.clr("deeppink", manifest.name)} · ${konsole.clr("pink", manifest.slogan)}`;
     const categories = konsole.clr(
@@ -17,7 +17,7 @@ export async function showPkgInfo(pkg: string) {
             ? "Categories: " + manifest.categories.join(", ")
             : "Unspecified categories",
     );
-    const authors = `${konsole.clr("grey", manifest.license ? humanLicense(manifest.license) : "Unspecified license")} · Brought to you by ${author.name}${author.verified ? konsole.clr("deeppink", " [ √ ]", true) : ""} (${konsole.clr("lightgray", manifest.author_id)})`;
+    const authors = `${konsole.clr("grey", manifest.license ? humanLicense(manifest.license) : "Unspecified license")} · Brought to you by ${author.name}${author.verified ? konsole.clr("deeppink", " [ √ ]", true) : ""} (${konsole.clr("lightgray", manifest.author)})`;
     const maintainers =
         manifest.maintainers && manifest.maintainers.length > 0
             ? `${konsole.clr("lightgray", "Maintained by")} ${manifest.maintainers
@@ -57,7 +57,7 @@ export async function showPkgInfo(pkg: string) {
             .join("\n"),
     );
     console.log("");
-    if (existsSync(PKG_PATH({ pkg, author: manifest.author_id })))
+    if (existsSync(PKG_PATH({ pkg, author: manifest.author })))
         konsole.suc("Package is installed.");
     else konsole.dbg("Package is not installed.");
     console.log("");

@@ -1,4 +1,4 @@
-import { isOrganization, type KONBINI_AUTHOR, type KONBINI_AUTHOR_ID } from "shared/types/author";
+import { isOrganization, type KONBINI_AUTHOR, type KONBINI_ID_USR } from "shared/types/author";
 import Badge from "../badge";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 import type { MANIFEST_WITH_ID } from "../../routes/home";
@@ -10,17 +10,11 @@ export default function PublisherDetails({
     usr,
     apps,
 }: {
-    authorId: KONBINI_AUTHOR_ID;
+    authorId: KONBINI_ID_USR;
     usr: KONBINI_AUTHOR;
     apps: null | MANIFEST_WITH_ID[];
 }) {
-    const manifestUrl =
-        locateUsr(authorId)
-            .replace("raw.githubusercontent", "github")
-            .replace("main", "blob/main") +
-        "/" +
-        authorId.split(".")[1] +
-        ".yaml";
+    const manifestUrl = locateUsr(authorId).manifestPub;
 
     const org = isOrganization(usr);
     const orgStr = org

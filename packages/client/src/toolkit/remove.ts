@@ -44,7 +44,7 @@ export async function removePackage(pkg: string) {
 
     const m = await getPkgManifest(pkg);
     konsole.suc("At your orders. Consider them out.");
-    const removePath = PKG_PATH({ pkg, author: m.author_id });
+    const removePath = PKG_PATH({ pkg, author: m.author });
     const lockfile: KONBINI_LOCKFILE = parseYaml(
         readFileSync(join(removePath, FILENAMES.lockfile), { encoding: "utf-8" }),
     );
@@ -55,7 +55,7 @@ export async function removePackage(pkg: string) {
     }
     konsole.dbg(`Applying rm -rf at ${removePath}.`);
     rmSync(removePath, { force: true, recursive: true });
-    rmSync(LAUNCHPAD_FILE_PATH({ pkg, author: m.author_id }), { force: true, recursive: true });
+    rmSync(LAUNCHPAD_FILE_PATH({ pkg, author: m.author }), { force: true, recursive: true });
 
     await logAction({
         app: pkg,

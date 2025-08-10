@@ -7,7 +7,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { prompt, promptBinary, promptScope } from "../toolkit/input";
 import type { KONBINI_MANIFEST, REPOSITORY_SCOPE } from "shared/types/manifest";
-import type { KONBINI_AUTHOR_ID } from "shared/types/author";
+import type { KONBINI_ID_USR } from "shared/types/author";
 
 export async function generateManifest() {
     konsole.suc(
@@ -35,7 +35,7 @@ export async function generateManifest() {
     );
     konsole.suc("Great slogan!");
 
-    const app_type: "cli" | "gui" | "both" = (
+    const type: "cli" | "gui" | "both" = (
         await prompt(
             "[ · ] Is your app a CLI, a GUI (graphical app), or can it be used in BOTH manners?",
             (val) => validate(val) && validateAgainst(val.toLowerCase(), ["cli", "gui", "both"]),
@@ -44,14 +44,14 @@ export async function generateManifest() {
     ).toLowerCase() as "cli" | "gui" | "both";
     konsole.suc("Nice.");
 
-    const author_id: KONBINI_AUTHOR_ID = (await prompt(
+    const author: KONBINI_ID_USR = (await prompt(
         "[ · ] Your author ID? (e.g. usr.john-doe) (be sure it exists!)",
         (val) =>
             validate(val) &&
             val.split(".").length === 2 &&
             validateAgainst(val.split(".")[0], ["usr", "org"]),
         'Whoops, that ID is not valid. Enter a valid string starting with "usr." or "org.".',
-    )) as KONBINI_AUTHOR_ID;
+    )) as KONBINI_ID_USR;
     konsole.suc("Nice.");
 
     const money: boolean = await promptBinary(
@@ -101,8 +101,8 @@ export async function generateManifest() {
 
     const manifest: KONBINI_MANIFEST = {
         name,
-        app_type,
-        author_id,
+        type,
+        author,
         slogan,
         desc,
         telemetry,

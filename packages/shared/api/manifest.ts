@@ -95,8 +95,7 @@ export function parseKps(scope: UnknownString): PARSED_KPS | PARSED_SPECIFIC_KPS
 
 /** Constructor for parsed Konbini Package Scopes */
 export function constructKps(scope: PARSED_KPS | PARSED_SPECIFIC_KPS): KONBINI_PKG_SCOPE {
-    if (isSpecificParsedKps(scope)) {
+    if (isSpecificParsedKps(scope))
         return `${scope.src}:${scope.value}@${scope.at.url ?? "-"}${scope.at.name ? `#${scope.at.name}` : ""}`;
-    }
     return `${scope.src}:${scope.value}`;
 }

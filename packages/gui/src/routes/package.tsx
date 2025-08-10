@@ -33,17 +33,12 @@ export default function PackagePage() {
     });
 
     const route = window.location.pathname.split("/package/").filter(Boolean)[0]!;
-    const manifestUrl =
-        locatePkg(route).replace("raw.githubusercontent", "github").replace("main", "blob/main") +
-        "/" +
-        route +
-        ".yaml";
 
     useEffect(() => {
         async function getApp() {
             try {
                 const manifest = await getPkgManifest(route, true);
-                const pkgAuthor = await getUsrManifest(manifest.author_id);
+                const pkgAuthor = await getUsrManifest(manifest.author);
                 const downloads = await getDownloads(route);
                 setAuthor(pkgAuthor);
                 setApp(manifest);
@@ -120,8 +115,8 @@ export default function PackagePage() {
                         <div className="flex flex-row gap-1">
                             <Badge color="#ffffff1a">
                                 By{" "}
-                                <a href={`https://konbini.vercel.app/author/${app.author_id}`}>
-                                    {app.author_id}
+                                <a href={`https://konbini.vercel.app/author/${app.author}`}>
+                                    {app.author}
                                 </a>
                             </Badge>
                             {author.verified && <Badge color="#c232826a">Verified developer</Badge>}
@@ -188,16 +183,12 @@ export default function PackagePage() {
                         __html: DOMPurify.sanitize(micromark(app.desc.replaceAll("\\n", "\n"))),
                     }}
                 />
-                {app.screenshot_urls && app.screenshot_urls.length > 0 && (
-                    <ScreenshotSlideshow ss={app.screenshot_urls} />
-                )}
+                {app.images && app.images.length > 0 && <ScreenshotSlideshow ss={app.images} />}
                 <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">Platform support</h2>
                 <PlatformSupport platforms={app.platforms} />
-                <PackageDetails app={app} manifestUrl={manifestUrl} />
-                {app.sys_requirements && (
-                    <SystemRequirementsTable requirements={app.sys_requirements} />
-                )}
-                <PublisherDetails authorId={app.author_id} usr={author} apps={null} />
+                <PackageDetails app={app} manifestUrl={locatePkg(route).manifestPub} />
+                {app.requirements && <SystemRequirementsTable requirements={app.requirements} />}
+                <PublisherDetails authorId={app.author} usr={author} apps={null} />
                 {app.maintainers && (
                     <MaintainersList maintainers={app.maintainers} author={author.name} />
                 )}

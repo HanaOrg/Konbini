@@ -2,7 +2,7 @@ import { useEffect, useState } from "preact/hooks";
 import { getUsrManifest } from "shared/api/core";
 import Nav from "../components/nav";
 import Footer from "../components/footer";
-import { type KONBINI_AUTHOR, type KONBINI_AUTHOR_ID } from "shared/types/author";
+import { type KONBINI_AUTHOR, type KONBINI_ID_USR } from "shared/types/author";
 import PublisherDetails from "../components/package/publisher-details";
 import { retrieveAllApps, type MANIFEST_WITH_ID } from "./home";
 
@@ -19,7 +19,7 @@ export default function AuthorPage() {
                 const pkgAuthor = await getUsrManifest(route);
                 setAuthor(pkgAuthor);
                 const apps = await retrieveAllApps();
-                const filtered = apps.filter((a) => a.author_id == route);
+                const filtered = apps.filter((a) => a.author == route);
                 setApps(filtered);
                 setLoading(false);
             } catch (error) {
@@ -56,7 +56,7 @@ export default function AuthorPage() {
                 {author.biography && (
                     <p className="text-xl italic opacity-[0.9] text-[#FFF]">{author.biography}</p>
                 )}
-                <PublisherDetails authorId={route as KONBINI_AUTHOR_ID} usr={author} apps={apps} />
+                <PublisherDetails authorId={route as KONBINI_ID_USR} usr={author} apps={apps} />
             </div>
             <Footer />
         </>

@@ -1,6 +1,6 @@
 import { isValidEmail, validate, validateAgainst } from "@zakahacecosas/string-utils";
 import { parseKps } from "../api/manifest.ts";
-import type { KONBINI_AUTHOR_ID } from "./author.ts";
+import type { KONBINI_ID_USR } from "./author.ts";
 
 export const CATEGORIES = [
     "SYSTEM_UTIL",
@@ -175,7 +175,7 @@ export interface KONBINI_MANIFEST {
      */
     repository: REPOSITORY_SCOPE | null;
     /** Whether the app is a CLI, a graphical app, or has support for both things. */
-    app_type: "cli" | "gui" | "both";
+    type: "cli" | "gui" | "both";
     /** Supported platforms for the package, with their Konbini Package Scope (KPS). */
     platforms: {
         /** 64-bit Linux KPS. */
@@ -198,7 +198,7 @@ export interface KONBINI_MANIFEST {
     /** Package license. */
     license: LICENSE | null;
     /** Author's unique identifier. */
-    author_id: KONBINI_AUTHOR_ID;
+    author: KONBINI_ID_USR;
     /** Package's logo, to be displayed in the Konbini UI. Only WEBP or PNG are allowed. */
     icon?: `https://${string}.${"webp" | "png"}` | null;
     /** A list of persons who have contributed to the development of this package. */
@@ -219,16 +219,20 @@ export interface KONBINI_MANIFEST {
     /** Terms and conditions of the package, if any. */
     terms?: `https://${string}`;
     /** System requirements, if any. */
-    sys_requirements?: {
-        /** Minimal OS version number, if any. In Linux, any string is valid (e.g. "Ubuntu 22.04 or later"). */
-        os_ver?: `win=${string | number | "x"},mac=${string | number | "x"},lin=${string | "x"}`;
+    requirements?: {
+        /** Minimal OS version, if any. */
+        os_ver?: {
+            win?: string;
+            mac?: string;
+            lin?: string;
+        };
         /** Minimal RAM. */
         ram_mb?: number;
         /** Minimal storage. */
         disk_mb?: number;
     };
     /** App screenshots to be displayed in the Konbini UI. Only WEBP is supported. */
-    screenshot_urls?: {
+    images?: {
         text: string;
         link: `https://${string}.${"webp" | "png"}`;
     }[];
@@ -308,9 +312,9 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const validStrings = [m.name, m.slogan, m.desc].every(validate);
 
-    const splitAuthor = (m.author_id || "").split(".");
+    const splitAuthor = (m.author || "").split(".");
     const validAuthorId =
-        validate(m.author_id) &&
+        validate(m.author) &&
         splitAuthor.length == 2 &&
         validateAgainst(splitAuthor[0], ["org", "usr"]) &&
         validate(splitAuthor[1]);
@@ -344,21 +348,20 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
             ));
 
     const validSysReq =
-        !is(m.sys_requirements) ||
-        (is(m.sys_requirements) &&
-            [m.sys_requirements!.ram_mb, m.sys_requirements!.disk_mb].every(
+        !is(m.requirements) ||
+        (is(m.requirements) &&
+            [m.requirements!.ram_mb, m.requirements!.disk_mb].every(
                 (s) => !s || s == undefined || typeof s == "number",
             ) &&
-            (!m.sys_requirements!.os_ver ||
-                m.sys_requirements!.os_ver == undefined ||
-                parseOsVer(m.sys_requirements!.os_ver) !== "Invalid OS requirements."));
+            (!m.requirements!.os_ver ||
+                m.requirements!.os_ver == undefined ||
+                Object.entries(m.requirements!.os_ver).every((s) => typeof s === "string")));
 
-    const validType = validate(m.app_type) && validateAgainst(m.app_type, ["cli", "gui", "both"]);
+    const validType = validate(m.type) && validateAgainst(m.type, ["cli", "gui", "both"]);
 
     const validScreenshots =
-        m.screenshot_urls === undefined ||
-        (Array.isArray(m.screenshot_urls) &&
-            m.screenshot_urls.every((i) => isImageURL(i.link) && validate(i.text)));
+        m.images === undefined ||
+        (Array.isArray(m.images) && m.images.every((i) => isImageURL(i.link) && validate(i.text)));
 
     const validCategories = Array.isArray(m.categories) && m.categories.every(validate);
 
@@ -407,43 +410,6 @@ export function getAgeRating(data: AGE_RATING): "everyone" | "mid" | "high" | "v
     if (data.money) return "high";
     if (data.social) return "mid";
     return "everyone";
-}
-
-/** Parses the os_ver string from manifest files. */
-export function parseOsVer(
-    ver: string,
-): { win: string | null; mac: string | null; lin: string | null } | "Invalid OS requirements." {
-    const splitted = ver.split(",");
-
-    // note: this could (and should) be stricter
-
-    try {
-        const winContent = (splitted[0] ?? "win=x").split("win=")[1]!;
-        const macContent = (splitted[1] ?? "mac=x").split("mac=")[1]!;
-        const linContent = (splitted[2] ?? "lin=x").split("lin=")[1]!;
-
-        const win =
-            winContent === "x"
-                ? null
-                : isNaN(Number(winContent))
-                  ? winContent
-                  : `Windows ${winContent} or later`;
-        const mac =
-            macContent === "x"
-                ? null
-                : isNaN(Number(macContent))
-                  ? macContent
-                  : `macOS ${macContent} or later`;
-        const lin = linContent === "x" ? null : linContent;
-
-        return {
-            win,
-            mac,
-            lin,
-        };
-    } catch {
-        return "Invalid OS requirements.";
-    }
 }
 
 export function isRepositoryScope(scope: any): scope is REPOSITORY_SCOPE {

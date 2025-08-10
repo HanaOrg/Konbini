@@ -35,7 +35,7 @@ export function Unpack(filepath: string | Buffer): void {
 
     const manifest: KONBINI_MANIFEST = parse(_manifest.getData().toString("utf-8"));
 
-    const out = PKG_PATH({ pkg: appId, author: manifest.author_id });
+    const out = PKG_PATH({ pkg: appId, author: manifest.author });
 
     zip.extractAllTo(out, true);
 
@@ -59,13 +59,13 @@ export function Unpack(filepath: string | Buffer): void {
         appId,
         version,
         appName: manifest.name,
-        publisher: manifest.author_id,
+        publisher: manifest.author,
         manifest,
     };
 
     const installPath = PKG_PATH({
         pkg: appId,
-        author: manifest.author_id,
+        author: manifest.author,
     });
 
     if (platform === "linux") {
@@ -75,7 +75,7 @@ export function Unpack(filepath: string | Buffer): void {
             // in case "both", we can assume the user prefers a GUI
             // otherwise they wouldn't click a UI icon
             // thus check just for "cli"
-            isCli: manifest.app_type === "cli",
+            isCli: manifest.type === "cli",
             comment: manifest.slogan,
             categories: manifest.categories
                 .map(String.prototype.toLowerCase)

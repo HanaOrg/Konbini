@@ -5,6 +5,36 @@ import { normalizer, SRCSET } from "../constants.ts";
 import { isValidManifest, type KONBINI_MANIFEST } from "../types/manifest.ts";
 import type { KONBINI_AUTHOR } from "../types/author.ts";
 
+/** Splits an ID. Throws if it's invalid. */
+function splitID(str: string): {
+    /** Prefix. USR or ORG. */
+    pref: "usr" | "org";
+    /** 2-char long delimiter. */
+    delimiter: string;
+    /** Author name. */
+    user: string;
+    /** If this is a pkg ID, the package. Null otherwise. */
+    package: string | null;
+} {
+    // split scope
+    const scopes = normalizer(str).split(".");
+    if (scopes.length !== 2 && scopes.length !== 3)
+        throw `Invalid author/package ID length (${scopes.length} && ${scopes})`;
+    if (!validateAgainst(scopes[0], ["usr", "org"]))
+        throw `Invalid author/package ID prefix (${scopes})`;
+    if (!scopes[1]) throw `No 2nd part of author/package ID (${scopes}).`;
+    // get the two 1st letters to locate its directory
+    const delimiter = (scopes[2] ?? scopes[1]).slice(0, 2);
+    // (can't be too long, we sliced it lol)
+    if (delimiter.length !== 2) throw "Delimiter too short.";
+    return {
+        pref: scopes[0],
+        delimiter,
+        user: scopes[1],
+        package: scopes[2] ?? null,
+    };
+}
+
 /**
  * Given a package name, returns the root of its KPI SOURCE route.
  *
@@ -17,10 +47,31 @@ import type { KONBINI_AUTHOR } from "../types/author.ts";
  * ```
  * @returns {string} String URL.
  */
-export function locatePkg(pkg: string, src: "R" | "A" = "R"): string {
-    const SOURCE = src === "R" ? SRCSET.PKGsR : SRCSET.PKGsA;
-    // get the two 1st letters to locate its directory
-    return [SOURCE, normalizer(pkg).slice(0, 2)].join("/");
+export function locatePkg(
+    pkg: string,
+    src: "R" | "A" = "R",
+): {
+    /** Manifest `R` or `A` route. */
+    manifest: string;
+    /** Manifest public route, visible from GitHub's UI. */
+    manifestPub: string;
+} {
+    const res = splitID(pkg);
+    if (!res.package) throw `No package provided for supposedly package ID (${pkg})`;
+    const root = [
+        src === "R" ? SRCSET.PKGsR : SRCSET.PKGsA,
+        res.delimiter,
+        `${res.pref}.${res.user}`,
+    ].join("/");
+    const manifest = [root, res.package+".yaml"].join("/");
+       console.debug("P", manifest);
+ const manifestPub = manifest
+        .replace("raw.githubusercontent", "github")
+        .replace("main", "blob/main");
+    return {
+        manifest,
+        manifestPub,
+    };
 }
 
 /**
@@ -35,18 +86,36 @@ export function locatePkg(pkg: string, src: "R" | "A" = "R"): string {
  * ```
  * @returns {string} String URL.
  */
-export function locateUsr(usr: string): string {
-    // split scope
-    const scopes = normalizer(usr).split(".");
-    if (scopes.length !== 2) {
-        throw `Invalid author ID length (${scopes.length} && ${scopes})`;
-    }
-    if (!validateAgainst(scopes[0], ["usr", "org"])) {
-        throw `Invalid author ID prefix (${scopes})`;
-    }
-    // get the two 1st letters to locate its directory
-    const prefix = normalizer(usr).split(".")[1]!.slice(0, 2);
-    return [SRCSET.USRsR, scopes[0], prefix].join("/");
+export function locateUsr(
+    usr: string,
+    src: "R" | "A" = "R",
+): {
+    /** Manifest `R` or `A` route. */
+    manifest: string;
+    /** Manifest public route, visible from GitHub's UI. */
+    manifestPub: string;
+    /** Signature `R` or `A` route. */
+    signature: string;
+    /** Signature public route, visible from GitHub's UI. */
+    signaturePub: string;
+} {
+    const res = splitID(usr);
+    const root = [src === "R" ? SRCSET.USRsR : SRCSET.USRsA, res.pref, res.delimiter].join("/");
+    const manifest = [root, res.user + ".yaml"].join("/");
+    console.debug("U", manifest);
+    const manifestPub = manifest
+        .replace("raw.githubusercontent", "github")
+        .replace("main", "blob/main");
+    const signature = [root, res.user + ".asc"].join("/");
+    const signaturePub = signature
+        .replace("raw.githubusercontent", "github")
+        .replace("main", "blob/main");
+    return {
+        manifest,
+        manifestPub,
+        signature,
+        signaturePub,
+    };
 }
 
 /**
@@ -60,10 +129,7 @@ export async function getPkgManifest(
     packageName: string,
     useApi: boolean = false,
 ): Promise<KONBINI_MANIFEST> {
-    const manifestPath = [
-        locatePkg(packageName, useApi ? "A" : "R"),
-        `${normalizer(packageName)}.yaml`,
-    ].join("/");
+    const manifestPath = locatePkg(packageName, useApi ? "A" : "R").manifest;
     const response = await fetchAPI(manifestPath, "GET");
 
     if (response.status === 404) {

@@ -1,33 +1,32 @@
-import { parseOsVer, type KONBINI_MANIFEST } from "shared/types/manifest";
+import { type KONBINI_MANIFEST } from "shared/types/manifest";
 
 export default function SystemRequirementsTable({
     requirements,
 }: {
-    requirements: KONBINI_MANIFEST["sys_requirements"];
+    requirements: KONBINI_MANIFEST["requirements"];
 }) {
     const req = requirements!;
-    const osVer = req.os_ver ? parseOsVer(req.os_ver) : null;
 
     return (
         <>
             <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">System requirements</h2>
             <div className="flex flex-row gap-12">
-                {req.os_ver && osVer && osVer !== "Invalid OS requirements." && (
+                {req.os_ver && (
                     <div className="flex flex-col gap-1">
                         <b className="mb-2">OS</b>
-                        {osVer.win && (
+                        {req.os_ver.win && (
                             <p>
-                                <b>Windows</b> | {osVer.win}
+                                <b>Windows</b> | {req.os_ver.win}
                             </p>
                         )}
-                        {osVer.mac && (
+                        {req.os_ver.mac && (
                             <p>
-                                <b>macOS</b> | {osVer.mac}
+                                <b>macOS</b> | {req.os_ver.mac}
                             </p>
                         )}
-                        {osVer.lin && (
+                        {req.os_ver.lin && (
                             <p>
-                                <b>Linux</b> | {osVer.lin}
+                                <b>Linux</b> | {req.os_ver.lin}
                             </p>
                         )}
                     </div>
