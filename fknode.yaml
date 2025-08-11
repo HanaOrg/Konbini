@@ -1,6 +1,5 @@
 destroy:
     targets:
-        - "./packages/client/guard/build/"
         - "./packages/client/dist/"
         - "./packages/gui/dist/"
     intensities:

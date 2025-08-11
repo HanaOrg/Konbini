@@ -18,7 +18,7 @@ export function about() {
         `Founded, developed, and maintained by ${konsole.clr("gray", "https://")}${konsole.clr("lime", "ZakaHaceCosas")}${konsole.clr("gray", ".github.io/")}.`,
     );
     konsole.adv(
-        'A huge "thank you" to my friends pico190, MrSerge01 and dimkauzh for helping me out.',
+        'A huge "thank you" to my friends @pico190, @MrSerge01 and @dimkauzh for helping me out.',
     );
     konsole.que("I like this and want to help/I hate this and want to fix it - Can I contribute?");
     konsole.adv("Absolutely! Konbini is open source and welcomes any PRs and contributions.");

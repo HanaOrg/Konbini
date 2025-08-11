@@ -75,6 +75,7 @@ export function konbiniHash(fileName: string): string {
     // hash it
     return hasher.digest("base64url");
 }
+
 /**
  * Asserts integrity of a file against a provided `base64url`-encoded **SHA3-512** hash.
  *

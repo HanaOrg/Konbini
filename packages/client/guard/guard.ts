@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { globSync } from "glob";
 import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
@@ -10,11 +10,11 @@ import { fetchAPI } from "shared/api/network";
 import type { MANIFEST_WITH_ID } from "../../gui/src/routes/home";
 import { downloadHandler } from "shared/api/download";
 import type { KONBINI_ID_PKG } from "shared/types/author";
-import { assertIntegrityPGP } from "shared/security";
+import { assertIntegrityPGP, assertIntegritySHA } from "shared/security";
 import { locateUsr } from "shared/api/core";
+import type { KONBINI_HASHFILE } from "shared/types/files";
 
-const GUARD_SCAN = true;
-const GUARD_DATA = true;
+const SCAN = true;
 
 function log(...a: any[]): void {
     console.log(...a);
@@ -38,8 +38,8 @@ function logBlock(title: string) {
 function buildFilenames(scope: KONBINI_PKG_SCOPE, id: KONBINI_ID_PKG, version: string, os: string) {
     const n = (s: string) => normalize(s, { preserveCase: true });
     const { value } = parseKps(scope);
-    const base = `./build/${id}_v${n(version)}_${os}`;
-    const core = `${base}_${value}`;
+    const base = `./build/${id}_v${n(version)}`;
+    const core = `${base}_${os}_${value}`;
     return {
         base,
         core,
@@ -88,7 +88,7 @@ async function fetchIfNotExists(filename: string, assetUrl: string) {
     writeFileSync(filename, new Uint8Array(arrayBuffer));
 }
 
-async function scanBuildFiles() {
+async function scanFiles() {
     const matches = globSync("./build/*").filter(
         (s) => !s.endsWith(".md") && !s.endsWith(".yaml") && !s.endsWith(".asc") && existsSync(s),
     );
@@ -96,10 +96,17 @@ async function scanBuildFiles() {
     const results: { pkg: string; ver: string; plat: string; res: string }[] = [];
     for (const file of matches) {
         log("[???]", file);
-        const [pkg, ver, plat] = file.replace("build/", "").split("_") as [string, string, string];
+        const [pkg, ver, plat] = file.replace("build/", "").split("_") as [
+            string,
+            string,
+            keyof KONBINI_HASHFILE,
+        ];
         const result = execSync("clamdscan --log=./CLAMAV.log " + file);
         const user = pkg.split(".").slice(0, 2).join(".");
         const userAscPath = "build/" + user + ".asc";
+        const pkgHashfile = parse(
+            readFileSync("build/" + pkg + "_" + ver + ".hash.yaml", "utf-8"),
+        ) as KONBINI_HASHFILE;
         const lines = result.toString().split("\n");
         const safety = (
             lines.find((line) => line.startsWith("Infected files:")) ?? "Infected files: 1"
@@ -115,7 +122,8 @@ async function scanBuildFiles() {
             })) === "valid"
                 ? "AUTHENTIC"
                 : "UNAUTHENTIC";
-        const res = [safety, signature].join("|");
+        const hash = assertIntegritySHA(file, pkgHashfile[plat] ?? "") ? "INTEGRAL" : "CORRUPTED";
+        const res = [safety, signature, hash].join("|");
         log("[RES]", file, res);
         results.push({
             pkg,
@@ -132,8 +140,8 @@ async function main() {
 
     logBlock(
         [
-            GUARD_DATA ? "WILL     UPDATE KData" : "WILL NOT UPDATE KData",
-            GUARD_SCAN ? "WILL     SCAN WITH ClamAV" : "WILL NOT SCAN WITH ClamAV",
+            "WILL     UPDATE KData",
+            SCAN ? "WILL     SCAN WITH ClamAV" : "WILL NOT SCAN WITH ClamAV",
         ].join("\n"),
     );
 
@@ -143,7 +151,7 @@ async function main() {
     const manifests = await fetchAllManifests();
     logSection(`Total manifests: (${manifests.length})`);
 
-    if (GUARD_SCAN) {
+    if (SCAN) {
         logSection("Initializing ClamAV Daemon");
         execSync("sudo systemctl start clamav-daemon");
 
@@ -153,6 +161,8 @@ async function main() {
         logSection("Clearing guard.txt");
         writeFileSync(GUARD_FILE, `KGuard ${new Date()} | Keeping Konbini safe\n`);
     }
+
+    if (!existsSync("./build")) mkdirSync("build");
 
     for (const manifest of manifests) {
         try {
@@ -164,7 +174,7 @@ async function main() {
                 writeFileSync(`./build/${manifest.id}.yaml`, stringify(manifest));
             if (!existsSync(`./build/${manifest.id}.changes.md`)) {
                 try {
-                    // TODO: support gitlab, codeberg, and properly detect main branch
+                    // TODO: support GitLab, CodeBerg, and properly detect main branch
                     // use manifest to detect platform
                     // use "default_branch: x" in JSON from these endpoints:
                     // GH - GET /repos/:owner/:repo
@@ -213,6 +223,7 @@ async function main() {
 
                     await fetchIfNotExists(files.core, remotes.coreAsset);
                     await fetchIfNotExists(files.core + ".asc", remotes.ascAsset);
+                    await fetchIfNotExists(files.base + ".hash.yaml", remotes.shaAsset);
                 } catch (error) {
                     err("[XXX] Error downloading assets", error);
                 }
@@ -234,10 +245,10 @@ async function main() {
         }
     }
 
-    if (GUARD_SCAN) {
+    if (SCAN) {
         log("[>>>] SCANNING ASSETS");
 
-        const result = await scanBuildFiles();
+        const result = await scanFiles();
         result.forEach((i) => {
             writeFileSync(GUARD_FILE, `${i.pkg}@${i.ver}@${i.plat}=${i.res}\n`, {
                 encoding: "utf-8",

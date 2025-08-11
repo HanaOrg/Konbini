@@ -26,8 +26,7 @@
         "bld:web": "cd packages/gui && bun run build",
         "launch:web": "cd packages/gui && bun run prod",
         "launch:web:bld": "bun run bld:web && cd packages/gui && bun run prod",
-        "launch:api": "cd packages/data && vercel --prod",
-        "guard": "cd packages/client/guard && bun guard.ts"
+        "launch:api": "cd packages/data && vercel --prod"
     },
     "dependencies": {
         "eslint": "^9.33.0",
