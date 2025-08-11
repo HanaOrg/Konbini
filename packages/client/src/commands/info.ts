@@ -55,12 +55,12 @@ export async function showPkgInfo(pkg: string) {
         ]
             .filter(Boolean)
             .join("\n"),
+        "\n",
     );
-    console.log("");
     if (existsSync(PKG_PATH({ pkg, author: manifest.author })))
-        konsole.suc("Package is installed.");
-    else konsole.dbg("Package is not installed.");
-    console.log("");
+        konsole.suc("Package is installed.\n");
+    else konsole.dbg("Package is not installed.\n");
+
     console.log(
         truncate(
             manifest.desc

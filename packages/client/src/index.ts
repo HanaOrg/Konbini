@@ -134,17 +134,17 @@ async function main() {
         case "konpak":
             if (!subcommand)
                 throw "No directory specified. Specify one.\nTo learn more, run 'learn konpak'.";
-            const { platform, id, binary, version, icon } = parseArgs({
+            const { platform, id, binary, ver, icon } = parseArgs({
                 args: args.slice(2),
                 options: {
                     platform: { type: "string" },
                     id: { type: "string" },
                     binary: { type: "string" },
-                    version: { type: "string" },
+                    ver: { type: "string" },
                     icon: { type: "string" },
                 },
             }).values;
-            await konpakFromDir(subcommand, platform, id, binary, version, icon);
+            await konpakFromDir(subcommand, platform, id, binary, ver, icon);
             break;
         case "unpack":
             if (!subcommand) throw "No filepath specified!";
@@ -160,8 +160,8 @@ async function main() {
         case "--version":
         case "version":
         case "v":
-            console.log("Konbini CLI", version, "for", platformString);
-            console.log(
+            konsole.adv("Konbini CLI", version, "for", platformString);
+            konsole.adv(
                 "Written in BunJS, version",
                 Bun.version,
                 "(running",

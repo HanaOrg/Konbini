@@ -22,7 +22,7 @@ export async function assertIntegrityPGP(params: {
     // load data
     const publicKeyArmored = readFileSync(authorAscFilePath, "utf8");
     const signatureArmored = readFileSync(executableAscFilePath, "utf8");
-    const signedBinary = readFileSync(executableFilePath, null); // No encoding
+    const signedBinary = readFileSync(executableFilePath, null); // no encoding
 
     const publicKey = await readKey({ armoredKey: publicKeyArmored });
     const signature = await readSignature({ armoredSignature: signatureArmored });

@@ -1,68 +1,86 @@
-// this file is a bit of a mess you know
-
 import { execSync } from "child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { globSync } from "glob";
-import { parse } from "yaml";
+import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
-import { isKbiScope, type KONBINI_MANIFEST, type KONBINI_PKG_SCOPE } from "shared/types/manifest";
+import { isKbiScope, type KONBINI_PKG_SCOPE } from "shared/types/manifest";
 import { getPkgRemotes } from "shared/api/getters";
 import { parseKps } from "shared/api/manifest";
 import { fetchAPI } from "shared/api/network";
+import type { MANIFEST_WITH_ID } from "../../gui/src/routes/home";
+import { downloadHandler } from "shared/api/download";
+import type { KONBINI_ID_PKG } from "shared/types/author";
+import { assertIntegrityPGP } from "shared/security";
+import { locateUsr } from "shared/api/core";
 
-type gh_elem =
+const GUARD_SCAN = true;
+const GUARD_DATA = true;
+
+function log(...a: any[]): void {
+    console.log(...a);
+}
+function err(...a: any[]): void {
+    console.error(...a);
+}
+
+type Element =
     | { type: "dir"; url: string; download_url: null }
     | { type: "file"; url: string; download_url: string };
 
 function logSection(title: string) {
-    console.log("=".repeat(5), title.toUpperCase(), "=".repeat(5));
+    log("=".repeat(5), title.toUpperCase(), "=".repeat(5));
 }
 
 function logBlock(title: string) {
-    console.log("=".repeat(50) + "\n" + title.toUpperCase() + "\n" + "=".repeat(50));
+    log("=".repeat(50) + "\n" + title.toUpperCase() + "\n" + "=".repeat(50));
 }
 
-function buildFilenames(scope: KONBINI_PKG_SCOPE, version: string) {
+function buildFilenames(scope: KONBINI_PKG_SCOPE, id: KONBINI_ID_PKG, version: string, os: string) {
     const n = (s: string) => normalize(s, { preserveCase: true });
-    const { src: platform, value: pkgName } = parseKps(scope);
-    const base = `./build/PKG__${n(pkgName)}`;
-    const core = `${base}__SRC__${n(platform)}__V__${n(version)}`;
+    const { value } = parseKps(scope);
+    const base = `./build/${id}_v${n(version)}_${os}`;
+    const core = `${base}_${value}`;
     return {
         base,
         core,
     };
 }
 
-async function gh_fetch_elem(url: string): Promise<gh_elem[]> {
+async function fetchElement(url: string): Promise<Element[]> {
     const res = await fetchAPI(url);
     if (!res.ok) throw `GitHub fetch failed: ${res.statusText}`;
-    return (await res.json()) as gh_elem[];
+    return (await res.json()) as Element[];
 }
 
-async function fetchAllManifests(): Promise<string[]> {
-    const dirs = (
-        await gh_fetch_elem("https://api.github.com/repos/HanaOrg/KonbiniPkgs/contents")
-    ).filter((e) => e.type === "dir");
-    const allPkgs = (await Promise.all(dirs.map((d) => gh_fetch_elem(d.url))))
-        .flat()
-        .filter((e) => e.type === "file");
-    const rawManifests = await Promise.all(
-        (await Promise.all(allPkgs.map((e) => fetch(e.download_url!)))).map((r) => r.text()),
+async function fetchAllManifests(): Promise<(MANIFEST_WITH_ID & { url: string })[]> {
+    const root = await fetchElement("https://api.github.com/repos/HanaOrg/KonbiniPkgs/contents");
+    const firstLevel = await Promise.all(
+        root.filter((e) => e.type === "dir").map((d) => fetchElement(d.url)),
     );
-    return rawManifests;
+    const secondLevel = await Promise.all(
+        firstLevel
+            .flat()
+            .filter((e) => e.type === "dir")
+            .map((d) => fetchElement(d.url)),
+    );
+    const finalLevel = await Promise.all(
+        secondLevel
+            .flat()
+            .filter((e) => e.type === "file")
+            .map((e) => fetch(e.download_url)),
+    );
+    const promises: [Promise<string>, string][] = finalLevel.map((r) => [
+        r.text(),
+        `\nid: "${r.url.split("/").slice(-2).join(".").replace(".yaml", "")}"`,
+    ]);
+    const regularManifests = await Promise.all(promises.map((i) => i[0]!));
+    const manifestsWithId = regularManifests.map(
+        (s) => s + promises[regularManifests.indexOf(s)]![1],
+    );
+    return manifestsWithId.map((s) => parse(s));
 }
 
-function ensureGuardFile(path: string): string {
-    if (!existsSync(path)) {
-        console.log("[INF] Using no guard file");
-        writeFileSync(path, "", { encoding: "utf-8", flag: "w" });
-    } else {
-        console.log("[INF] Using earlier guard file");
-    }
-    return readFileSync(path, { encoding: "utf-8" });
-}
-
-async function writeFileIfNotExists(filename: string, assetUrl: string) {
+async function fetchIfNotExists(filename: string, assetUrl: string) {
     if (existsSync(filename)) return;
     const response = await fetchAPI(assetUrl);
     if (!response.ok) throw `Failed to fetch ${assetUrl}: ${response.statusText}`;
@@ -70,130 +88,165 @@ async function writeFileIfNotExists(filename: string, assetUrl: string) {
     writeFileSync(filename, new Uint8Array(arrayBuffer));
 }
 
-function scanBuildFiles() {
-    const matches = globSync("./build/**").filter(
-        (s) => !s.endsWith("/build") && !s.endsWith("\\build"),
+async function scanBuildFiles() {
+    const matches = globSync("./build/*").filter(
+        (s) => !s.endsWith(".md") && !s.endsWith(".yaml") && !s.endsWith(".asc") && existsSync(s),
     );
-    console.debug(matches);
-    const results: { pkg: string; ver: string; plat: string; secure: boolean }[] = [];
+    log(matches);
+    const results: { pkg: string; ver: string; plat: string; res: string }[] = [];
     for (const file of matches) {
-        console.debug("[???]", file);
-        if (!existsSync(file)) continue;
-        if (file.endsWith(".asc") || file.endsWith(".yaml")) continue;
-        const result = execSync("clamdscan " + file);
-        // TODO - uhh, we'll have to sort this out
-        // const hash = KbiSecSHA.assertIntegrity(file,
-        //     (parse(readFileSync(file + ".hash.yaml", "utf-8")))[]
-        // );
+        log("[???]", file);
+        const [pkg, ver, plat] = file.replace("build/", "").split("_") as [string, string, string];
+        const result = execSync("clamdscan --log=./CLAMAV.log " + file);
+        const user = pkg.split(".").slice(0, 2).join(".");
+        const userAscPath = "build/" + user + ".asc";
         const lines = result.toString().split("\n");
-        const isSafe = (
+        const safety = (
             lines.find((line) => line.startsWith("Infected files:")) ?? "Infected files: 1"
-        ).endsWith("0");
-        console.log("[RES]", file, isSafe ? "SAFE." : "INFECTED.");
-        const splitted = file.split("./build/").filter(Boolean).join("").split("__");
+        ).endsWith("0")
+            ? "SAFE"
+            : "INFECTED";
+        await fetchIfNotExists(userAscPath, locateUsr(user).signature);
+        const signature =
+            (await assertIntegrityPGP({
+                executableFilePath: file,
+                executableAscFilePath: file + ".asc",
+                authorAscFilePath: userAscPath,
+            })) === "valid"
+                ? "AUTHENTIC"
+                : "UNAUTHENTIC";
+        const res = [safety, signature].join("|");
+        log("[RES]", file, res);
         results.push({
-            pkg: splitted[1]!,
-            plat: splitted[3]!,
-            ver: splitted[5]!,
-            secure: isSafe,
+            pkg,
+            plat,
+            ver,
+            res,
         });
     }
     return results;
 }
 
 async function main() {
-    logBlock("KONBINI GUARD ClamAV SCAN BEGINS");
+    logBlock("KONBINI GUARD BEGINS");
 
-    const GUARD_FILE_PATH = "./guard.txt";
-    const GUARD_TEXT = ensureGuardFile(GUARD_FILE_PATH);
+    logBlock(
+        [
+            GUARD_DATA ? "WILL     UPDATE KData" : "WILL NOT UPDATE KData",
+            GUARD_SCAN ? "WILL     SCAN WITH ClamAV" : "WILL NOT SCAN WITH ClamAV",
+        ].join("\n"),
+    );
+
+    const GUARD_FILE = "./guard.txt";
 
     logSection(`Fetching manifests...`);
     const manifests = await fetchAllManifests();
-    logSection(`Fetched manifests (${manifests.length})`);
+    logSection(`Total manifests: (${manifests.length})`);
 
-    logSection("NOT(TODO) Initializing ClamAV Daemon");
-    // execSync("sudo systemctl start clamav-daemon");
+    if (GUARD_SCAN) {
+        logSection("Initializing ClamAV Daemon");
+        execSync("sudo systemctl start clamav-daemon");
+
+        logSection("Updating DB");
+        execSync("sudo freshclam");
+
+        logSection("Clearing guard.txt");
+        writeFileSync(GUARD_FILE, `KGuard ${new Date()} | Keeping Konbini safe\n`);
+    }
 
     for (const manifest of manifests) {
         try {
-            const m = parse(manifest) as KONBINI_MANIFEST;
+            if (!manifest.repository) continue;
 
-            if (!m.repository) continue;
+            log("[WRK] Fetching", manifest.name);
 
-            console.log("[WRK] Analyzing", m.name);
+            if (!existsSync(`./build/${manifest.id}.yaml`))
+                writeFileSync(`./build/${manifest.id}.yaml`, stringify(manifest));
+            if (!existsSync(`./build/${manifest.id}.changes.md`)) {
+                try {
+                    // TODO: support gitlab, codeberg, and properly detect main branch
+                    // use manifest to detect platform
+                    // use "default_branch: x" in JSON from these endpoints:
+                    // GH - GET /repos/:owner/:repo
+                    // GL - GET /projects/:id (reminder, gitlab uses "owner%20repo" type strings)
+                    // CB - GET /repos/:owner/:repo
+                    await downloadHandler({
+                        remoteUrl: `https://raw.githubusercontent.com/${manifest.repository.replace("gh:", "")}/refs/heads/main/CHANGELOG.md`,
+                        filePath: `./build/${manifest.id}.changes.md`,
+                    });
+                } catch (error) {
+                    if (String(error).includes("404")) {
+                        writeFileSync(`./build/${manifest.id}.changes.md`, "no.");
+                        log(`[ ! ] No CHANGELOG file for ${manifest.id}`);
+                    }
+                }
+            }
 
-            let f;
-            let r;
+            log("[WRK] Analyzing", manifest.name);
 
-            for (const plat of Object.entries(m.platforms)) {
+            let files;
+            let remotes;
+
+            const platforms = Object.entries(manifest.platforms);
+
+            if (platforms.every((p) => !p[1] || !isKbiScope(p[1]))) {
+                log("[<<<] TRUSTED PACKAGE", manifest.name);
+                continue;
+            }
+
+            for (const plat of Object.entries(manifest.platforms)) {
                 const scope = plat[1];
-                if (!scope) {
-                    console.log("[<<<] ASSET", plat, "SKIPPED");
-                    continue;
-                }
-                if (!isKbiScope(scope)) {
-                    console.log("[<<<] ASSET", plat, "TRUSTED");
+                if (!scope || !isKbiScope(scope)) {
+                    log("[<<<] TRUSTED ASSET", plat);
                     continue;
                 }
 
-                console.log("[>>>] ASSET", plat, "ON SCOPE", scope);
+                log("[>>>] ASSET", plat, "ON SCOPE", scope);
 
                 try {
-                    r = await getPkgRemotes(scope, m);
-                    f = buildFilenames(scope, r.pkgVersion);
+                    remotes = await getPkgRemotes(scope, manifest);
+                    files = buildFilenames(scope, manifest.id, remotes.pkgVersion, plat[0]);
 
-                    console.debug("[>>>] REMOTE", r);
+                    log("[>>>] REMOTE", remotes);
 
                     if (!existsSync("./build")) mkdirSync("./build");
 
-                    if (
-                        GUARD_TEXT.includes(
-                            `${m.name}@${r.pkgVersion}@${parseKps(scope).src}=VALID`,
-                        )
-                    ) {
-                        console.log("[SKP] KONBINI PKG", m.name, "ALREADY VALIDATED. CAN SKIP.");
-                        continue;
-                    } else {
-                        console.log("[WRK] KONBINI PKG", m.name, "WILL BE SCANNED");
-                    }
-
-                    await writeFileIfNotExists(f.core, r.coreAsset);
+                    await fetchIfNotExists(files.core, remotes.coreAsset);
+                    await fetchIfNotExists(files.core + ".asc", remotes.ascAsset);
                 } catch (error) {
-                    console.error("[XXX] Error downloading assets", error);
+                    err("[XXX] Error downloading assets", error);
                 }
             }
 
-            if (!f) {
-                console.warn("[XXX] No scannable assets for", m.name);
+            if (!files) {
+                log("[XXX] No scannable assets for", manifest.name);
                 continue;
             }
 
-            if (!r) {
-                console.error("[XXX] No valid remotes found for", m.name);
+            if (!remotes) {
+                err("[XXX] No valid remotes found for", manifest.name);
                 continue;
             }
 
-            await writeFileIfNotExists(f.base + ".hash.yaml", r.shaAsset);
-            await writeFileIfNotExists(f.base + ".asc", r.ascAsset);
-        } catch (err) {
-            console.error("[XXX] ERROR GETTING ASSETS TO BE SCANNED:", err);
+            await fetchIfNotExists(files.base + ".hash.yaml", remotes.shaAsset);
+        } catch (e) {
+            err("[XXX] ERROR GETTING ASSETS TO BE SCANNED:", e);
         }
     }
 
-    console.log("[>>>] SCANNING ASSETS");
-    const result = scanBuildFiles();
-    result.map((i) => {
-        writeFileSync(
-            GUARD_FILE_PATH,
-            `${readFileSync(GUARD_FILE_PATH)}\n${i.pkg}@${i.ver}@${i.plat}=${i.secure ? "VALID" : "INVALID"}\n`
-                .split("\n")
-                .filter(Boolean)
-                .join("\n"),
-            { encoding: "utf-8" },
-        );
-    });
+    if (GUARD_SCAN) {
+        log("[>>>] SCANNING ASSETS");
 
-    logBlock("KONBINI GUARD ClamAV SCAN ENDS");
+        const result = await scanBuildFiles();
+        result.forEach((i) => {
+            writeFileSync(GUARD_FILE, `${i.pkg}@${i.ver}@${i.plat}=${i.res}\n`, {
+                encoding: "utf-8",
+                flag: "a",
+            });
+        });
+    }
+
+    logBlock("KONBINI GUARD ENDS");
 }
 
 main();

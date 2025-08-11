@@ -1,0 +1,6 @@
+KGuard Mon Aug 11 2025 10:02:37 GMT+0200 (Central European Summer Time) | Keeping Konbini safe
+org.fuckingnode.fuckingnode@v4.0.1@win64=SAFE|AUTHENTIC
+org.fuckingnode.fuckingnode@v4.0.1@macArm=SAFE|AUTHENTIC
+org.fuckingnode.fuckingnode@v4.0.1@mac64=SAFE|AUTHENTIC
+org.fuckingnode.fuckingnode@v4.0.1@linuxArm=SAFE|AUTHENTIC
+org.fuckingnode.fuckingnode@v4.0.1@linux64=SAFE|AUTHENTIC

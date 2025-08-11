@@ -7,6 +7,7 @@ import type { KONBINI_MANIFEST } from "shared/types/manifest";
 import AppGrid from "../components/app-grid";
 import Footer from "../components/footer";
 import Nav from "../components/nav";
+import type { KONBINI_ID_PKG } from "shared/types/author";
 
 type tEntryPoint = {
     path: string;
@@ -16,7 +17,7 @@ type tEntryPoint = {
     };
 };
 
-export type MANIFEST_WITH_ID = KONBINI_MANIFEST & { id: string };
+export type MANIFEST_WITH_ID = KONBINI_MANIFEST & { id: KONBINI_ID_PKG };
 
 export async function retrieveAllApps() {
     const entryPoint = await (await fetchAPI(SRCSET.PKGsA)).json();
