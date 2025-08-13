@@ -16,6 +16,7 @@ import {
     parseRepositoryScope,
     type KONBINI_MANIFEST,
     type KONBINI_PKG_SCOPE,
+    type SUPPORTED_PLATFORMS,
 } from "shared/types/manifest";
 import { getPkgRemotes } from "shared/api/getters";
 import { parseKps } from "shared/api/manifest";
@@ -310,7 +311,7 @@ async function main() {
     > = {};
     const kdata_downloads: Record<KONBINI_ID_PKG, {}> = {};
     const kdata_manifests: Record<KONBINI_ID_PKG, KONBINI_MANIFEST> = {};
-    const kdata_filesizes: Record<KONBINI_ID_PKG, number> = {};
+    const kdata_filesizes: Record<KONBINI_ID_PKG, Record<SUPPORTED_PLATFORMS, number>> = {};
 
     for (const file of readdirSync("./build", { withFileTypes: true })) {
         if (
@@ -330,7 +331,12 @@ async function main() {
             file.name.includes("win64");
         if (isBinary) {
             log("Storing", file.name, "release size");
-            kdata_filesizes[pkg] = statSync(path).size;
+            if (!kdata_filesizes[pkg.split("_")[0]! as KONBINI_ID_PKG]) {
+                kdata_filesizes[pkg.split("_")[0]! as KONBINI_ID_PKG] = {} as any;
+            }
+            kdata_filesizes[pkg.split("_")[0]! as KONBINI_ID_PKG]![
+                path.split("_")[2]! as SUPPORTED_PLATFORMS
+            ] = statSync(path).size;
             continue;
         }
         const contents = readFileSync(path, "utf-8");
@@ -350,10 +356,10 @@ async function main() {
     }
 
     log("Writing JSON files");
-    writeFileSync("build/kdo/kdata_downloads.json", JSON.stringify(kdata_downloads, undefined, 2));
-    writeFileSync("build/kdo/kdata_manifests.json", JSON.stringify(kdata_manifests, undefined, 2));
-    writeFileSync("build/kdo/kdata_changelog.json", JSON.stringify(kdata_changelog, undefined, 2));
-    writeFileSync("build/kdo/kdata_filesizes.json", JSON.stringify(kdata_filesizes, undefined, 2));
+    writeFileSync("build/kdo/kdata_downloads.json", JSON.stringify(kdata_downloads));
+    writeFileSync("build/kdo/kdata_manifests.json", JSON.stringify(kdata_manifests));
+    writeFileSync("build/kdo/kdata_changelog.json", JSON.stringify(kdata_changelog));
+    writeFileSync("build/kdo/kdata_filesizes.json", JSON.stringify(kdata_filesizes));
     log("Copying to KData source code");
     copyFileSync("build/kdo/kdata_downloads.json", "../../data/api/kdata_downloads.json");
     copyFileSync("build/kdo/kdata_manifests.json", "../../data/api/kdata_manifests.json");
