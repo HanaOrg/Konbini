@@ -1,30 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import geoip from "geoip-lite";
 import { Redis } from "@upstash/redis";
-
-// things from zakahacecosas/string-utils that because of NodeJS we can't just bring here
-
-function normalize(str: any): string {
-    if (str === undefined || str === null || typeof str !== "string" || str.trim() == "") return "";
-    const normalizedStr = str
-        .normalize("NFD") // normalize á, é, etc.
-        .replace(/[\u0300-\u036f]/g, "") // remove accentuation
-        .replace(/\s+/g, " ") // turn "my      search  query" into "my search query"
-        .trim() // turn "      my search query   " into "my search query"
-        .replace(/[\s\W_]/g, ""); // remove ANY special char
-
-    return normalizedStr;
-}
-
-function validate(str: any): str is string {
-    if (str === undefined || str === null || typeof str !== "string" || normalize(str) === "") {
-        return false;
-    }
-
-    return true;
-}
-
-// actual API
+import { validate } from "../utils";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {

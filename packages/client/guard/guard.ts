@@ -1,9 +1,22 @@
 import { execSync } from "child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import {
+    copyFileSync,
+    existsSync,
+    mkdirSync,
+    readdirSync,
+    readFileSync,
+    statSync,
+    writeFileSync,
+} from "fs";
 import { globSync } from "glob";
 import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
-import { isKbiScope, type KONBINI_PKG_SCOPE } from "shared/types/manifest";
+import {
+    isKbiScope,
+    parseRepositoryScope,
+    type KONBINI_MANIFEST,
+    type KONBINI_PKG_SCOPE,
+} from "shared/types/manifest";
 import { getPkgRemotes } from "shared/api/getters";
 import { parseKps } from "shared/api/manifest";
 import { fetchAPI } from "shared/api/network";
@@ -13,8 +26,10 @@ import type { KONBINI_ID_PKG } from "shared/types/author";
 import { assertIntegrityPGP, assertIntegritySHA } from "shared/security";
 import { locateUsr } from "shared/api/core";
 import type { KONBINI_HASHFILE } from "shared/types/files";
+import { getDownloads } from "./downloads";
+import { join } from "path";
 
-const SCAN = true;
+const SCAN = false;
 
 function log(...a: any[]): void {
     console.log(...a);
@@ -82,6 +97,7 @@ async function fetchAllManifests(): Promise<(MANIFEST_WITH_ID & { url: string })
 
 async function fetchIfNotExists(filename: string, assetUrl: string) {
     if (existsSync(filename)) return;
+    log("[···] Fetching", assetUrl, "for", filename);
     const response = await fetchAPI(assetUrl);
     if (!response.ok) throw `Failed to fetch ${assetUrl}: ${response.statusText}`;
     const arrayBuffer = await response.arrayBuffer();
@@ -174,21 +190,37 @@ async function main() {
                 writeFileSync(`./build/${manifest.id}.yaml`, stringify(manifest));
             if (!existsSync(`./build/${manifest.id}.changes.md`)) {
                 try {
-                    // TODO: support GitLab, CodeBerg, and properly detect main branch
-                    // use manifest to detect platform
-                    // use "default_branch: x" in JSON from these endpoints:
-                    // GH - GET /repos/:owner/:repo
-                    // GL - GET /projects/:id (reminder, gitlab uses "owner%20repo" type strings)
-                    // CB - GET /repos/:owner/:repo
+                    const scope = parseRepositoryScope(manifest.repository);
+                    const branch: string = (await (await fetchAPI(scope.main)).json())
+                        .default_branch;
+                    log(
+                        "[|||] Seeking CHANGELOG.md from",
+                        manifest.repository,
+                        "on branch",
+                        branch,
+                    );
                     await downloadHandler({
-                        remoteUrl: `https://raw.githubusercontent.com/${manifest.repository.replace("gh:", "")}/refs/heads/main/CHANGELOG.md`,
+                        remoteUrl: scope.file(branch, "CHANGELOG.md"),
                         filePath: `./build/${manifest.id}.changes.md`,
                     });
                 } catch (error) {
                     if (String(error).includes("404")) {
-                        writeFileSync(`./build/${manifest.id}.changes.md`, "no.");
+                        writeFileSync(`./build/${manifest.id}.changes.md`, "# No");
                         log(`[ ! ] No CHANGELOG file for ${manifest.id}`);
+                    } else {
+                        log(`[ ! ] Error reading CHANGELOG for ${manifest.id}: ${error}`);
                     }
+                }
+            }
+            if (!existsSync(`./build/${manifest.id}.downloads.yaml`)) {
+                try {
+                    log("[|||] Seeking download history for", manifest.repository);
+                    writeFileSync(
+                        `./build/${manifest.id}.downloads.yaml`,
+                        stringify(await getDownloads(manifest.id)),
+                    );
+                } catch (error) {
+                    log(`[ ! ] Error reading downloads for ${manifest.id}: ${error}`);
                 }
             }
 
@@ -203,6 +235,8 @@ async function main() {
                 log("[<<<] TRUSTED PACKAGE", manifest.name);
                 continue;
             }
+
+            const fetches: [string, string][] = [];
 
             for (const plat of Object.entries(manifest.platforms)) {
                 const scope = plat[1];
@@ -219,14 +253,20 @@ async function main() {
 
                     log("[>>>] REMOTE", remotes);
 
-                    if (!existsSync("./build")) mkdirSync("./build");
-
-                    await fetchIfNotExists(files.core, remotes.coreAsset);
-                    await fetchIfNotExists(files.core + ".asc", remotes.ascAsset);
-                    await fetchIfNotExists(files.base + ".hash.yaml", remotes.shaAsset);
+                    fetches.push([files.core, remotes.coreAsset]);
+                    fetches.push([files.core + ".asc", remotes.ascAsset]);
+                    fetches.push([files.base + ".hash.yaml", remotes.shaAsset]);
+                    writeFileSync("./build/" + manifest.id + ".pa.txt", remotes.pkgReleaseDate);
                 } catch (error) {
                     err("[XXX] Error downloading assets", error);
                 }
+            }
+
+            try {
+                const promises = fetches.map((f) => fetchIfNotExists(f[0], f[1]));
+                await Promise.all(promises);
+            } catch (error) {
+                err("[XXX] Error downloading assets", error);
             }
 
             if (!files) {
@@ -257,7 +297,70 @@ async function main() {
         });
     }
 
-    logBlock("KONBINI GUARD ENDS");
+    // kdo = konbini data output
+    // i suck at naming stuff alr
+    if (!existsSync("./build/kdo")) mkdirSync("./build/kdo");
+
+    const kdata_changelog: Record<
+        KONBINI_ID_PKG,
+        {
+            published_at: string;
+            log: string;
+        }
+    > = {};
+    const kdata_downloads: Record<KONBINI_ID_PKG, {}> = {};
+    const kdata_manifests: Record<KONBINI_ID_PKG, KONBINI_MANIFEST> = {};
+    const kdata_filesizes: Record<KONBINI_ID_PKG, number> = {};
+
+    for (const file of readdirSync("./build", { withFileTypes: true })) {
+        if (
+            !file.isFile() ||
+            file.name.endsWith(".asc") ||
+            file.name.endsWith(".hash.yaml") ||
+            file.name.endsWith(".pa.txt")
+        )
+            continue;
+        const pkg = file.name.split(".").slice(0, 3).join(".") as KONBINI_ID_PKG;
+        const path = join(file.parentPath, file.name);
+        const isBinary =
+            file.name.includes("linux64") ||
+            file.name.includes("linuxArm") ||
+            file.name.includes("mac64") ||
+            file.name.includes("macArm") ||
+            file.name.includes("win64");
+        if (isBinary) {
+            log("Storing", file.name, "release size");
+            kdata_filesizes[pkg] = statSync(path).size;
+            continue;
+        }
+        const contents = readFileSync(path, "utf-8");
+        log("Storing data for", pkg, "from", file.name);
+        if (file.name.endsWith(".downloads.yaml")) {
+            kdata_downloads[pkg] = parse(contents);
+        } else if (file.name.endsWith(".changes.md") && contents.trim() !== "# No") {
+            // rudimentary but functional hack
+            // validation of format is done later on, dw
+            kdata_changelog[pkg] = {
+                published_at: readFileSync(join("./build/", pkg) + ".pa.txt", "utf-8"),
+                log: "## [" + contents.trim().split("## [")[1],
+            };
+        } else if (file.name === `${pkg}.yaml`) {
+            kdata_manifests[pkg] = parse(contents);
+        }
+    }
+
+    log("Writing JSON files");
+    writeFileSync("build/kdo/kdata_downloads.json", JSON.stringify(kdata_downloads, undefined, 2));
+    writeFileSync("build/kdo/kdata_manifests.json", JSON.stringify(kdata_manifests, undefined, 2));
+    writeFileSync("build/kdo/kdata_changelog.json", JSON.stringify(kdata_changelog, undefined, 2));
+    writeFileSync("build/kdo/kdata_filesizes.json", JSON.stringify(kdata_filesizes, undefined, 2));
+    log("Copying to KData source code");
+    copyFileSync("build/kdo/kdata_downloads.json", "../../data/api/kdata_downloads.json");
+    copyFileSync("build/kdo/kdata_manifests.json", "../../data/api/kdata_manifests.json");
+    copyFileSync("build/kdo/kdata_changelog.json", "../../data/api/kdata_changelog.json");
+    copyFileSync("build/kdo/kdata_filesizes.json", "../../data/api/kdata_filesizes.json");
+
+    logBlock(`KONBINI GUARD ENDS :D`);
 }
 
 main();

@@ -426,10 +426,14 @@ export function isRepositoryScope(scope: any): scope is REPOSITORY_SCOPE {
 export function parseRepositoryScope(scope: REPOSITORY_SCOPE): {
     /** Source of the repo. */
     source: "gh" | "gl" | "cb";
-    /** Remote, REST API URL. */
-    remote: string;
+    /** Main REST API URL. Returns repo details. */
+    main: string;
+    /** Releases REST API URL. Returns details about the LATEST release. */
+    releases: string;
     /** Public, frontend URL. */
     public: string;
+    /** Public URL that points to a raw file. Getter function that takes the file name and branch. Use a slashed string (a/b) for nested files. */
+    file: (branch: string, name: string) => string;
 } {
     if (!isRepositoryScope(scope)) throw `Invalid REPOSITORY_SCOPE "${scope}".`;
 
@@ -440,18 +444,30 @@ export function parseRepositoryScope(scope: REPOSITORY_SCOPE): {
     if (colonSplit[0] === "gh")
         return {
             source: "gh",
-            remote: `https://api.github.com/repos/${slashSplit[0]}/${slashSplit[1]}/releases/latest`,
+            main: `https://api.github.com/repos/${slashSplit[0]}/${slashSplit[1]}`,
+            releases: `https://api.github.com/repos/${slashSplit[0]}/${slashSplit[1]}/releases/latest`,
             public: `https://github.com/${slashSplit[0]}/${slashSplit[1]}`,
+            file: (branch: string, name: string) =>
+                `https://raw.githubusercontent.com/${slashSplit[0]}/${slashSplit[1]}/${branch}/${name}`,
         };
     if (colonSplit[0] === "gl")
         return {
             source: "gl",
-            remote: `https://gitlab.com/api/v4/projects/${encodeURIComponent(pref)}/releases`,
+            main: `https://gitlab.com/api/v4/projects/${encodeURIComponent(pref)}`,
+            releases: `https://gitlab.com/api/v4/projects/${encodeURIComponent(pref)}/releases`,
             public: `https://gitlab.com/${slashSplit[0]}/${slashSplit[1]}`,
+            file: (branch: string, name: string) =>
+                `https://gitlab.com/${slashSplit[0]}/${slashSplit[1]}/-/raw/${branch}/${name}`,
         };
     return {
         source: "cb",
-        remote: `https://codeberg.org/api/v1/repos/${slashSplit[0]}/${slashSplit[1]}/releases/latest`,
+        main: `https://codeberg.org/api/v1/repos/${slashSplit[0]}/${slashSplit[1]}`,
+        releases: `https://codeberg.org/api/v1/repos/${slashSplit[0]}/${slashSplit[1]}/releases/latest`,
         public: `https://codeberg.org/${slashSplit[0]}/${slashSplit[1]}`,
+        file: (branch: string, name: string) =>
+            `https://codeberg.org/${slashSplit[0]}/${slashSplit[1]}/raw/${branch}/${name}`,
     };
 }
+
+/** Supported platforms. */
+export type SUPPORTED_PLATFORMS = "linux64" | "linuxArm" | "mac64" | "macArm" | "win64";

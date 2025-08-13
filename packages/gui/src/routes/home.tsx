@@ -17,7 +17,10 @@ type tEntryPoint = {
     };
 };
 
-export type MANIFEST_WITH_ID = KONBINI_MANIFEST & { id: KONBINI_ID_PKG };
+export type MANIFEST_WITH_ID = KONBINI_MANIFEST & {
+    /** The package's ID. */
+    id: KONBINI_ID_PKG;
+};
 
 export async function retrieveAllApps() {
     const entryPoint = await (await fetchAPI(SRCSET.PKGsA)).json();

@@ -2,7 +2,7 @@ import { fetchAPI } from "./network.ts";
 import { validatePGPSignature } from "../security.ts";
 import { existsSync } from "fs";
 import { join } from "path";
-import type { RELEASE_CODEBERG, RELEASE_GITHUB, RELEASE_GITLAB } from "../types/git.ts";
+import type { RELEASE_GH_CB, RELEASE_GL } from "../types/git.ts";
 import { FILENAMES, normalizer } from "../constants.ts";
 import {
     isKbiScope,
@@ -20,10 +20,11 @@ export async function getPkgRemotes(
     kps: KONBINI_PKG_SCOPE,
     manifest: KONBINI_MANIFEST,
 ): Promise<{
-    coreAsset: string;
-    pkgVersion: string;
     shaAsset: string;
     ascAsset: string;
+    coreAsset: string;
+    pkgVersion: string;
+    pkgReleaseDate: string;
 }> {
     const kv = parseKps(kps);
     if (!isKbiScope(kps)) {
@@ -35,15 +36,15 @@ export async function getPkgRemotes(
 
     /** rs as in repository scope */
     const rs = manifest.repository;
-    const url = parseRepositoryScope(rs).remote;
+    const url = parseRepositoryScope(rs).releases;
 
     const releases = await (await fetchAPI(url)).json();
 
-    const release: RELEASE_CODEBERG | RELEASE_GITHUB | RELEASE_GITLAB = rs.startsWith("gl")
-        ? (releases[0] as RELEASE_GITLAB)
+    const release: RELEASE_GH_CB | RELEASE_GH_CB | RELEASE_GL = rs.startsWith("gl")
+        ? (releases[0] as RELEASE_GL)
         : rs.startsWith("cb")
-          ? (releases as RELEASE_CODEBERG)
-          : (releases as RELEASE_GITHUB);
+          ? (releases as RELEASE_GH_CB)
+          : (releases as RELEASE_GH_CB);
 
     // github 1st release is always the latest
     if (!release) {
@@ -51,7 +52,7 @@ export async function getPkgRemotes(
     }
 
     const assets = (
-        url.startsWith("gl") ? (release as RELEASE_GITLAB).assets.links : release.assets
+        url.startsWith("gl") ? (release as RELEASE_GL).assets.links : release.assets
     ) as ({ url: string; name: string } | { browser_download_url: string; name: string })[];
 
     const versionedName = replace(kv.value, {
@@ -77,10 +78,11 @@ export async function getPkgRemotes(
         url.startsWith("gl") ? (i as any).url : (i as any).browser_download_url;
 
     return {
-        coreAsset: getUrl(asset),
-        pkgVersion: release.tag_name,
         shaAsset: getUrl(sha),
         ascAsset: getUrl(asc),
+        coreAsset: getUrl(asset),
+        pkgVersion: release.tag_name,
+        pkgReleaseDate: release.published_at,
     };
 }
 

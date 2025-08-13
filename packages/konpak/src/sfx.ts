@@ -1,7 +1,7 @@
 import { INSTALLATION_DIR, konsole } from "shared/client";
 import { join } from "path";
 import { existsSync, readFileSync } from "fs";
-import type { RELEASE_GITHUB } from "shared/types/git";
+import type { RELEASE_GH_CB } from "shared/types/git";
 import { getPlatform } from "shared/api/platform";
 import { downloadHandler } from "shared/api/download";
 
@@ -20,7 +20,7 @@ export async function getKonpakSfx(): Promise<Buffer | null> {
     const response = await fetch(
         `https://api.github.com/repos/FuckingNode/FuckingNode/releases/latest`,
     );
-    const data: RELEASE_GITHUB = await response.json();
+    const data: RELEASE_GH_CB = await response.json();
     const remoteUrl = data.assets.find((s) =>
         s.name.startsWith(`kpak-sfx-${getPlatform()}`),
     )?.browser_download_url;

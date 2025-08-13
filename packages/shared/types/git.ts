@@ -1,7 +1,12 @@
-/** GitHub REST API Release */
-export interface RELEASE_GITHUB {
+/** GitHub / CodeBerg REST API Release
+ *
+ * They use the same response format (at least for the properties we use), thus a single interface.
+ */
+export interface RELEASE_GH_CB {
     /** Used for package version; this will be stored inside of the package's lockfile. */
     tag_name: string;
+    /** When was this release published. */
+    published_at: string;
     /** Downloadable assets we want. */
     assets: {
         /** Filename of the asset. */
@@ -12,9 +17,11 @@ export interface RELEASE_GITHUB {
 }
 
 /** GitLab REST API Release */
-export interface RELEASE_GITLAB {
+export interface RELEASE_GL {
     /** Used for package version; this will be stored inside of the package's lockfile. */
     tag_name: string;
+    /** When was this release published. */
+    published_at: string;
     /** Downloadable assets we want. */
     assets: {
         /** Actual downloadable assets we want. */
@@ -25,17 +32,4 @@ export interface RELEASE_GITLAB {
             url: string;
         }[];
     };
-}
-
-/** GitLab REST API Release */
-export interface RELEASE_CODEBERG {
-    /** Used for package version; this will be stored inside of the package's lockfile. */
-    tag_name: string;
-    /** Downloadable assets we want. */
-    assets: {
-        /** Filename of the asset. */
-        name: string;
-        /** URL to the asset. May be a binary, `.asc` file, or `.yaml` file. */
-        browser_download_url: string;
-    }[];
 }

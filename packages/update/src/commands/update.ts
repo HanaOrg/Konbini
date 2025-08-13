@@ -2,7 +2,7 @@ import { INSTALLATION_DIR, konsole } from "shared/client";
 import { version as kVersion } from "../../../client/package.json";
 import { join } from "path";
 import { getPlatform } from "shared/api/platform";
-import type { RELEASE_GITHUB } from "shared/types/git";
+import type { RELEASE_GH_CB } from "shared/types/git";
 import { fetchAPI } from "shared/api/network";
 import { downloadHandler } from "shared/api/download";
 
@@ -10,7 +10,7 @@ export async function updateKonbini() {
     konsole.adv("You're currently on Konbini", kVersion);
     konsole.adv("Checking for updates...");
 
-    const res: RELEASE_GITHUB = await (
+    const res: RELEASE_GH_CB = await (
         await fetchAPI("https://api.github.com/repos/HanaOrg/Konbini/releases/latest")
     ).json();
 

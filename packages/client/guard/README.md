@@ -4,11 +4,14 @@
 
 ## Requirements for running
 
-These only apply if you're running the antivirus scan.
+Only if you're running the antivirus scan:
 
 - A Linux machine (preferably Debian, though any distribution should do). Otherwise, WSL.
 - ClamAV installed.
-- A not too high internet bill.
+
+Overall:
+
+- A not too high internet bill (this is intense).
 
 ## How it works
 

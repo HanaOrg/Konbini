@@ -1,32 +1,28 @@
-# Konbini &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue)](https://github.com/hanaorg/konbini/blob/master/CONTRIBUTING.md) &middot; [![CLI-ready](https://img.shields.io/badge/CLI-ready-white)](#command-line-interface) &middot; [![GUI-ready](https://img.shields.io/badge/GUI-ready-white)](#graphical-user-interface) &middot; [![Cross-platform](https://img.shields.io/badge/Cross_platform-ready-white)](#cross-platform)
+# Konbini &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue)](https://github.com/hanaorg/konbini/blob/master/CONTRIBUTING.md) &middot; [![CLI-ready](https://img.shields.io/badge/CLI-ready-white)](#command-line-interface) &middot; [![GUI-ready](https://img.shields.io/badge/GUI-ready-white)](#graphical-user-interface) &middot; [![Cross-platform](https://img.shields.io/badge/Cross_platform-ready-white)](#availability)
 
 > Konbini, Your convenience store.
 
 Konbini is a package manager and software center meant to provide the most easy, beautiful, and straightforward experience to both users and developers.
 
-## Features
+## What makes Konbini better?
 
-### Easy publishing
+### Easiness for devs
 
-Konbini's main advantage is bureaucracy-less publishing. You only need _one_ Pull Request to register as a developer, then _one_ Pull Request to publish your package. Any update you publish will be instantly available (if you publish correctly, of course). No need for making another PR for each version like WinGet or Nix do.
+Bureaucracy-less publishing. You only need _one_ Pull Request to register as a developer, then _one_ Pull Request to publish your package. Any update you publish will be instantly available (if you publish correctly, of course, which is also easy). No need for making another PR for each version like WinGet or Nix do.
 
-### Cross-platform support
+### Universality
 
-Another advantage is aliasing, so you can have a WinGet, Nix, APT, or Homebrew package available from Konbini. This way, if the user attempts to install the package, it'll be automatically installed with the package manager that should be used instead, and will let it manage updates. The main reason for doing this is that you'll get a frontend link (for our store) to share with your users.
-
-As of now, Konbini _per se_ (not aliased) only supports self-packaged releases, like raw executables or `.AppImage` files.
+Aliasing, a feature unique to Konbini, lets you have WinGet, Nix, APT, or Homebrew packages available from Konbini. This way, if the user attempts to install the package, it'll be automatically installed with the package manager that should be used instead, and will let it manage updates. The main reason for doing this is that you'll get a frontend link (for our store) to share with your users.
 
 ### Safety
 
-Konbini requires all executables to be digitally signed using PGP, and to be hashed using the SHA3-512 hashing algorithm, ensuring secure distribution.
+Konbini requires all executables to be digitally signed using PGP, and to be hashed using the SHA3-512 hashing algorithm, ensuring secure distribution. These can be generated using Konbini itself, via `kbi sign` and `kbi hash` respectively.
 
-These can be generated using Konbini itself, via `kbi sign` and `kbi hash` respectively.
+Furthermore, we periodically scan every package with antivirus software in a transparent manner. [More onto this here](./packages/client/guard/README.md).
 
-We also have a periodically running task that scans all downloadable projects with ClamAV. [More onto this here](./packages/client/guard/README.md).
+### Availability
 
-### Cross-platform
-
-Konbini removes the need to learn different publishing methods depending on the platform. Instead of learning WinGet process for Windows and Homebrew for macOS and Linux (for example), Konbini can handle all major platforms, and in macOS and Linux it supports both 64-bits and ARM.
+Konbini removes the need to use different publishing methods depending on the platform, by supporting all major platforms, including both x64 and ARM in macOS and Linux.
 
 ## Usage
 
@@ -34,7 +30,7 @@ Konbini removes the need to learn different publishing methods depending on the 
 
 Run `kbi` once installed and you will be shown a list of available commands and a brief description of what do they do.
 
-Developers must compile (via `bun run build`) Konbini before execution - this is because Konbini relies on `sudo` in order to function, so `bun . <command>` usually won't work as it should.
+Developers must compile (via `bun run build`) Konbini before execution - this is because Konbini relies on elevation in order to function, so `bun . <command>` usually won't work as it should.
 
 ### Graphical User Interface
 

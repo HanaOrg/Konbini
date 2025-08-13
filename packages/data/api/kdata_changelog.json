@@ -1,0 +1,6 @@
+{
+    "org.fuckingnode.fuckingnode": {
+        "published_at": "2025-08-13T13:13:35Z",
+        "log": "## [4.0.2-patch.2] (11-08-2025)\n\n### Fixed\n\n- Fixed \\`buildCmd\\` not properly halting execution when a command fails.\n\n"
+    }
+}

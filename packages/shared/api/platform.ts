@@ -1,4 +1,6 @@
-export function getPlatform(): "linux64" | "linuxArm" | "mac64" | "macArm" | "win64" {
+import type { SUPPORTED_PLATFORMS } from "../types/manifest";
+
+export function getPlatform(): SUPPORTED_PLATFORMS {
     if (process.platform === "linux") {
         if (process.arch === "x64") {
             return "linux64";
