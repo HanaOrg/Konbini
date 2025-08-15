@@ -17,14 +17,14 @@ import { parseKps } from "shared/api/manifest";
 import { fetchAPI } from "shared/api/network";
 import type { MANIFEST_WITH_ID } from "../../gui/src/routes/home";
 import { downloadHandler } from "shared/api/download";
-import type { KONBINI_ID_PKG } from "shared/types/author";
+import type { KONBINI_AUTHOR, KONBINI_ID_PKG, KONBINI_ID_USR } from "shared/types/author";
 import { assertIntegrityPGP, assertIntegritySHA } from "shared/security";
 import { locateUsr } from "shared/api/core";
 import type { KONBINI_HASHFILE } from "shared/types/files";
 import { getDownloads } from "./downloads";
 import { join } from "path";
 
-const SCAN = true;
+const SCAN = false;
 
 function log(...a: any[]): void {
     console.log(...a);
@@ -62,8 +62,12 @@ async function fetchElement(url: string): Promise<Element[]> {
     return (await res.json()) as Element[];
 }
 
-async function fetchAllManifests(): Promise<(MANIFEST_WITH_ID & { url: string })[]> {
-    const root = await fetchElement("https://api.github.com/repos/HanaOrg/KonbiniPkgs/contents");
+async function fetchAllManifests(kind: "Pkgs"): Promise<(MANIFEST_WITH_ID & { url: string })[]>;
+async function fetchAllManifests(kind: "Authors"): Promise<(KONBINI_AUTHOR & { id: string })[]>;
+async function fetchAllManifests(
+    kind: "Pkgs" | "Authors",
+): Promise<(MANIFEST_WITH_ID & { url: string })[] | (KONBINI_AUTHOR & { id: string })[]> {
+    const root = await fetchElement(`https://api.github.com/repos/HanaOrg/Konbini${kind}/contents`);
     const firstLevel = await Promise.all(
         root.filter((e) => e.type === "dir").map((d) => fetchElement(d.url)),
     );
@@ -77,11 +81,16 @@ async function fetchAllManifests(): Promise<(MANIFEST_WITH_ID & { url: string })
         secondLevel
             .flat()
             .filter((e) => e.type === "file")
+            .filter((e) => !e.download_url.includes(".asc"))
             .map((e) => fetch(e.download_url)),
     );
     const promises: [Promise<string>, string][] = finalLevel.map((r) => [
         r.text(),
-        `\nid: "${r.url.split("/").slice(-2).join(".").replace(".yaml", "")}"`,
+        `\nid: "${
+            kind === "Pkgs"
+                ? r.url.split("/").slice(-2).join(".").replace(".yaml", "")
+                : `${r.url.split("/").slice(-3)[0]}.${r.url.split("/").slice(-3)[2]!.replace(".yaml", "")}`
+        }"`,
     ]);
     const regularManifests = await Promise.all(promises.map((i) => i[0]!));
     const manifestsWithId = regularManifests.map(
@@ -177,8 +186,9 @@ async function main() {
     logBlock("コンビニ GUARD // PREFETCH // BEGINS");
 
     logSection(`Fetching manifests...`);
-    const manifests = await fetchAllManifests();
-    logSection(`Total manifests: (${manifests.length})`);
+    const manifests = await fetchAllManifests("Pkgs");
+    const authors = await fetchAllManifests("Authors");
+    logSection(`Fetched all manifests [${manifests.length} PKGS | ${authors.length} AUTHORS]`);
 
     if (SCAN) {
         logSection("Initializing ClamAV Daemon");
@@ -199,14 +209,13 @@ async function main() {
 
     for (const manifest of manifests) {
         try {
-            if (!manifest.repository) continue;
-
             log("[WRK] Fetching", manifest.name);
 
             if (!existsSync(`./build/${manifest.id}.yaml`))
                 writeFileSync(`./build/${manifest.id}.yaml`, stringify(manifest));
             if (!existsSync(`./build/${manifest.id}.changes.md`)) {
                 try {
+                    if (!manifest.repository) throw "404";
                     const scope = parseRepositoryScope(manifest.repository);
                     const branch: string = (await (await fetchAPI(scope.main)).json())
                         .default_branch;
@@ -403,11 +412,16 @@ async function main() {
         }),
     );
     const sortedByLastUpdate = fromSorting(kdata, sortByLastUpdate);
+    // TODO: save up some kb by removing { id: x }, it's already the key of the object anyway
+    const sortedAuthors: Record<KONBINI_ID_USR, KONBINI_AUTHOR> = Object.fromEntries(
+        authors.map((a) => [a.id, a]),
+    );
 
     writeFileSync("../../data/api/kdata_per_author_id.json", JSON.stringify(kdata));
     writeFileSync("../../data/api/kdata_per_downloads.json", JSON.stringify(sortedByDownloads));
     writeFileSync("../../data/api/kdata_per_category.json", JSON.stringify(groupedByCategories));
     writeFileSync("../../data/api/kdata_per_releases.json", JSON.stringify(sortedByLastUpdate));
+    writeFileSync("../../data/api/kdata_authors.json", JSON.stringify(sortedAuthors));
 
     logBlock("コンビニ GUARD // KDATA // SUCCESSFULLY ENDS");
 

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { Redis } from "@upstash/redis";
 import { validate } from "../utils.js";
+import * as KDATA from "./kdata_authors.json";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
@@ -28,36 +28,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             return;
         }
 
-        const { app } = req.query;
+        const { id } = req.query;
 
-        if (!validate(app)) return res.status(400).json({ error: "Bad request: No app specified" });
+        if (!validate(id))
+            return res.status(400).json({ error: "Bad request: No author ID specified." });
+        // @ts-expect-error
+        if (!KDATA[id])
+            return res
+                .status(404)
+                .json({ error: `Not found: Author '${id}' was not found within the registry.` });
 
-        // checks we're alright
-        const url = process.env["UPSTASH_REDIS_REST_URL"];
-        const token = process.env["UPSTASH_REDIS_REST_TOKEN"];
-
-        if (!url || !token) {
-            throw new Error("Missing UPSTASH env variables! Cannot operate.");
-        }
-
-        const db = new Redis({
-            url,
-            token,
-        });
-
-        const downloads = (await db.lrange("downloads", 0, -1)).filter(
-            (i) => (i as any).app == app,
-        ).length;
-        const removals = (await db.lrange("removals", 0, -1)).filter(
-            (i) => (i as any).app == app,
-        ).length;
-        const product = downloads - removals;
-
-        res.status(200).json({
-            downloads,
-            removals,
-            product,
-        });
+        // @ts-expect-error
+        res.status(200).json(KDATA[id]);
         return;
     } catch (error) {
         res.status(500).json({ message: "Internal error: " + String(error) });
