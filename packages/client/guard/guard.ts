@@ -24,7 +24,7 @@ import type { KONBINI_HASHFILE } from "shared/types/files";
 import { getDownloads } from "./downloads";
 import { join } from "path";
 
-const SCAN = false;
+const SCAN = true;
 
 function log(...a: any[]): void {
     console.log(...a);
@@ -101,7 +101,12 @@ async function fetchIfNotExists(filename: string, assetUrl: string) {
 
 async function scanFiles() {
     const matches = globSync("./build/*").filter(
-        (s) => !s.endsWith(".md") && !s.endsWith(".yaml") && !s.endsWith(".asc") && existsSync(s),
+        (s) =>
+            !s.endsWith(".md") &&
+            !s.endsWith(".yaml") &&
+            !s.endsWith(".asc") &&
+            !s.endsWith(".pa.txt") &&
+            existsSync(s),
     );
     log(matches);
     const results: { pkg: string; ver: string; plat: string; res: string }[] = [];
@@ -399,10 +404,10 @@ async function main() {
     );
     const sortedByLastUpdate = fromSorting(kdata, sortByLastUpdate);
 
-    writeFileSync("./build/kdata_per_author_id.json", JSON.stringify(kdata));
-    writeFileSync("./build/kdata_per_downloads.json", JSON.stringify(sortedByDownloads));
-    writeFileSync("./build/kdata_per_category.json", JSON.stringify(groupedByCategories));
-    writeFileSync("./build/kdata_per_releases.json", JSON.stringify(sortedByLastUpdate));
+    writeFileSync("../../data/api/kdata_per_author_id.json", JSON.stringify(kdata));
+    writeFileSync("../../data/api/kdata_per_downloads.json", JSON.stringify(sortedByDownloads));
+    writeFileSync("../../data/api/kdata_per_category.json", JSON.stringify(groupedByCategories));
+    writeFileSync("../../data/api/kdata_per_releases.json", JSON.stringify(sortedByLastUpdate));
 
     logBlock("コンビニ GUARD // KDATA // SUCCESSFULLY ENDS");
 
