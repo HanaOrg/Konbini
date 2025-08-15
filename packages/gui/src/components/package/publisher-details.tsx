@@ -88,7 +88,7 @@ export default function PublisherDetails({
                         All apps from {usr.name}
                     </h2>
                     <div className="flex flex-row gap-2 wrap">
-                        {apps.map((app) => (
+                        {Object.values(apps).map((app) => (
                             <Detail justify="start" className="flex-grow-1">
                                 {app.icon && (
                                     <img

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
-import { getAgeRating, type KONBINI_MANIFEST } from "shared/types/manifest";
-import { getPkgManifest, getUsrManifest, locatePkg } from "shared/api/core";
+import { getAgeRating, isValidManifest } from "shared/types/manifest";
+import { locatePkg } from "shared/api/core";
 import { micromark } from "micromark";
 import DOMPurify from "dompurify";
 import { getDesktopPlatform } from "../ua";
@@ -10,40 +10,30 @@ import Footer from "../components/footer";
 import InstallDialog from "../components/package/install-dialog";
 import Badge from "../components/badge";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
-import { type KONBINI_AUTHOR } from "shared/types/author";
+import { type KONBINI_AUTHOR, type KONBINI_ID_PKG } from "shared/types/author";
 import PublisherDetails from "../components/package/publisher-details";
 import ScreenshotSlideshow from "../components/package/screenshots";
 import SystemRequirementsTable from "../components/package/sys-req";
 import MaintainersList from "../components/package/maintainers";
 import PackageDetails from "../components/package/details";
-import { getDownloads } from "shared/api/telemetry";
+import { getAuthor, getPkg } from "shared/api/pkg";
+import type { KDATA_ENTRY } from "../../../client/guard/guard";
 
 export default function PackagePage() {
-    const [app, setApp] = useState<KONBINI_MANIFEST>();
+    const [app, setApp] = useState<KDATA_ENTRY>();
     const [author, setAuthor] = useState<KONBINI_AUTHOR>();
     const [loading, setLoading] = useState<boolean>(true);
-    const [downloads, setDownloads] = useState<{
-        downloads: number;
-        removals: number;
-        product: number;
-    }>({
-        downloads: 0,
-        removals: 0,
-        product: 0,
-    });
 
     const route = window.location.pathname.split("/package/").filter(Boolean)[0]!;
 
     useEffect(() => {
         async function getApp() {
             try {
-                const manifest = await getPkgManifest(route, true);
-                const pkgAuthor = await getUsrManifest(manifest.author);
-                const downloads = await getDownloads(route);
+                const manifest = await getPkg(route as KONBINI_ID_PKG);
+                const pkgAuthor = await getAuthor(manifest.author);
                 setAuthor(pkgAuthor);
                 setApp(manifest);
                 setLoading(false);
-                setDownloads(downloads);
             } catch (error) {
                 if (String(error).includes("does NOT exist")) {
                     window.location.pathname = "/404";
@@ -55,6 +45,18 @@ export default function PackagePage() {
         }
         getApp();
     }, []);
+
+    if (!isValidManifest(app))
+        return (
+            <>
+                <h1>Invalid manifest</h1>
+                <p>
+                    This app has an improper manifest. Tell his developer to check it.
+                    <br />
+                    <a href="/">Go back.</a>
+                </p>
+            </>
+        );
 
     if ((!app || !author) && loading)
         return (
@@ -71,12 +73,13 @@ export default function PackagePage() {
 
     const plat = getDesktopPlatform();
 
-    const isSupported =
-        (plat.plat == "Windows" && app.platforms.win64) ||
-        (plat.plat == "macOS" && plat.arch == "64" && app.platforms.mac64) ||
-        (plat.plat == "macOS" && plat.arch == "ARM" && app.platforms.macArm) ||
-        (plat.plat == "Linux" && plat.arch == "64" && app.platforms.linux64) ||
-        (plat.plat == "Linux" && plat.arch == "ARM" && app.platforms.linuxArm);
+    const isSupported = app.platforms
+        ? (plat.plat == "Windows" && app.platforms.win64) ||
+          (plat.plat == "macOS" && plat.arch == "64" && app.platforms.mac64) ||
+          (plat.plat == "macOS" && plat.arch == "ARM" && app.platforms.macArm) ||
+          (plat.plat == "Linux" && plat.arch == "64" && app.platforms.linux64) ||
+          (plat.plat == "Linux" && plat.arch == "ARM" && app.platforms.linuxArm)
+        : false;
     /** for when we don't know the arch but know the OS */
     const isPossiblySupported =
         (plat.plat == "macOS" && (app.platforms.mac64 || app.platforms.macArm)) ||
@@ -110,7 +113,7 @@ export default function PackagePage() {
                         <h1 className="grad">{app.name}</h1>
                         <h2 className="text-xl text-white opacity-[0.7] mb-2">{app.slogan}</h2>
                         <h2 className="text-lg text-white opacity-[0.5] mb-2">
-                            {downloads.product} active installs (est.)
+                            {app.downloads.active} active installs (est.)
                         </h2>
                         <div className="flex flex-row gap-1">
                             <Badge color="#ffffff1a">

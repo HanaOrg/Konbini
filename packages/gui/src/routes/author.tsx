@@ -1,10 +1,10 @@
 import { useEffect, useState } from "preact/hooks";
-import { getUsrManifest } from "shared/api/core";
 import Nav from "../components/nav";
 import Footer from "../components/footer";
 import { type KONBINI_AUTHOR, type KONBINI_ID_USR } from "shared/types/author";
 import PublisherDetails from "../components/package/publisher-details";
-import { retrieveAllApps, type MANIFEST_WITH_ID } from "./home";
+import { type MANIFEST_WITH_ID } from "./home";
+import { getAuthor } from "shared/api/pkg";
 
 export default function AuthorPage() {
     const [author, setAuthor] = useState<KONBINI_AUTHOR>();
@@ -16,10 +16,13 @@ export default function AuthorPage() {
     useEffect(() => {
         async function getAuthorAndApps() {
             try {
-                const pkgAuthor = await getUsrManifest(route);
+                const pkgAuthor = await getAuthor(route as KONBINI_ID_USR);
                 setAuthor(pkgAuthor);
-                const apps = await retrieveAllApps();
-                const filtered = apps.filter((a) => a.author == route);
+                const apps = await (
+                    await fetch(`https://konbini-data.vercel.app/api/group?sorting=a`)
+                ).json();
+                const filtered = apps[route];
+                console.debug(route, apps);
                 setApps(filtered);
                 setLoading(false);
             } catch (error) {

@@ -26,6 +26,14 @@ import { join } from "path";
 
 const SCAN = false;
 
+export type KDATA_ENTRY = KONBINI_MANIFEST & {
+    downloads: { installs: []; removals: []; active: number };
+    last_release_at: string;
+    changelog: string;
+    filesizes: Record<SUPPORTED_PLATFORMS, number>;
+};
+export type KDATA_FILE = Record<KONBINI_ID_PKG, KDATA_ENTRY>;
+
 function log(...a: any[]): void {
     console.log(...a);
 }
@@ -329,14 +337,6 @@ async function main() {
 
     logBlock("コンビニ GUARD // KDATA // BEGINS");
 
-    type KDATA_ENTRY = KONBINI_MANIFEST & {
-        downloads: { installs: []; removals: []; active: number };
-        last_release_at: string;
-        changelog: string;
-        filesizes: Record<SUPPORTED_PLATFORMS, number>;
-    };
-    type KDATA_FILE = Record<KONBINI_ID_PKG, KDATA_ENTRY>;
-
     const kdata: KDATA_FILE = {};
 
     for (const file of readdirSync("./build", { withFileTypes: true })) {
@@ -416,8 +416,16 @@ async function main() {
     const sortedAuthors: Record<KONBINI_ID_USR, KONBINI_AUTHOR> = Object.fromEntries(
         authors.map((a) => [a.id, a]),
     );
+    const groupedByAuthors: Record<
+        KONBINI_ID_USR,
+        Record<KONBINI_ID_PKG, KDATA_ENTRY>
+    > = Object.fromEntries(authors.map((a) => [a.id, {}]));
+    Object.entries(kdata).forEach(([user, m]) => {
+        if (!groupedByAuthors[m.author]) groupedByAuthors[m.author] = {};
+        groupedByAuthors[m.author]![user as KONBINI_ID_PKG] = m;
+    });
 
-    writeFileSync("../../data/api/kdata_per_author_id.json", JSON.stringify(kdata));
+    writeFileSync("../../data/api/kdata_per_author_id.json", JSON.stringify(groupedByAuthors));
     writeFileSync("../../data/api/kdata_per_downloads.json", JSON.stringify(sortedByDownloads));
     writeFileSync("../../data/api/kdata_per_category.json", JSON.stringify(groupedByCategories));
     writeFileSync("../../data/api/kdata_per_releases.json", JSON.stringify(sortedByLastUpdate));

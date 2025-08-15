@@ -18,15 +18,21 @@ module.exports = async function handler(reqParam: any, resParam: any) {
 
         if (
             origin &&
-            (origin.startsWith("http://localhost:") ||
+            (origin.includes("localhost:") ||
                 ["https://konbini.vercel.app", "https://konbini-data.vercel.app"].includes(
                     origin.trim(),
                 ))
         ) {
             res.setHeader("Access-Control-Allow-Origin", origin);
+            res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+            res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+            if (req.method === "OPTIONS") {
+                res.statusCode = 200;
+                res.end();
+                return;
+            }
         }
-        res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         if (req.method === "OPTIONS") {
             res.status(200).end();

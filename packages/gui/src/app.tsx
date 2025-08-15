@@ -9,6 +9,7 @@ import Safety from "./routes/safety";
 import Credits from "./routes/credits";
 import AuthorPage from "./routes/author";
 import Privacy from "./routes/privacy";
+import Search from "./routes/search";
 
 export function App() {
     return (
@@ -16,6 +17,7 @@ export function App() {
             <ErrorBoundary>
                 <Router>
                     <Route path="/" component={Home} />
+                    <Route path="/search" component={Search} />
                     <Route path="/author/:id" component={AuthorPage} />
                     <Route path="/package/:id" component={PackagePage} />
                     <Route path="/safety" component={Safety} />
