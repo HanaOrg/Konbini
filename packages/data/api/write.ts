@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import geoip from "geoip-lite";
 import { Redis } from "@upstash/redis";
-import { validate } from "../utils";
+import { validate } from "../utils.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {

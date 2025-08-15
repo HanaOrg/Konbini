@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { Redis } from "@upstash/redis";
-import { validate } from "../utils";
+import { validate } from "../utils.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
@@ -9,7 +9,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (
             origin &&
             (origin.startsWith("http://localhost:") ||
-                ["https://konbini.vercel.app", "https://konbini-data.vercel.app"].includes(origin))
+                ["https://konbini.vercel.app", "https://konbini-data.vercel.app"].includes(
+                    origin.trim(),
+                ))
         ) {
             res.setHeader("Access-Control-Allow-Origin", origin);
         }

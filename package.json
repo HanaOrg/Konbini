@@ -1,5 +1,6 @@
 {
     "name": "konbini",
+    "description": "Your convenience store.",
     "version": "0.0.1",
     "private": true,
     "type": "module",
@@ -15,6 +16,12 @@
             "@types/bun": "latest"
         }
     },
+    "contributors": [
+        {
+            "name": "ZakaHaceCosas",
+            "url": "https://zakahacecosas.github.io/"
+        }
+    ],
     "scripts": {
         "pretty": "prettier --w .",
         "lint": "eslint . --cache --fix && tsc --noEmit",

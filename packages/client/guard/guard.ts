@@ -1,19 +1,13 @@
 import { execSync } from "child_process";
-import {
-    copyFileSync,
-    existsSync,
-    mkdirSync,
-    readdirSync,
-    readFileSync,
-    statSync,
-    writeFileSync,
-} from "fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { globSync } from "glob";
 import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
 import {
+    CATEGORIES,
     isKbiScope,
     parseRepositoryScope,
+    type CATEGORY,
     type KONBINI_MANIFEST,
     type KONBINI_PKG_SCOPE,
     type SUPPORTED_PLATFORMS,
@@ -152,8 +146,19 @@ async function scanFiles() {
     return results;
 }
 
+/**
+ * Creates a new object by sorting an existing one.
+ *
+ * @param {*} o Object to sort.
+ * @param {*} sorter Sorting function.
+ * @returns {*}
+ */
+function fromSorting<T extends Record<any, any>>(o: T, sorter: any): T {
+    return Object.fromEntries(Object.entries(o).sort(sorter)) as T;
+}
+
 async function main() {
-    logBlock("KONBINI GUARD BEGINS");
+    logBlock("コンビニ GUARD BEGINS");
 
     logBlock(
         [
@@ -163,6 +168,8 @@ async function main() {
     );
 
     const GUARD_FILE = "./guard.txt";
+
+    logBlock("コンビニ GUARD // PREFETCH // BEGINS");
 
     logSection(`Fetching manifests...`);
     const manifests = await fetchAllManifests();
@@ -176,10 +183,14 @@ async function main() {
         execSync("sudo freshclam");
 
         logSection("Clearing guard.txt");
-        writeFileSync(GUARD_FILE, `KGuard ${new Date()} | Keeping Konbini safe\n`);
+        writeFileSync(GUARD_FILE, `コンビニ | KGuard ${new Date()} | Keeping Konbini safe\n`);
     }
 
     if (!existsSync("./build")) mkdirSync("build");
+
+    logBlock("コンビニ GUARD // PREFETCH // SUCCESSFULLY ENDS");
+
+    logBlock("コンビニ GUARD // MANIFEST LOOP // BEGINS");
 
     for (const manifest of manifests) {
         try {
@@ -286,8 +297,10 @@ async function main() {
         }
     }
 
+    logBlock("コンビニ GUARD // MANIFEST LOOP // SUCCESSFULLY ENDS");
+
     if (SCAN) {
-        log("[>>>] SCANNING ASSETS");
+        logBlock("コンビニ GUARD // AV SCAN // BEGINS");
 
         const result = await scanFiles();
         result.forEach((i) => {
@@ -296,22 +309,21 @@ async function main() {
                 flag: "a",
             });
         });
+
+        logBlock("コンビニ GUARD // AV SCAN // SUCCESSFULLY ENDS");
     }
 
-    // kdo = konbini data output
-    // i suck at naming stuff alr
-    if (!existsSync("./build/kdo")) mkdirSync("./build/kdo");
+    logBlock("コンビニ GUARD // KDATA // BEGINS");
 
-    const kdata_changelog: Record<
-        KONBINI_ID_PKG,
-        {
-            published_at: string;
-            log: string;
-        }
-    > = {};
-    const kdata_downloads: Record<KONBINI_ID_PKG, {}> = {};
-    const kdata_manifests: Record<KONBINI_ID_PKG, KONBINI_MANIFEST> = {};
-    const kdata_filesizes: Record<KONBINI_ID_PKG, Record<SUPPORTED_PLATFORMS, number>> = {};
+    type KDATA_ENTRY = KONBINI_MANIFEST & {
+        downloads: { installs: []; removals: []; active: number };
+        last_release_at: string;
+        changelog: string;
+        filesizes: Record<SUPPORTED_PLATFORMS, number>;
+    };
+    type KDATA_FILE = Record<KONBINI_ID_PKG, KDATA_ENTRY>;
+
+    const kdata: KDATA_FILE = {};
 
     for (const file of readdirSync("./build", { withFileTypes: true })) {
         if (
@@ -331,10 +343,13 @@ async function main() {
             file.name.includes("win64");
         if (isBinary) {
             log("Storing", file.name, "release size");
-            if (!kdata_filesizes[pkg.split("_")[0]! as KONBINI_ID_PKG]) {
-                kdata_filesizes[pkg.split("_")[0]! as KONBINI_ID_PKG] = {} as any;
+            if (!kdata[pkg.split("_")[0]! as KONBINI_ID_PKG]) {
+                kdata[pkg.split("_")[0]! as KONBINI_ID_PKG] = {} as any;
             }
-            kdata_filesizes[pkg.split("_")[0]! as KONBINI_ID_PKG]![
+            if (!kdata[pkg.split("_")[0]! as KONBINI_ID_PKG]!["filesizes"]) {
+                kdata[pkg.split("_")[0]! as KONBINI_ID_PKG]!["filesizes"] = {} as any;
+            }
+            kdata[pkg.split("_")[0]! as KONBINI_ID_PKG]!["filesizes"][
                 path.split("_")[2]! as SUPPORTED_PLATFORMS
             ] = statSync(path).size;
             continue;
@@ -342,31 +357,56 @@ async function main() {
         const contents = readFileSync(path, "utf-8");
         log("Storing data for", pkg, "from", file.name);
         if (file.name.endsWith(".downloads.yaml")) {
-            kdata_downloads[pkg] = parse(contents);
+            if (!kdata[pkg]) kdata[pkg] = {} as any;
+            kdata[pkg]!["downloads"] = parse(contents);
         } else if (file.name.endsWith(".changes.md") && contents.trim() !== "# No") {
+            if (!kdata[pkg]) kdata[pkg] = {} as any;
+            kdata[pkg]!["last_release_at"] = readFileSync(
+                join("./build/", pkg) + ".pa.txt",
+                "utf-8",
+            );
             // rudimentary but functional hack
             // validation of format is done later on, dw
-            kdata_changelog[pkg] = {
-                published_at: readFileSync(join("./build/", pkg) + ".pa.txt", "utf-8"),
-                log: "## [" + contents.trim().split("## [")[1],
-            };
+            kdata[pkg]!["changelog"] = "## [" + contents.trim().split("## [")[1];
         } else if (file.name === `${pkg}.yaml`) {
-            kdata_manifests[pkg] = parse(contents);
+            if (!kdata[pkg]) kdata[pkg] = {} as any;
+            kdata[pkg] = {
+                ...kdata[pkg],
+                ...parse(contents),
+            };
         }
     }
 
-    log("Writing JSON files");
-    writeFileSync("build/kdo/kdata_downloads.json", JSON.stringify(kdata_downloads));
-    writeFileSync("build/kdo/kdata_manifests.json", JSON.stringify(kdata_manifests));
-    writeFileSync("build/kdo/kdata_changelog.json", JSON.stringify(kdata_changelog));
-    writeFileSync("build/kdo/kdata_filesizes.json", JSON.stringify(kdata_filesizes));
-    log("Copying to KData source code");
-    copyFileSync("build/kdo/kdata_downloads.json", "../../data/api/kdata_downloads.json");
-    copyFileSync("build/kdo/kdata_manifests.json", "../../data/api/kdata_manifests.json");
-    copyFileSync("build/kdo/kdata_changelog.json", "../../data/api/kdata_changelog.json");
-    copyFileSync("build/kdo/kdata_filesizes.json", "../../data/api/kdata_filesizes.json");
+    const sortByDownloads = (a: [string, KDATA_ENTRY], b: [string, KDATA_ENTRY]) =>
+        b[1].downloads.active - a[1].downloads.active;
+    const sortByLastUpdate = (a: [string, KDATA_ENTRY], b: [string, KDATA_ENTRY]) =>
+        new Date(b[1].last_release_at ?? 0).getTime() -
+        new Date(a[1].last_release_at ?? 0).getTime();
+    const createCategoryGroup = (c: CATEGORY): [CATEGORY, KDATA_FILE] => [c, {}];
 
-    logBlock(`KONBINI GUARD ENDS :D`);
+    const sortedByDownloads = fromSorting(kdata, sortByDownloads);
+    // (Partial<> since now that Konbini is a new thing, not all categories may be defined)
+    const groupedByCategories: Partial<Record<CATEGORY, KDATA_FILE>> = Object.fromEntries(
+        CATEGORIES.map(createCategoryGroup),
+    );
+    Object.entries(kdata).forEach((e) =>
+        e[1].categories.forEach((cat) => {
+            if (!groupedByCategories[cat]) {
+                groupedByCategories[cat] = {};
+            }
+            groupedByCategories[cat][e[0] as KONBINI_ID_PKG] = e[1];
+        }),
+    );
+    const sortedByLastUpdate = fromSorting(kdata, sortByLastUpdate);
+
+    writeFileSync("./build/kdata_per_author_id.json", JSON.stringify(kdata));
+    writeFileSync("./build/kdata_per_downloads.json", JSON.stringify(sortedByDownloads));
+    writeFileSync("./build/kdata_per_category.json", JSON.stringify(groupedByCategories));
+    writeFileSync("./build/kdata_per_releases.json", JSON.stringify(sortedByLastUpdate));
+
+    logBlock("コンビニ GUARD // KDATA // SUCCESSFULLY ENDS");
+
+    logBlock(`コンビニ SUCCESSFULLY ENDS GUARDING, BALLER :D`);
 }
 
 main();
