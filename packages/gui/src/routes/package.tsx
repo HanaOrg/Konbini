@@ -23,6 +23,7 @@ export default function PackagePage() {
     const [app, setApp] = useState<KDATA_ENTRY>();
     const [author, setAuthor] = useState<KONBINI_AUTHOR>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     const route = window.location.pathname.split("/package/").filter(Boolean)[0]!;
 
@@ -39,24 +40,12 @@ export default function PackagePage() {
                     window.location.pathname = "/404";
                     return;
                 }
-                console.error(error);
+                setError(String(error));
                 throw error;
             }
         }
         getApp();
     }, []);
-
-    if (!isValidManifest(app))
-        return (
-            <>
-                <h1>Invalid manifest</h1>
-                <p>
-                    This app has an improper manifest. Tell his developer to check it.
-                    <br />
-                    <a href="/">Go back.</a>
-                </p>
-            </>
-        );
 
     if ((!app || !author) && loading)
         return (
@@ -70,6 +59,18 @@ export default function PackagePage() {
     if (!app) return <h1>Error loading {route}. Failed to load app.</h1>;
     if (!author)
         return <h1>Error loading {route}. The app itself loaded, but its author's data didn't.</h1>;
+    if (error) return <h1>Error: {error}</h1>;
+    if (!isValidManifest(app))
+        return (
+            <>
+                <h1>Invalid manifest</h1>
+                <p>
+                    This app has an improper manifest. Tell his developer to check it.
+                    <br />
+                    <a href="/">Go back.</a>
+                </p>
+            </>
+        );
 
     const plat = getDesktopPlatform();
 

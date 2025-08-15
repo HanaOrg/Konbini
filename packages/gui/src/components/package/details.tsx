@@ -50,7 +50,7 @@ export default function PackageDetails({
                             <p className="text-xs font-light">{app.privacy}</p>
                         </div>
                     ) : (
-                        <p className="font-normal">No Privacy Policy provided.</p>
+                        <p className="font-normal">No Privacy Policy.</p>
                     )}
                 </Detail>
                 <Detail>
@@ -74,7 +74,7 @@ export default function PackageDetails({
                             <p className="text-xs font-light">{app.terms}</p>
                         </div>
                     ) : (
-                        <p className="font-normal">No Terms of Use provided.</p>
+                        <p className="font-normal">No Terms of Use.</p>
                     )}
                 </Detail>
                 <Detail>
@@ -95,7 +95,7 @@ export default function PackageDetails({
                             Licensed under <b>{humanLicense(app.license)}</b>
                         </p>
                     ) : (
-                        <p>No license specified</p>
+                        <p>No license.</p>
                     )}
                 </Detail>
                 <Detail>
@@ -119,9 +119,7 @@ export default function PackageDetails({
                             <p className="text-xs font-light">{app.homepage}</p>
                         </div>
                     ) : (
-                        <p className="font-normal">
-                            The author of this package didn't specify a homepage.
-                        </p>
+                        <p className="font-normal">No website.</p>
                     )}
                 </Detail>
                 <Detail>
@@ -149,9 +147,7 @@ export default function PackageDetails({
                             <p className="text-xs font-light">{app.docs}</p>
                         </div>
                     ) : (
-                        <p className="font-normal">
-                            The author of this package didn't specify a documentation site.
-                        </p>
+                        <p className="font-normal">No user manual.</p>
                     )}
                 </Detail>
                 <Detail>
@@ -190,7 +186,7 @@ export default function PackageDetails({
                             <p className="text-xs font-light">{repo.public}</p>
                         </div>
                     ) : (
-                        <p className="font-normal">This package is closed source {":["}</p>
+                        <p className="font-normal">Closed source {":["}</p>
                     )}
                 </Detail>
                 <Detail>

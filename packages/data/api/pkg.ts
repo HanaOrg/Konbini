@@ -1,5 +1,5 @@
 const { validate } = require("../utils.js");
-const KDATA = require("./kdata_per_author_id.json");
+const KDATA = require("./kdata_per_downloads.json");
 
 /** @type {import('@vercel/node').VercelRequest} */
 let req;

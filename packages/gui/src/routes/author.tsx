@@ -22,7 +22,6 @@ export default function AuthorPage() {
                     await fetch(`https://konbini-data.vercel.app/api/group?sorting=a`)
                 ).json();
                 const filtered = apps[route];
-                console.debug(route, apps);
                 setApps(filtered);
                 setLoading(false);
             } catch (error) {
