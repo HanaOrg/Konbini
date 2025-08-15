@@ -1,9 +1,16 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import geoip from "geoip-lite";
-import { Redis } from "@upstash/redis";
-import { validate } from "../utils.js";
+const geoip = require("geoip-lite");
+const { Redis } = require("@upstash/redis");
+const { validate } = require("../utils.js");
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+/** @type {import('@vercel/node').VercelRequest} */
+let req;
+/** @type {import('@vercel/node').VercelResponse} */
+let res;
+
+module.exports = async function handler(reqParam: any, resParam: any) {
+    req = reqParam;
+    res = resParam;
+
     try {
         const origin = req.headers.origin;
 
@@ -84,4 +91,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.status(500).json({ message: "Internal error: " + String(error) });
         return;
     }
-}
+};

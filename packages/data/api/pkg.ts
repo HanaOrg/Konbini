@@ -1,8 +1,15 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { validate } from "../utils.js";
-import * as KDATA from "./kdata_per_author_id.json";
+const { validate } = require("../utils.js");
+const KDATA = require("./kdata_per_author_id.json");
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+/** @type {import('@vercel/node').VercelRequest} */
+let req;
+/** @type {import('@vercel/node').VercelResponse} */
+let res;
+
+module.exports = async function handler(reqParam: any, resParam: any) {
+    req = reqParam;
+    res = resParam;
+
     try {
         const origin = req.headers.origin;
 
@@ -32,17 +39,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         if (!validate(id))
             return res.status(400).json({ error: "Bad request: No package ID specified." });
-        // @ts-expect-error
+        // !@ts-expect-error
         if (!KDATA[id])
             return res
                 .status(404)
                 .json({ error: `Not found: Package '${id}' was not found within the registry.` });
 
-        // @ts-expect-error
+        // !@ts-expect-error
         res.status(200).json(KDATA[id]);
         return;
     } catch (error) {
         res.status(500).json({ message: "Internal error: " + String(error) });
         return;
     }
-}
+};

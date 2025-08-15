@@ -1,11 +1,18 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { validate } from "../utils.js";
-import * as KDATA_PER_AUTHOR_ID from "./kdata_per_author_id.json";
-import * as KDATA_PER_DOWNLOADS from "./kdata_per_downloads.json";
-import * as KDATA_PER_RELEASES from "./kdata_per_releases.json";
-import * as KDATA_PER_CATEGORY from "./kdata_per_category.json";
+const { validate } = require("../utils.js");
+const KDATA_PER_AUTHOR_ID = require("./kdata_per_author_id.json");
+const KDATA_PER_DOWNLOADS = require("./kdata_per_downloads.json");
+const KDATA_PER_RELEASES = require("./kdata_per_releases.json");
+const KDATA_PER_CATEGORY = require("./kdata_per_category.json");
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+/** @type {import('@vercel/node').VercelRequest} */
+let req;
+/** @type {import('@vercel/node').VercelResponse} */
+let res;
+
+module.exports = async function handler(reqParam: any, resParam: any) {
+    req = reqParam;
+    res = resParam;
+
     try {
         const origin = req.headers.origin;
 
@@ -38,7 +45,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!["a", "c", "d", "r"].includes(sorting))
             return res.status(400).json({ error: "Bad request: Invalid sorting method." });
 
-        const num = !validate(entries) || !isNaN(Number(entries)) ? undefined : Number(entries);
+        const num = isNaN(Number(entries)) ? undefined : Number(entries);
         const delivery = Object.fromEntries(
             Object.entries(
                 sorting === "a"
@@ -57,4 +64,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.status(500).json({ message: "Internal error: " + String(error) });
         return;
     }
-}
+};

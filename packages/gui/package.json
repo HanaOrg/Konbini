@@ -10,7 +10,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@tailwindcss/vite": "^4.1.11",
+        "@tailwindcss/vite": "^4.1.12",
         "@vercel/analytics": "^1.5.0",
         "@vercel/speed-insights": "^1.2.0",
         "@zakahacecosas/string-utils": "catalog:",
@@ -18,13 +18,13 @@
         "micromark": "^4.0.2",
         "preact": "^10.27.0",
         "preact-iso": "^2.9.2",
-        "tailwindcss": "^4.1.11",
+        "tailwindcss": "^4.1.12",
         "yaml": "catalog:"
     },
     "devDependencies": {
         "@preact/preset-vite": "^2.10.2",
-        "@types/node": "^24.2.1",
+        "@types/node": "^24.3.0",
         "typescript": "catalog:",
-        "vite": "^7.1.1"
+        "vite": "^7.1.2"
     }
 }

@@ -29,10 +29,10 @@ export async function getDownloads(app: KONBINI_ID_PKG): Promise<{
 
     const installs = (await db.lrange("downloads", 0, -1))
         .filter((i) => (i as any).app == app)
-        .map((s) => JSON.parse(s));
+        .map((s) => (typeof s === "object" ? s : JSON.parse(s)));
     const removals = (await db.lrange("removals", 0, -1))
         .filter((i) => (i as any).app == app)
-        .map((s) => JSON.parse(s));
+        .map((s) => (typeof s === "object" ? s : JSON.parse(s)));
     const active = installs.length - removals.length;
 
     return {

@@ -392,7 +392,7 @@ async function main() {
     }
 
     const sortByDownloads = (a: [string, KDATA_ENTRY], b: [string, KDATA_ENTRY]) =>
-        b[1].downloads.active - a[1].downloads.active;
+        (b[1]?.downloads?.active ?? 0) - (a[1]?.downloads?.active ?? 0);
     const sortByLastUpdate = (a: [string, KDATA_ENTRY], b: [string, KDATA_ENTRY]) =>
         new Date(b[1].last_release_at ?? 0).getTime() -
         new Date(a[1].last_release_at ?? 0).getTime();

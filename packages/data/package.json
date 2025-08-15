@@ -1,15 +1,15 @@
 {
     "name": "konbini-data",
     "version": "1.0.0",
-    "type": "module",
+    "type": "commonjs",
     "dependencies": {
         "@upstash/redis": "^1.35.3",
-        "@vercel/node": "^5.3.11",
+        "@vercel/node": "^5.3.12",
         "geoip-lite": "^1.4.10"
     },
     "devDependencies": {
         "@types/geoip-lite": "^1.4.4",
-        "@types/node": "^24.2.1"
+        "@types/node": "^24.3.0"
     },
     "packageManager": "pnpm@10.14.0"
 }
