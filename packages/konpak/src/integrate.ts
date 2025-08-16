@@ -117,11 +117,12 @@ function IntegrateWindows(params: WindowsParams) {
         NoModify: 1,
         NoRepair: 1,
     };
+    // NOTE: HelpLink, URLInfoAbout, and URLUpdateInfo do exist
+    // they show links in the cp
 
     for (const [key, val] of Object.entries(values)) {
-        const isDword = typeof val === "number";
         CMD.push(
-            `Set-ItemProperty -Path "${regPath}" -Name "${key}" ${isDword ? `-Type DWord -Value ${val}` : `-Value "${val}"`}`,
+            `Set-ItemProperty -Path "${regPath}" -Name "${key}" ${typeof val === "number" ? `-Type DWord -Value ${val}` : `-Value "${val}"`}`,
         );
     }
 

@@ -14,7 +14,17 @@ export default function Footer() {
                     <p>
                         <i>Your convenience store.</i>
                     </p>
-                    <p> Copyright &copy; The Hana Organization, 2025</p>
+                    <p>
+                        Copyright &copy;{" "}
+                        <a
+                            href="https://hana-org.vercel.app"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            The Hana Organization
+                        </a>
+                        , 2025
+                    </p>
                 </div>
                 <div className="flex flex-col gap-4 items-end justify-start">
                     <a href="/safety" className="text-lg font-medium">

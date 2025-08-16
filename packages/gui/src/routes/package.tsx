@@ -179,7 +179,8 @@ export default function PackagePage() {
                             Download
                         </button>
                         <div className="text-base" style={{ color: supportColor }}>
-                            {supportString}
+                            {supportString}.<br />
+                            {app.type === "both" ? "Both CLI and GUI" : app.type.toUpperCase()}
                         </div>
                     </div>
                 </div>
@@ -218,7 +219,9 @@ export default function PackagePage() {
                 {app.maintainers && (
                     <MaintainersList maintainers={app.maintainers} author={author.name} />
                 )}
-                {app.downloads && <DownloadChart downloads={app.downloads} />}
+                {(app.downloads.installs.length > 0 || app.downloads.removals.length > 0) && (
+                    <DownloadChart downloads={app.downloads} />
+                )}
             </div>
             <Footer />
         </>

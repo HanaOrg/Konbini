@@ -24,9 +24,7 @@ export type KDATA_ENTRY_PKG = KONBINI_MANIFEST & {
     downloads: DownloadData;
     /** Date of the last release. */
     last_release_at: string;
-    /** Markdown string of the last changelog entry.
-     * TODO: it has flaws (what about "unreleased"? + reject non-KeepAChangelog changelogs)
-     */
+    /** Markdown string of the last changelog entry. */
     changelog: string;
     /** Filesizes of all uploaded binaries, in bytes. Platforms without a binary are entirely absent.*/
     filesizes: Record<SUPPORTED_PLATFORMS, number>;

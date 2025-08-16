@@ -22,6 +22,7 @@ import type { KONBINI_HASHFILE } from "shared/types/files";
 import { getDownloads } from "./fetch";
 import { join } from "path";
 import type { MANIFEST_WITH_ID, KDATA_FILE_PKG, KDATA_ENTRY_PKG } from "shared/types/kdata";
+import { parseKAChangelog } from "shared/changelog";
 
 const SCAN = false;
 
@@ -370,9 +371,8 @@ async function main() {
                 join("./build/", pkg) + ".pa.txt",
                 "utf-8",
             );
-            // rudimentary but functional hack
-            // validation of format is done later on, dw
-            kdata[pkg]!["changelog"] = "## [" + contents.trim().split("## [")[1];
+            const log = parseKAChangelog(contents);
+            if (log) kdata[pkg]!["changelog"] = log;
         } else if (file.name === `${pkg}.yaml`) {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg] = {

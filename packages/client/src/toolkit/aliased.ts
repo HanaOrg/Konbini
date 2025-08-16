@@ -53,6 +53,9 @@ export function installAliasedPackage(params: {
         konsole.err(
             `This package requires "${kps.name}" a 3rd party package manager that is not installed on your system.`,
         );
+        konsole.war(
+            `Future versions of Konbini will (attempt to) install it for you.\nFor now, it's on you. Sorry!`,
+        );
         return "needsPkgMgr";
     }
 
