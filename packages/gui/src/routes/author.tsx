@@ -1,14 +1,13 @@
 import { useEffect, useState } from "preact/hooks";
 import Nav from "../components/nav";
 import Footer from "../components/footer";
-import { type KONBINI_AUTHOR, type KONBINI_ID_USR } from "shared/types/author";
+import { type KONBINI_ID_USR } from "shared/types/author";
 import PublisherDetails from "../components/package/publisher-details";
-import { type MANIFEST_WITH_ID } from "./home";
-import { getAuthor } from "shared/api/pkg";
+import { getAuthor } from "shared/api/kdata";
+import type { KDATA_ENTRY_USR } from "shared/types/kdata";
 
 export default function AuthorPage() {
-    const [author, setAuthor] = useState<KONBINI_AUTHOR>();
-    const [apps, setApps] = useState<MANIFEST_WITH_ID[]>([]);
+    const [author, setAuthor] = useState<KDATA_ENTRY_USR>();
     const [loading, setLoading] = useState<boolean>(true);
 
     const route = window.location.pathname.split("/author/").filter(Boolean)[0]!;
@@ -18,11 +17,6 @@ export default function AuthorPage() {
             try {
                 const pkgAuthor = await getAuthor(route as KONBINI_ID_USR);
                 setAuthor(pkgAuthor);
-                const apps = await (
-                    await fetch(`https://konbini-data.vercel.app/api/group?sorting=a`)
-                ).json();
-                const filtered = apps[route];
-                setApps(filtered);
                 setLoading(false);
             } catch (error) {
                 if (String(error).includes("does NOT exist")) {
@@ -58,7 +52,11 @@ export default function AuthorPage() {
                 {author.biography && (
                     <p className="text-xl italic opacity-[0.9] text-[#FFF]">{author.biography}</p>
                 )}
-                <PublisherDetails authorId={route as KONBINI_ID_USR} usr={author} apps={apps} />
+                <PublisherDetails
+                    authorId={route as KONBINI_ID_USR}
+                    usr={author}
+                    apps={author.packages}
+                />
             </div>
             <Footer />
         </>

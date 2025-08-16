@@ -15,8 +15,8 @@ import { parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import { FILENAMES } from "shared/constants";
 import { assertIntegritySHA, konbiniHash, assertIntegrityPGP } from "shared/security";
-import { logAction } from "shared/api/telemetry";
 import { Unpack } from "../../../konpak/src/unpack";
+import { logAction } from "shared/api/kdata";
 
 async function installSingleExecutable(params: {
     filePath: string;

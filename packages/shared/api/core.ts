@@ -1,9 +1,10 @@
 import { validateAgainst } from "@zakahacecosas/string-utils";
 import { parse } from "yaml";
-import { b64toString, fetchAPI } from "./network.ts";
-import { normalizer, SRCSET } from "../constants.ts";
-import { isValidManifest, type KONBINI_MANIFEST } from "../types/manifest.ts";
+import { fetchAPI } from "./network.ts";
+import { normalizer } from "../constants.ts";
+import { isValidManifest } from "../types/manifest.ts";
 import type { KONBINI_AUTHOR } from "../types/author.ts";
+import type { KDATA_ENTRY_PKG } from "../types/kdata.ts";
 
 /** Parses an ID and returns it. Throws if it's invalid. */
 export function parseID(str: string): {
@@ -39,29 +40,18 @@ export function parseID(str: string): {
  * Given a package ID, returns an object with its KPI SOURCE routes and public routes to manifest file.
  *
  * @param {string} pkg Package ID.
- * @param {"R" | "A"} src Defaults to `R` (RAW). Sets the source to either RAW or API.
  * @returns All URLs.
  */
-export function locatePkg(
-    pkg: string,
-    src: "R" | "A" = "R",
-): {
-    /** Manifest `R` or `A` route. */
+export function locatePkg(pkg: string): {
+    /** Manifest KData route. */
     manifest: string;
     /** Manifest public route, visible from GitHub's UI. */
     manifestPub: string;
 } {
     const res = parseID(pkg);
     if (!res.package) throw `No package provided for supposedly package ID (${pkg})`;
-    const root = [
-        src === "R" ? SRCSET.PKGsR : SRCSET.PKGsA,
-        res.delimiter,
-        `${res.pref}.${res.user}`,
-    ].join("/");
-    const manifest = [root, res.package + ".yaml"].join("/");
-    const manifestPub = manifest
-        .replace("raw.githubusercontent", "github")
-        .replace("main", "blob/main");
+    const manifest = `https://konbini-data.vercel.app/api/pkg?id=${pkg}`;
+    const manifestPub = `https://github.com/HanaOrg/KonbiniPkgs/blob/main/${res.delimiter}/${res.pref}.${res.user}/${res.package}.yaml`;
     return {
         manifest,
         manifestPub,
@@ -72,29 +62,27 @@ export function locatePkg(
  * Given a user / org ID, returns an object with its KPI SOURCE routes and public routes to manifest and signature files.
  *
  * @param {string} usr User / org ID.
- * @param {"R" | "A"} src Defaults to `R` (RAW). Sets the source to either RAW or API.
  * @returns All URLs.
  */
-export function locateUsr(
-    usr: string,
-    src: "R" | "A" = "R",
-): {
-    /** Manifest `R` or `A` route. */
+export function locateUsr(usr: string): {
+    /** Manifest KData route. */
     manifest: string;
     /** Manifest public route, visible from GitHub's UI. */
     manifestPub: string;
-    /** Signature `R` or `A` route. */
+    /** Signature GitHub/RAW route. */
     signature: string;
     /** Signature public route, visible from GitHub's UI. */
     signaturePub: string;
 } {
     const res = parseID(usr);
-    const root = [src === "R" ? SRCSET.USRsR : SRCSET.USRsA, res.pref, res.delimiter].join("/");
-    const manifest = [root, res.user + ".yaml"].join("/");
-    const manifestPub = manifest
-        .replace("raw.githubusercontent", "github")
-        .replace("main", "blob/main");
-    const signature = [root, res.user + ".asc"].join("/");
+    const manifest = `https://konbini-data.vercel.app/api/author?id=${usr}`;
+    const manifestPub = `https://github.com/HanaOrg/KonbiniAuthors/blob/main/${res.pref}/${res.delimiter}/${res.user}.yaml`;
+    const signature = [
+        "https://raw.githubusercontent.com/HanaOrg/KonbiniAuthors/main",
+        res.pref,
+        res.delimiter,
+        res.user + ".asc",
+    ].join("/");
     const signaturePub = signature
         .replace("raw.githubusercontent", "github")
         .replace("main", "blob/main");
@@ -111,13 +99,10 @@ export function locateUsr(
  *
  * @async
  * @param {string} packageName
- * @returns {Promise<KONBINI_MANIFEST>}
+ * @returns {Promise<KDATA_ENTRY_PKG>}
  */
-export async function getPkgManifest(
-    packageName: string,
-    useApi: boolean = false,
-): Promise<KONBINI_MANIFEST> {
-    const manifestPath = locatePkg(packageName, useApi ? "A" : "R").manifest;
+export async function getPkgManifest(packageName: string): Promise<KDATA_ENTRY_PKG> {
+    const manifestPath = locatePkg(packageName).manifest;
     const response = await fetchAPI(manifestPath, "GET");
 
     if (response.status === 404) {
@@ -127,21 +112,11 @@ export async function getPkgManifest(
         throw `Could not access KPI remote for ${packageName} (HTTP:${response.status}).`;
     }
 
-    if (!useApi) {
-        const packageData = await response.text();
-        const packageInfo = parse(packageData);
-        if (!isValidManifest(packageInfo)) {
-            throw `The manifest for ${packageName} was invalidated. Its author made a mistake somewhere. Notify them.`;
-        }
-        return packageInfo;
-    }
     const json = await response.json();
-    const res = await (await fetchAPI(json.url)).json();
-    const packageInfoB = parse(b64toString(res.content));
-    if (!isValidManifest(packageInfoB)) {
+    if (!isValidManifest(json)) {
         throw `The manifest for ${packageName} was invalidated. Its author made a mistake somewhere. Notify them.`;
     }
-    return packageInfoB;
+    return json as KDATA_ENTRY_PKG;
 }
 
 export async function getUsrManifest(authorId: string): Promise<KONBINI_AUTHOR> {

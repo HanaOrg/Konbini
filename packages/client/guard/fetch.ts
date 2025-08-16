@@ -1,20 +1,8 @@
 import { Redis } from "@upstash/redis";
 import type { KONBINI_ID_PKG } from "shared/types/author";
-import type { SUPPORTED_PLATFORMS } from "shared/types/manifest";
+import type { DownloadData } from "shared/types/kdata";
 
-interface DownloadData {
-    app: KONBINI_ID_PKG;
-    version: string;
-    sys: SUPPORTED_PLATFORMS;
-    country: string;
-    timestamp: number;
-}
-
-export async function getDownloads(app: KONBINI_ID_PKG): Promise<{
-    installs: DownloadData[];
-    removals: DownloadData[];
-    active: number;
-}> {
+export async function getDownloads(app: KONBINI_ID_PKG): Promise<DownloadData> {
     const url = process.env["UPSTASH_REDIS_REST_URL"];
     const token = process.env["UPSTASH_REDIS_REST_TOKEN"];
 

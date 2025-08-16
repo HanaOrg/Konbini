@@ -1,4 +1,4 @@
-const { validate } = require("../utils.js");
+const { validate, isValidOrigin } = require("../utils.js");
 const KDATA_PER_AUTHOR_ID = require("./kdata_per_author_id.json");
 const KDATA_PER_DOWNLOADS = require("./kdata_per_downloads.json");
 const KDATA_PER_RELEASES = require("./kdata_per_releases.json");
@@ -14,28 +14,9 @@ module.exports = async function handler(reqParam: any, resParam: any) {
     res = resParam;
 
     try {
-        const origin = req.headers.origin;
-
-        if (
-            origin &&
-            (origin.includes("localhost:") ||
-                ["https://konbini.vercel.app", "https://konbini-data.vercel.app"].includes(
-                    origin.trim(),
-                ))
-        ) {
-            res.setHeader("Access-Control-Allow-Origin", origin);
-            res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-            res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-            if (req.method === "OPTIONS") {
-                res.statusCode = 200;
-                res.end();
-                return;
-            }
-        }
-
-        if (req.method === "OPTIONS") {
-            res.status(200).end();
+        if (isValidOrigin(req, res) && req.method === "OPTIONS") {
+            res.statusCode = 200;
+            res.end();
             return;
         }
 

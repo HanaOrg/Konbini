@@ -1,37 +1,23 @@
 import { useEffect, useState } from "preact/hooks";
-import type { KONBINI_MANIFEST } from "shared/types/manifest";
 import AppGrid from "../components/app-grid";
 import Footer from "../components/footer";
 import Nav from "../components/nav";
-import type { KONBINI_ID_PKG } from "shared/types/author";
 import { useLocation } from "preact-iso";
-
-export type MANIFEST_WITH_ID = KONBINI_MANIFEST & {
-    /** The package's ID. */
-    id: KONBINI_ID_PKG;
-};
+import { getPkgs } from "shared/api/kdata";
+import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 
 export default function Home() {
-    const [mostDownloadedApps, setMostDownloadedApps] = useState<
-        Record<KONBINI_ID_PKG, MANIFEST_WITH_ID>
-    >({});
-    const [mostRecentApps, setMostRecentApps] = useState<Record<KONBINI_ID_PKG, MANIFEST_WITH_ID>>(
-        {},
-    );
+    const [mostDownloadedApps, setMostDownloadedApps] = useState<KDATA_ENTRY_PKG[]>([]);
+    const [mostRecentApps, setMostRecentApps] = useState<KDATA_ENTRY_PKG[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const { route } = useLocation();
 
     useEffect(() => {
         async function fetchApps() {
-            const popular = await (
-                await fetch("https://konbini-data.vercel.app/api/group?sorting=d&entries=6")
-            ).json();
-            const recent = await (
-                await fetch("https://konbini-data.vercel.app/api/group?sorting=r&entries=6")
-            ).json();
-
-            setMostDownloadedApps(popular);
-            setMostRecentApps(recent);
+            const popular = await getPkgs("d", 6);
+            const recent = await getPkgs("r", 6);
+            setMostDownloadedApps(Object.values(popular));
+            setMostRecentApps(Object.values(recent));
             setLoading(false);
         }
         fetchApps();
@@ -48,7 +34,7 @@ export default function Home() {
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
-                        route(`/search?q=${e.currentTarget.search.value}`);
+                        route(`/search?q=${e.currentTarget["search"]["value"]}`);
                     }}
                 >
                     <input

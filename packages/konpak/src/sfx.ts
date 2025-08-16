@@ -17,9 +17,7 @@ export async function getKonpakSfx(): Promise<Buffer | null> {
     const download = konsole.ask("Download it? It's around 100 MB.");
     if (!download) return null;
 
-    const response = await fetch(
-        `https://api.github.com/repos/FuckingNode/FuckingNode/releases/latest`,
-    );
+    const response = await fetch(`https://api.github.com/repos/HanaOrg/Konbini/releases/latest`);
     const data: RELEASE_GH_CB = await response.json();
     const remoteUrl = data.assets.find((s) =>
         s.name.startsWith(`kpak-sfx-${getPlatform()}`),

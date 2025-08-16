@@ -1,6 +1,6 @@
+const { validate, isValidOrigin } = require("../utils.js");
 const geoip = require("geoip-lite");
 const { Redis } = require("@upstash/redis");
-const { validate } = require("../utils.js");
 
 /** @type {import('@vercel/node').VercelRequest} */
 let req;
@@ -12,24 +12,10 @@ module.exports = async function handler(reqParam: any, resParam: any) {
     res = resParam;
 
     try {
-        const origin = req.headers.origin;
-
-        if (
-            origin &&
-            (origin.includes("localhost:") ||
-                ["https://konbini.vercel.app", "https://konbini-data.vercel.app"].includes(
-                    origin.trim(),
-                ))
-        ) {
-            res.setHeader("Access-Control-Allow-Origin", origin);
-            res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-            res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-            if (req.method === "OPTIONS") {
-                res.statusCode = 200;
-                res.end();
-                return;
-            }
+        if (isValidOrigin(req, res) && req.method === "OPTIONS") {
+            res.statusCode = 200;
+            res.end();
+            return;
         }
 
         if (req.method !== "POST") {

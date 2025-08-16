@@ -1,5 +1,10 @@
 import { validate } from "@zakahacecosas/string-utils";
-import { bearer } from "../../gui/src/tkn";
+
+/*
+no bearer exists in production; every user has his own per-IP rate limit anyway
+API key is only used locally as KGuard is expensive and needs higher limits
+*/
+const bearer = process.env["BEARER"];
 
 // whether we're on web or not, because the CLI cannot use the web cache API
 const isWeb = typeof window !== "undefined" && typeof document !== "undefined";
@@ -81,9 +86,4 @@ export async function fetchAPI(_url: string, method: "GET" | "POST" = "GET"): Pr
 
     await cache.put(url, timestampedCacheEntry);
     return res;
-}
-
-/** Handles complex characters (which atob() doesn't). */
-export function b64toString(str: string) {
-    return new TextDecoder("utf-8").decode(Uint8Array.from(atob(str), (c) => c.charCodeAt(0)));
 }

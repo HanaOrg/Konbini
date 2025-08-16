@@ -1,19 +1,25 @@
 import { useLocation, useRoute } from "preact-iso";
 import { useEffect, useState } from "preact/hooks";
-import { searchPkg } from "shared/api/pkg";
-import type { KDATA_ENTRY } from "../../../client/guard/guard";
+import { searchPkg } from "shared/api/kdata";
+import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 import Nav from "../components/nav";
 import AppGrid from "../components/app-grid";
 
 export default function Search() {
     const [loading, setLoading] = useState(true);
-    const [results, setResults] = useState<KDATA_ENTRY[]>([]);
+    const [results, setResults] = useState<KDATA_ENTRY_PKG[]>([]);
     const { query } = useRoute();
     const { route } = useLocation();
 
     useEffect(() => {
         async function handler() {
-            const res = await searchPkg(query["q"]);
+            const q = query["q"];
+            if (!q) {
+                setResults([]);
+                setLoading(false);
+                return;
+            }
+            const res = await searchPkg(q);
             setResults(res);
             setLoading(false);
         }
@@ -29,7 +35,7 @@ export default function Search() {
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
-                        route(`/search?q=${e.currentTarget.search.value}`);
+                        route(`/search?q=${e.currentTarget["search"]["value"]}`);
                     }}
                 >
                     <input

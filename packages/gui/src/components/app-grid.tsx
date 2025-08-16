@@ -1,16 +1,14 @@
 import IconWin from "../assets/win";
 import IconTux from "../assets/tux";
 import IconMac from "../assets/mac";
-import type { MANIFEST_WITH_ID } from "../routes/home";
-import type { KONBINI_ID_PKG } from "shared/types/author";
-import type { KDATA_ENTRY } from "../../../client/guard/guard";
+import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 
 export default function AppGrid({
     apps,
     desc,
     title,
 }: {
-    apps: Record<KONBINI_ID_PKG, MANIFEST_WITH_ID> | KDATA_ENTRY[];
+    apps: KDATA_ENTRY_PKG[];
     title: string;
     desc: string;
 }) {

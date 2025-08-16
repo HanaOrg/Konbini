@@ -8,31 +8,22 @@ import {
     isKbiScope,
     parseRepositoryScope,
     type CATEGORY,
-    type KONBINI_MANIFEST,
     type KONBINI_PKG_SCOPE,
     type SUPPORTED_PLATFORMS,
 } from "shared/types/manifest";
 import { getPkgRemotes } from "shared/api/getters";
 import { parseKps } from "shared/api/manifest";
 import { fetchAPI } from "shared/api/network";
-import type { MANIFEST_WITH_ID } from "../../gui/src/routes/home";
 import { downloadHandler } from "shared/api/download";
 import type { KONBINI_AUTHOR, KONBINI_ID_PKG, KONBINI_ID_USR } from "shared/types/author";
 import { assertIntegrityPGP, assertIntegritySHA } from "shared/security";
 import { locateUsr } from "shared/api/core";
 import type { KONBINI_HASHFILE } from "shared/types/files";
-import { getDownloads } from "./downloads";
+import { getDownloads } from "./fetch";
 import { join } from "path";
+import type { MANIFEST_WITH_ID, KDATA_FILE_PKG, KDATA_ENTRY_PKG } from "shared/types/kdata";
 
 const SCAN = false;
-
-export type KDATA_ENTRY = KONBINI_MANIFEST & {
-    downloads: { installs: []; removals: []; active: number };
-    last_release_at: string;
-    changelog: string;
-    filesizes: Record<SUPPORTED_PLATFORMS, number>;
-};
-export type KDATA_FILE = Record<KONBINI_ID_PKG, KDATA_ENTRY>;
 
 function log(...a: any[]): void {
     console.log(...a);
@@ -70,11 +61,11 @@ async function fetchElement(url: string): Promise<Element[]> {
     return (await res.json()) as Element[];
 }
 
-async function fetchAllManifests(kind: "Pkgs"): Promise<(MANIFEST_WITH_ID & { url: string })[]>;
+async function fetchAllManifests(kind: "Pkgs"): Promise<MANIFEST_WITH_ID[]>;
 async function fetchAllManifests(kind: "Authors"): Promise<(KONBINI_AUTHOR & { id: string })[]>;
 async function fetchAllManifests(
     kind: "Pkgs" | "Authors",
-): Promise<(MANIFEST_WITH_ID & { url: string })[] | (KONBINI_AUTHOR & { id: string })[]> {
+): Promise<MANIFEST_WITH_ID[] | (KONBINI_AUTHOR & { id: string })[]> {
     const root = await fetchElement(`https://api.github.com/repos/HanaOrg/Konbini${kind}/contents`);
     const firstLevel = await Promise.all(
         root.filter((e) => e.type === "dir").map((d) => fetchElement(d.url)),
@@ -337,7 +328,7 @@ async function main() {
 
     logBlock("コンビニ GUARD // KDATA // BEGINS");
 
-    const kdata: KDATA_FILE = {};
+    const kdata: KDATA_FILE_PKG = {};
 
     for (const file of readdirSync("./build", { withFileTypes: true })) {
         if (
@@ -391,16 +382,16 @@ async function main() {
         }
     }
 
-    const sortByDownloads = (a: [string, KDATA_ENTRY], b: [string, KDATA_ENTRY]) =>
+    const sortByDownloads = (a: [string, KDATA_ENTRY_PKG], b: [string, KDATA_ENTRY_PKG]) =>
         (b[1]?.downloads?.active ?? 0) - (a[1]?.downloads?.active ?? 0);
-    const sortByLastUpdate = (a: [string, KDATA_ENTRY], b: [string, KDATA_ENTRY]) =>
+    const sortByLastUpdate = (a: [string, KDATA_ENTRY_PKG], b: [string, KDATA_ENTRY_PKG]) =>
         new Date(b[1].last_release_at ?? 0).getTime() -
         new Date(a[1].last_release_at ?? 0).getTime();
-    const createCategoryGroup = (c: CATEGORY): [CATEGORY, KDATA_FILE] => [c, {}];
+    const createCategoryGroup = (c: CATEGORY): [CATEGORY, KDATA_FILE_PKG] => [c, {}];
 
     const sortedByDownloads = fromSorting(kdata, sortByDownloads);
     // (Partial<> since now that Konbini is a new thing, not all categories may be defined)
-    const groupedByCategories: Partial<Record<CATEGORY, KDATA_FILE>> = Object.fromEntries(
+    const groupedByCategories: Partial<Record<CATEGORY, KDATA_FILE_PKG>> = Object.fromEntries(
         CATEGORIES.map(createCategoryGroup),
     );
     Object.entries(kdata).forEach((e) =>
@@ -412,13 +403,12 @@ async function main() {
         }),
     );
     const sortedByLastUpdate = fromSorting(kdata, sortByLastUpdate);
-    // TODO: save up some kb by removing { id: x }, it's already the key of the object anyway
     const sortedAuthors: Record<KONBINI_ID_USR, KONBINI_AUTHOR> = Object.fromEntries(
         authors.map((a) => [a.id, a]),
     );
     const groupedByAuthors: Record<
         KONBINI_ID_USR,
-        Record<KONBINI_ID_PKG, KDATA_ENTRY>
+        Record<KONBINI_ID_PKG, KDATA_ENTRY_PKG>
     > = Object.fromEntries(authors.map((a) => [a.id, {}]));
     Object.entries(kdata).forEach(([user, m]) => {
         if (!groupedByAuthors[m.author]) groupedByAuthors[m.author] = {};

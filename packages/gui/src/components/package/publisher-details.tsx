@@ -1,9 +1,9 @@
 import { isOrganization, type KONBINI_AUTHOR, type KONBINI_ID_USR } from "shared/types/author";
 import Badge from "../badge";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
-import type { MANIFEST_WITH_ID } from "../../routes/home";
 import Detail from "../detail";
 import { locateUsr } from "shared/api/core";
+import type { KDATA_FILE_PKG } from "shared/types/kdata";
 
 export default function PublisherDetails({
     authorId,
@@ -12,7 +12,7 @@ export default function PublisherDetails({
 }: {
     authorId: KONBINI_ID_USR;
     usr: KONBINI_AUTHOR;
-    apps: null | MANIFEST_WITH_ID[];
+    apps: null | KDATA_FILE_PKG;
 }) {
     const manifestUrl = locateUsr(authorId).manifestPub;
 
@@ -88,7 +88,7 @@ export default function PublisherDetails({
                         All apps from {usr.name}
                     </h2>
                     <div className="flex flex-row gap-2 wrap">
-                        {Object.values(apps).map((app) => (
+                        {Object.entries(apps).map(([id, app]) => (
                             <Detail justify="start" className="flex-grow-1">
                                 {app.icon && (
                                     <img
@@ -100,7 +100,7 @@ export default function PublisherDetails({
                                 )}
                                 <div className="flex flex-col">
                                     <h3 className="text-2xl text-white font-medium">{app.name}</h3>
-                                    <a href={`https://konbini.vercel.app/package/${app.id}`}>
+                                    <a href={`https://konbini.vercel.app/package/${id}`}>
                                         See in Konbini
                                     </a>
                                 </div>

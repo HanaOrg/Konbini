@@ -127,8 +127,7 @@ describe("validates and handles IDs", () => {
         expect(() => locatePkg("usr.b")).toThrow("Delimiter too short");
         expect(() => locatePkg("usr.bbb")).toThrow("No package provided for supposedly package ID");
         expect(locatePkg("org.hana.zaiko")).toEqual({
-            manifest:
-                "https://raw.githubusercontent.com/HanaOrg/KonbiniPkgs/main/za/org.hana/zaiko.yaml",
+            manifest: "https://konbini-data.vercel.app/api/pkg?id=org.hana.zaiko",
             manifestPub: "https://github.com/HanaOrg/KonbiniPkgs/blob/main/za/org.hana/zaiko.yaml",
         });
     });
@@ -140,8 +139,7 @@ describe("validates and handles IDs", () => {
         expect(() => locateUsr("usr.")).toThrow("No 2nd part of author/package ID");
         expect(() => locateUsr("usr.b")).toThrow("Delimiter too short");
         expect(locateUsr("org.hana")).toEqual({
-            manifest:
-                "https://raw.githubusercontent.com/HanaOrg/KonbiniAuthors/main/org/ha/hana.yaml",
+            manifest: "https://konbini-data.vercel.app/api/author?id=org.hana",
             manifestPub: "https://github.com/HanaOrg/KonbiniAuthors/blob/main/org/ha/hana.yaml",
             signature:
                 "https://raw.githubusercontent.com/HanaOrg/KonbiniAuthors/main/org/ha/hana.asc",

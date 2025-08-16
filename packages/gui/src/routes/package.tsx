@@ -16,11 +16,11 @@ import ScreenshotSlideshow from "../components/package/screenshots";
 import SystemRequirementsTable from "../components/package/sys-req";
 import MaintainersList from "../components/package/maintainers";
 import PackageDetails from "../components/package/details";
-import { getAuthor, getPkg } from "shared/api/pkg";
-import type { KDATA_ENTRY } from "../../../client/guard/guard";
+import { getAuthor, getPkg } from "shared/api/kdata";
+import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 
 export default function PackagePage() {
-    const [app, setApp] = useState<KDATA_ENTRY>();
+    const [app, setApp] = useState<KDATA_ENTRY_PKG>();
     const [author, setAuthor] = useState<KONBINI_AUTHOR>();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);

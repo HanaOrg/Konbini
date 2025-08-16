@@ -9,7 +9,7 @@ import { getPkgManifest } from "shared/api/core";
 import { parseKps } from "shared/api/manifest";
 import { FILENAMES } from "shared/constants";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
-import { logAction } from "shared/api/telemetry";
+import { logAction } from "shared/api/kdata";
 import { getPkgRemotes } from "shared/api/getters";
 import { getPlatform } from "shared/api/platform";
 

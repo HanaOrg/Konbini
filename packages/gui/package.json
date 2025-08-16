@@ -13,18 +13,23 @@
         "@tailwindcss/vite": "^4.1.12",
         "@vercel/analytics": "^1.5.0",
         "@vercel/speed-insights": "^1.2.0",
-        "@zakahacecosas/string-utils": "catalog:",
+        "@zakahacecosas/string-utils": "npm:@jsr/zakahacecosas__string-utils@^3.4.0",
         "dompurify": "^3.2.6",
         "micromark": "^4.0.2",
         "preact": "^10.27.0",
         "preact-iso": "^2.9.2",
         "tailwindcss": "^4.1.12",
-        "yaml": "catalog:"
+        "yaml": "^2.8.1"
     },
     "devDependencies": {
         "@preact/preset-vite": "^2.10.2",
         "@types/node": "^24.3.0",
-        "typescript": "catalog:",
+        "typescript": "^5.9.2",
         "vite": "^7.1.2"
+    },
+    "pnpm": {
+        "overrides": {
+            "@types/react": "npm:@types/preact@latest"
+        }
     }
 }
