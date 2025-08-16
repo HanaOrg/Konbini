@@ -134,17 +134,22 @@ async function main() {
         case "konpak":
             if (!subcommand)
                 throw "No directory specified. Specify one.\nTo learn more, run 'learn konpak'.";
-            const { platform, id, binary, ver, icon } = parseArgs({
-                args: args.slice(2),
-                options: {
-                    platform: { type: "string" },
-                    id: { type: "string" },
-                    binary: { type: "string" },
-                    ver: { type: "string" },
-                    icon: { type: "string" },
-                },
-            }).values;
-            await konpakFromDir(subcommand, platform, id, binary, ver, icon);
+            try {
+                const { platform, id, binary, ver, icon, sfx } = parseArgs({
+                    args: args.slice(2),
+                    options: {
+                        platform: { type: "string" },
+                        id: { type: "string" },
+                        binary: { type: "string" },
+                        ver: { type: "string" },
+                        icon: { type: "string" },
+                        sfx: { type: "boolean" },
+                    },
+                }).values;
+                await konpakFromDir(subcommand, platform, id, binary, ver, icon, sfx);
+            } catch (error) {
+                konsole.err(Error.isError(error) ? error.message + "." : error);
+            }
             break;
         case "unpack":
             if (!subcommand) throw "No filepath specified!";

@@ -20,15 +20,16 @@ export async function konpakFromDir(
     binary: string | undefined,
     version: string | undefined,
     icon: string | undefined,
+    useSfx: boolean | undefined,
 ) {
-    if (!existsSync(dir)) throw "Directory does not exist.";
+    if (!existsSync(dir)) throw `Directory ${dir} does not exist.`;
 
     if (!validateAgainst(platform, ["windows", "linux"]))
         throw "Invalid platform. Either 'windows' or 'linux'. Provide it with --platform=[windows | linux].";
     if (!validate(appId)) throw "No app ID provided. Provide it with --id=[...].";
     if (!validate(binary)) throw "No binary provided. Provide the FILENAME with --binary=[...].";
     if (!validate(icon)) throw "No icon provided. Provide the FILENAME with --icon=[...].";
-    if (!validate(version)) throw "No version provided. Provide it with --version=[...].";
+    if (!validate(version)) throw "No version provided. Provide it with --ver=[...].";
 
     const pathToManifest = join(dir, "manifest.yaml");
     const pathToBinary = join(dir, binary);
@@ -36,7 +37,7 @@ export async function konpakFromDir(
     const pathToDirected = join(dir, "directed");
 
     if (![pathToManifest, pathToBinary, pathToIcon].every((p) => existsSync(p)))
-        throw "Some required files don't exist.";
+        throw "Some required files don't exist. Check that a manifest.yaml and the given binary and icon exist.";
 
     if (!existsSync(pathToDirected)) mkdirSync(pathToDirected);
 
@@ -62,9 +63,11 @@ export async function konpakFromDir(
     const path = join(cwd(), `${appId}.kpak`);
 
     konsole.suc(`Konpak'd ${appId} successfully! Find it at ${path}.`);
-    const sfx = konsole.ask(
-        "Make it a self-extracting Konpak?\nThis gives you a more versatile installer than users can execute directly, similar to an installer.\nThis advantage comes at the cost of an extra 100 MB as of now.",
-    );
+    const sfx = useSfx
+        ? true
+        : konsole.ask(
+              "Turn it into a self-extracting Konpak?\nThis gives you a more versatile installer than users can execute directly, similar to an installer.\nThis advantage comes at the cost of an extra 100 MB.",
+          );
 
     if (sfx) {
         const sfx = await getKonpakSfx();
