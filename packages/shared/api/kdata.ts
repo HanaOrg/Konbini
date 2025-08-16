@@ -13,7 +13,7 @@ export async function getPkg(pkg: KONBINI_ID_PKG): Promise<KDATA_ENTRY_PKG> {
 
 export async function getPkgs(sorting: "d" | "r", entries?: number): Promise<KDATA_FILE_PKG> {
     const res = await fetchAPI(
-        `https://konbini-data.vercel.app/api/sorted?sorting=${sorting}${entries ? `&entries${entries}` : ""}`,
+        `https://konbini-data.vercel.app/api/group?sorting=${sorting}${entries ? `&entries=${entries}` : ""}`,
     );
     const json = await res.json();
 

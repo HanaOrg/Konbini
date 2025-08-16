@@ -18,6 +18,7 @@ import MaintainersList from "../components/package/maintainers";
 import PackageDetails from "../components/package/details";
 import { getAuthor, getPkg } from "shared/api/kdata";
 import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
+import DownloadChart from "../components/package/downloads";
 
 export default function PackagePage() {
     const [app, setApp] = useState<KDATA_ENTRY_PKG>();
@@ -112,7 +113,9 @@ export default function PackagePage() {
                     )}
                     <div className="flex flex-col w-fit gap-0">
                         <h1 className="grad">{app.name}</h1>
-                        <h2 className="text-xl text-white opacity-[0.7] mb-2">{app.slogan}</h2>
+                        <h2 className="text-xl text-white opacity-[0.8] mb-2 italic">
+                            {app.slogan}
+                        </h2>
                         <h2 className="text-lg text-white opacity-[0.5] mb-2">
                             {app.downloads.active} active installs (est.)
                         </h2>
@@ -187,6 +190,25 @@ export default function PackagePage() {
                         __html: DOMPurify.sanitize(micromark(app.desc.replaceAll("\\n", "\n"))),
                     }}
                 />
+                {app.changelog && (
+                    <>
+                        <hr className="mt-6" />
+                        <h2 className="mt-6 text-3xl text-white font-semibold">
+                            Changelog for the latest update
+                        </h2>
+                        <p className="mb-4 text-white font-semibold">
+                            Published {new Date(app.last_release_at).toUTCString()}
+                        </p>
+                        <div
+                            className="markdown"
+                            dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(
+                                    micromark(app.changelog.replaceAll("\\n", "\n"), {}),
+                                ),
+                            }}
+                        />
+                    </>
+                )}
                 {app.images && app.images.length > 0 && <ScreenshotSlideshow ss={app.images} />}
                 <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">Platform support</h2>
                 <PlatformSupport platforms={app.platforms} />
@@ -196,6 +218,7 @@ export default function PackagePage() {
                 {app.maintainers && (
                     <MaintainersList maintainers={app.maintainers} author={author.name} />
                 )}
+                {app.downloads && <DownloadChart downloads={app.downloads} />}
             </div>
             <Footer />
         </>

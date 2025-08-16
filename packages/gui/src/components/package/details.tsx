@@ -1,19 +1,59 @@
-import { humanLicense, parseRepositoryScope, type KONBINI_MANIFEST } from "shared/types/manifest";
+import { humanLicense, parseRepositoryScope } from "shared/types/manifest";
 import Detail from "../detail";
+import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
+import { getDesktopPlatform } from "../../ua";
 
 export default function PackageDetails({
     app,
     manifestUrl,
 }: {
-    app: KONBINI_MANIFEST;
+    app: KDATA_ENTRY_PKG;
     manifestUrl: string;
 }) {
     const repo = app.repository ? parseRepositoryScope(app.repository) : null;
+    const _p = getDesktopPlatform();
+    const platform =
+        _p.plat === "Windows" && _p.arch === "64"
+            ? "win64"
+            : _p.plat === "Linux"
+              ? _p.arch === "64"
+                  ? "linux64"
+                  : _p.arch === "ARM"
+                    ? "linuxArm"
+                    : null
+              : _p.plat === "macOS"
+                ? _p.arch === "ARM"
+                    ? "macArm"
+                    : _p.arch === "64"
+                      ? "mac64"
+                      : null
+                : null;
+    const appSize = platform ? (app.filesizes ? (app.filesizes[platform] ?? null) : null) : null;
 
     return (
         <>
             <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">Package details</h2>
             <div className="flex flex-row gap-3 flex-wrap w-full">
+                {appSize && (
+                    <Detail>
+                        <svg
+                            width="35"
+                            height="35"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M5 7h14a3 3 0 0 1 2.995 2.824L22 10v4a3 3 0 0 1-2.824 2.995L19 17H5a3 3 0 0 1-2.995-2.824L2 14v-4a3 3 0 0 1 2.824-2.995L5 7h14H5Zm13 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm-4 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"
+                                fill="#FFF"
+                            />
+                        </svg>
+                        <div className="flex flex-col">
+                            <p>Takes {(appSize / 1048576).toFixed(2)} MB.</p>
+                            <p className="text-xs font-light">{app.privacy}</p>
+                        </div>
+                    </Detail>
+                )}
                 <Detail>
                     {app.privacy ? (
                         <svg

@@ -77,6 +77,14 @@ h1 {
     line-height: 135%;
 }
 
+.markdown ul {
+    list-style: unset;
+}
+
+.markdown li {
+    margin-left: 20px;
+}
+
 .markdown h1 {
     font-size: 2.5em;
     color: #fff;

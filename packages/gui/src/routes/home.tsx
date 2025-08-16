@@ -2,7 +2,6 @@ import { useEffect, useState } from "preact/hooks";
 import AppGrid from "../components/app-grid";
 import Footer from "../components/footer";
 import Nav from "../components/nav";
-import { useLocation } from "preact-iso";
 import { getPkgs } from "shared/api/kdata";
 import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 
@@ -10,7 +9,6 @@ export default function Home() {
     const [mostDownloadedApps, setMostDownloadedApps] = useState<KDATA_ENTRY_PKG[]>([]);
     const [mostRecentApps, setMostRecentApps] = useState<KDATA_ENTRY_PKG[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const { route } = useLocation();
 
     useEffect(() => {
         async function fetchApps() {
@@ -27,23 +25,11 @@ export default function Home() {
         <>
             <Nav />
             <div className="app-main-cont">
-                <div className="bg-[#FF6F00] w-300 h-150 blur-[300px] opacity-[0.35] absolute top-[-250px] left-[-250px] z-[-1]" />
+                <div className="bg-[#FF6F00] w-300 h-150 blur-[300px] opacity-[0.5] absolute top-[-250px] left-[-250px] z-[-1]" />
                 <h1 style={{ color: "#fff", opacity: 0.9, fontSize: "6em" }}>
                     Your convenience store
                 </h1>
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        route(`/search?q=${e.currentTarget["search"]["value"]}`);
-                    }}
-                >
-                    <input
-                        type="search"
-                        name="search"
-                        placeholder="Search packages"
-                        className="w-full my-4 border-1 border-[#FFFFFF17] bg-[#FFFFFF14] px-4 py-3 focus:border-1 focus:border-[#FFFFFF5A] rounded-2xl focus:outline-none"
-                    />
-                </form>
+                <hr className="my-6" />
                 <div id="not_found" className="hidden">
                     <h1>We couldn't find anything...</h1>
                     <p>
