@@ -1,5 +1,13 @@
 import { execSync } from "child_process";
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
+import {
+    copyFileSync,
+    existsSync,
+    mkdirSync,
+    readdirSync,
+    readFileSync,
+    statSync,
+    writeFileSync,
+} from "fs";
 import { globSync } from "glob";
 import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
@@ -24,7 +32,7 @@ import { join } from "path";
 import type { MANIFEST_WITH_ID, KDATA_FILE_PKG, KDATA_ENTRY_PKG } from "shared/types/kdata";
 import { parseKAChangelog } from "shared/changelog";
 
-const SCAN = false;
+const SCAN = true;
 
 function log(...a: any[]): void {
     console.log(...a);
@@ -420,6 +428,7 @@ async function main() {
     writeFileSync("../../data/api/kdata_per_category.json", JSON.stringify(groupedByCategories));
     writeFileSync("../../data/api/kdata_per_releases.json", JSON.stringify(sortedByLastUpdate));
     writeFileSync("../../data/api/kdata_authors.json", JSON.stringify(sortedAuthors));
+    copyFileSync("./guard.txt", "../../data/api/guard.txt");
 
     logBlock("コンビニ GUARD // KDATA // SUCCESSFULLY ENDS");
 

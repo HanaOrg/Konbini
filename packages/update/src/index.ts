@@ -35,7 +35,7 @@ async function main() {
             await updateKonbini();
             break;
         case "where":
-            konsole.suc("Sure, here's where we live on your PC:");
+            konsole.suc("Here's where we live on your PC:");
             konsole.adv("Konbini Updater is installed at and running from", import.meta.dir);
             break;
         case "about":

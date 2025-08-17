@@ -79,7 +79,9 @@ export async function konpakFromDir(
             platform === "windows" ? path + ".exe" : path,
             Buffer.concat([sfx, readFileSync(path)]),
         );
-        konsole.suc("Your Konpak is ready for universal distribution.");
+        konsole.suc(
+            `Your Konpak is ready for universal ${toUpperCaseFirst(platform)} distribution.`,
+        );
     } else {
         konsole.suc("Got it. Your Konpak is ready for Konbini-only distribution.");
     }

@@ -16,6 +16,8 @@ import { getPkgManifest } from "shared/api/core";
 import { constructKps, parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
+import { installPkgMgr } from "./ipm";
+import { exists } from "./path";
 
 /** true if it IS up to date, false if it NEEDS to update */
 function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
@@ -48,15 +50,24 @@ export function installAliasedPackage(params: {
     );
 
     try {
-        execSync(`${kps.cmd} -v`);
+        exists(kps.cmd);
     } catch {
         konsole.err(
-            `This package requires "${kps.name}" a 3rd party package manager that is not installed on your system.`,
+            `This package requires "${kps.name}", a 3rd party package manager that is not installed on your system.`,
         );
+        if (kps.src === "fpak") return "needsPkgMgr";
         konsole.war(
-            `Future versions of Konbini will (attempt to) install it for you.\nFor now, it's on you. Sorry!`,
+            "We may attempt to install it for you. Keep in mind this is not really recommended and somewhat error prone.",
         );
-        return "needsPkgMgr";
+        const install = konsole.ask("Should we try to?");
+        if (install) {
+            try {
+                const out = installPkgMgr(kps.src);
+                if (out === "edge") throw `Edge case: Shouldn't ${kps.name} be preinstalled?`;
+            } catch (error) {
+                throw `Error installing ${kps.name}`;
+            }
+        }
     }
 
     // very specific workaround

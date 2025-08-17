@@ -66,7 +66,7 @@ export async function showPkgInfo(pkg: string) {
             manifest.desc
                 .split("\n")
                 .filter((s) => s.trim() != "")
-                .join("\n\n      "),
+                .join("\n\n"),
             350,
             true,
         ),

@@ -104,10 +104,7 @@ export async function getUsrSignature(authorId: string, folderPath: string): Pro
         return filePath;
     }
 
-    const signaturePath = [locateUsr(authorId), `${normalizer(authorId).split(".")[1]}.asc`].join(
-        "/",
-    );
-    const response = await fetchAPI(signaturePath);
+    const response = await fetchAPI(locateUsr(authorId).signature);
 
     if (response.status === 404) {
         throw `Author ${authorId} does NOT have a valid signature (or at least, we didn't find one). Report this issue, please.`;
@@ -117,7 +114,7 @@ export async function getUsrSignature(authorId: string, folderPath: string): Pro
     }
 
     await downloadHandler({
-        remoteUrl: signaturePath,
+        remoteUrl: locateUsr(authorId).signature,
         filePath,
     });
 

@@ -16,7 +16,7 @@ import type { KONBINI_MANIFEST } from "shared/types/manifest";
  *
  * TODO: Find out how to detect rejection to halt execution (and possibly show a proper error message).
  */
-function runElevatedScript(scriptContent: string) {
+export function runElevatedScript(scriptContent: string) {
     const tmpFile = normalize(join(tmpdir(), `temp_script_${Date.now()}.ps1`));
 
     writeFileSync(tmpFile, scriptContent);

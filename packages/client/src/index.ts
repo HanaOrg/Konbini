@@ -7,7 +7,7 @@ import { listPackages } from "./commands/list";
 import { removePackage } from "./toolkit/remove";
 import { learn } from "./commands/learn";
 import { showPkgInfo, showUserInfo } from "./commands/info";
-import { addToUserPathEnvVariable } from "./toolkit/path";
+import { addToUserPathEnvVariable, registerGuardCronjob } from "./toolkit/path";
 import { updatePackages } from "./commands/update";
 import { generateManifest } from "./commands/manifest-pkg";
 import { about } from "./commands/about";
@@ -20,6 +20,7 @@ import { parseArgs } from "util";
 import { Unpack } from "../../konpak/src/unpack";
 import { registerKonpakForWindows } from "../../konpak/src/integrate";
 import { parseID } from "shared/api/core";
+import { ensureSecurity } from "./commands/secure";
 
 const p = getPlatform();
 const platformString =
@@ -37,6 +38,7 @@ async function main() {
     if (!existsSync(PACKAGES_DIR)) mkdirSync(PACKAGES_DIR, { recursive: true });
     if (!existsSync(LAUNCHPAD_DIR)) mkdirSync(LAUNCHPAD_DIR, { recursive: true });
     registerKonpakForWindows();
+    registerGuardCronjob();
     addToUserPathEnvVariable(LAUNCHPAD_DIR);
 
     if (!command) {
@@ -96,13 +98,10 @@ async function main() {
             await removePackage(subcommand);
             break;
         case "where":
-            konsole.suc("Sure, here's where we live on your PC:");
+            konsole.suc("Here's where we live on your PC:");
             konsole.adv("Konbini is installed at and running from", import.meta.dir);
             konsole.adv("Konbini executables overall live at", INSTALLATION_DIR);
-            konsole.adv(
-                "Installed packages (that don't come from a scoped 3rd party pkg manager) are at",
-                PACKAGES_DIR,
-            );
+            konsole.adv("Installed packages (non scoped) are at", PACKAGES_DIR);
             konsole.adv("Launchpad shortcuts are at", LAUNCHPAD_DIR);
             konsole.adv("Your private signatures (NEVER SHARE THEM) are stored at", SIGNATURE_DIR);
             break;
@@ -122,6 +121,9 @@ async function main() {
                 'Run "learn hash" if you\'re curious about why we use our own hasher for Konbini.',
             );
             konsole.suc(konbiniHash(subcommand));
+            break;
+        case "ensure-security":
+            await ensureSecurity();
             break;
         case "sign":
             if (!validateAgainst(subcommand, ["new", "apply"]))
@@ -169,9 +171,9 @@ async function main() {
             konsole.adv(
                 "Written in BunJS, version",
                 Bun.version,
-                "(running",
-                process.version,
-                "of Node)",
+                "(running version",
+                process.versions.node,
+                "of NodeJS)",
             );
             break;
         default:
