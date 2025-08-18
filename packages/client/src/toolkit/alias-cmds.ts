@@ -59,7 +59,7 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `winget install ${pkg} ${microsoft}`,
         reinstall: (pkg) => `winget install ${pkg} --force ${microsoft}`,
         update: (pkg) => `winget upgrade ${microsoft} --id ${pkg}`,
-        exists: (pkg) => `winget list --name ${pkg.split(".")[1]}`,
+        exists: (pkg) => `winget list --name ${pkg}`,
         uninstall: (pkg) => `winget uninstall ${pkg} ${microsoft}`,
         check: (_) => "winget upgrade",
     },

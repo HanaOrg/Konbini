@@ -108,7 +108,7 @@ async function downloadSafetyRelatedFiles(params: {
 }
 
 export async function installPackage(
-    pkgId: string,
+    pkgId: KONBINI_ID_PKG,
     method: "install" | "update" | "reinstall" = "install",
 ) {
     if (pkgId.includes(":")) {
@@ -123,7 +123,7 @@ export async function installPackage(
         );
         konsole.war("Proceeding...");
         const ret = installAliasedPackage({
-            pkgId: kps.value,
+            pkgId,
             manifest: {
                 name: kps.value,
                 // idk man this needs a value in order not to fail
@@ -292,8 +292,8 @@ export async function installPackage(
     }
 
     // generate launchpad shortcut
-    writeLaunchpadShortcut(pkgId, manifest.author, outputPath);
-    konsole.dbg("Launchpad shortcut written.");
+    // the function itself makes the "shortcut written log"
+    writeLaunchpadShortcut(pkgId, manifest.author, outputPath, null);
 
     chmodSync(outputPath, statSync(outputPath).mode | 0o111);
     konsole.dbg("Made the executable actually runnable.");

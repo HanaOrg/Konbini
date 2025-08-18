@@ -9,7 +9,7 @@ export function getDesktopPlatform(): {
         arch:
             ua.includes("ARM") || ua.includes("aarch64")
                 ? "ARM"
-                : ua.includes("x86_64") || ua.includes("x64")
+                : ua.includes("x86_64") || ua.includes("x64") || ua.includes("Intel Mac")
                   ? "64"
                   : "32",
     };

@@ -32,7 +32,8 @@ for (const [name, platform] of Object.entries(platforms)) {
         "--minify",
         "--sourcemap",
         "--outfile",
-        `./dist/${name}`,
+        // TODO: remove
+        `./dist/alpha-${name}`,
         `--target=${platform}`,
         src,
     ];

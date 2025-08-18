@@ -21,6 +21,7 @@ import { Unpack } from "../../konpak/src/unpack";
 import { registerKonpakForWindows } from "../../konpak/src/integrate";
 import { parseID } from "shared/api/core";
 import { ensureSecurity } from "./commands/secure";
+import type { KONBINI_ID_PKG } from "shared/types/author";
 
 const p = getPlatform();
 const platformString =
@@ -37,9 +38,9 @@ async function main() {
 
     if (!existsSync(PACKAGES_DIR)) mkdirSync(PACKAGES_DIR, { recursive: true });
     if (!existsSync(LAUNCHPAD_DIR)) mkdirSync(LAUNCHPAD_DIR, { recursive: true });
+    addToUserPathEnvVariable(LAUNCHPAD_DIR);
     registerKonpakForWindows();
     registerGuardCronjob();
-    addToUserPathEnvVariable(LAUNCHPAD_DIR);
 
     if (!command) {
         console.log(
@@ -64,6 +65,11 @@ async function main() {
                 `> sign <mode> [...]      ${konsole.clr("grey", "// works around PGP signatures, run it for more info")}`,
                 `> manifest               ${konsole.clr("grey", "// guides you and creates a manifest for a Konbini package")}`,
                 `> konpak <dir>           ${konsole.clr("grey", "// turns the specified directory into a Konpak")}`,
+                // TODO: remove
+                "",
+                ">>> YOU'RE AN ALPHA TESTER - test everything here please :)",
+                ">>> EXPECT A TON OF ISSUES, report anything you can IN DETAIL",
+                ">>> thank you so much",
             ].join("\n"),
         );
         return;
@@ -74,7 +80,12 @@ async function main() {
             if (!subcommand) throw "No package specified.";
             if (validateAgainst(subcommand, ["konbini", "kbi", "kbu"]))
                 throw "To update Konbini, use 'kbu update'.";
-            await installPackage(subcommand);
+            try {
+                parseID(subcommand);
+            } catch {
+                throw `Invalid package ID ${subcommand}`;
+            }
+            await installPackage(subcommand as KONBINI_ID_PKG);
             break;
         case "list":
             const len = await listPackages(subcommand === "-v" ? "VERBOSE" : "STANDARD");

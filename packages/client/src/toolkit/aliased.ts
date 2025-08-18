@@ -1,6 +1,6 @@
 import { konsole } from "shared/client";
 import { execSync } from "child_process";
-import { writeLockfile } from "./write";
+import { writeLaunchpadShortcut, writeLockfile } from "./write";
 import { ALIASED_CMDs } from "./alias-cmds";
 import { PKG_PATH } from "shared/client";
 import { existsSync } from "fs";
@@ -18,24 +18,35 @@ import { getPlatform } from "shared/api/platform";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { installPkgMgr } from "./ipm";
 import { exists } from "./path";
+import type { KONBINI_ID_PKG } from "shared/types/author";
+
+// TODO: review this dumpster fire
 
 /** true if it IS up to date, false if it NEEDS to update */
 function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
     if (scope.src === "kbi")
         throw new Error("You should not be able to see this (KBI KPS over alias-only func).");
-    const out = execSync(ALIASED_CMDs[scope.src]["exists"](scope.value)).toString();
+    let out;
+    try {
+        out = execSync(ALIASED_CMDs[scope.src]["check"](scope.value))
+            .toString()
+            .split("\n")
+            .map((line) => line.trim());
+    } catch (error) {
+        out = new TextDecoder()
+            .decode((error as any).stdout)
+            .split("\n")
+            .map((line) => line.trim());
+    }
     // 7.0.0 < 7.0.1
     if (scope.src === "nix") return !out.includes("<");
     // outdated packages:
     // foobar (7.0.1)
-    return !out
-        .split("\n")
-        .map((line) => line.trim())
-        .some((line) => line.includes(scope.value));
+    return !out.some((line) => line.includes(scope.value));
 }
 
 export function installAliasedPackage(params: {
-    pkgId: string;
+    pkgId: KONBINI_ID_PKG;
     kps: KONBINI_PARSED_SCOPE;
     manifest: KONBINI_MANIFEST;
     method: "install" | "update" | "reinstall";
@@ -112,7 +123,7 @@ export function installAliasedPackage(params: {
         }
     }
 
-    if (isUpToDate(kps)) return "upToDate";
+    if (method === "update" && isUpToDate(kps)) return "upToDate";
 
     try {
         execSync(ALIASED_CMDs[kps.src][method](kps.value), {
@@ -136,6 +147,7 @@ export function installAliasedPackage(params: {
         timestamp: new Date().toString(),
     };
     writeLockfile(lockfile, pkgId, manifest.author);
+    writeLaunchpadShortcut(pkgId, manifest.author, "", scope);
     return "installedOrUpdated";
 }
 
@@ -154,9 +166,10 @@ export async function packageExists(pkg: string): Promise<boolean> {
     try {
         out = execSync(cmd).toString().trim();
     } catch (error) {
-        out = String(error);
+        out = new TextDecoder().decode((error as any).stdout).trim();
     }
 
+    // TODO: review why the fuck did i make this
     // chocolatey is stupid...
     if (kps.src === "cho") return out.length === "1 packages installed.".length;
     // NOTE - be sure to test all pkg managers to ensure behavior is consistent

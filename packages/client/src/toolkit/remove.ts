@@ -5,7 +5,7 @@ import { konsole } from "shared/client";
 import { parse as parseYaml } from "yaml";
 import { execSync } from "child_process";
 import { ALIASED_CMDs } from "./alias-cmds";
-import { getPkgManifest } from "shared/api/core";
+import { getPkgManifest, parseID } from "shared/api/core";
 import { parseKps } from "shared/api/manifest";
 import { FILENAMES } from "shared/constants";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
@@ -40,7 +40,10 @@ export async function removePackage(pkg: string) {
     }
     konsole.dbg(`Applying rm -rf at ${removePath}.`);
     rmSync(removePath, { force: true, recursive: true });
-    rmSync(LAUNCHPAD_FILE_PATH({ pkg, author: m.author }), { force: true, recursive: true });
+    rmSync(LAUNCHPAD_FILE_PATH({ pkg: parseID(pkg).package!, author: m.author }), {
+        force: true,
+        recursive: true,
+    });
 
     await logAction({
         app: pkg,
