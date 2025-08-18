@@ -52,14 +52,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Finder (MacOS) folder config
 .DS_Store
 
-# Konbini built executable
-dist/**
-
 # guard downloads
 packages/client/guard/build/**
-
-# personal
-TODO.md
 
 # API-served data
 packages/data/api/**.json

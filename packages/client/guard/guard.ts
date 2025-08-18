@@ -397,7 +397,7 @@ async function main() {
         CATEGORIES.map(createCategoryGroup),
     );
     Object.entries(kdata).forEach((e) =>
-        e[1].categories.forEach((cat) => {
+        (e[1].categories || []).forEach((cat) => {
             if (!groupedByCategories[cat]) {
                 groupedByCategories[cat] = {};
             }

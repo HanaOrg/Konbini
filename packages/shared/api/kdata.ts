@@ -76,7 +76,7 @@ export async function searchPkg(q: string): Promise<KDATA_ENTRY_PKG[]> {
             matches(app.name) ||
             matches(app.desc) ||
             matches(app.slogan) ||
-            app.categories.some(matches)
+            (app.categories || []).some(matches)
         )
             results.push(app);
     });

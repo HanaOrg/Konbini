@@ -31,6 +31,8 @@ Depending on whether the manifest is for a USER or an ORGANIZATION, two differen
 ```yaml
 # Your name. Should be real, but doesn't have to, a username works.
 name: string
+# Verification status. Read more about this in "verified.md".
+verified: boolean # (optional)
 # Name of an organization you belong to.
 org: string # (optional)
 # A publicly visible e-mail address.
@@ -53,6 +55,8 @@ socials: # (optional - inner props are all optional too)
     github: string
     # GitLab username
     gitlab: string
+    # Codeberg username
+    gitlab: string
 ```
 
 #### Organization manifest
@@ -61,10 +65,10 @@ socials: # (optional - inner props are all optional too)
 # Your organization's name.
 name: string
 # Your organization's website.
-website: string
+website: string # (optional)
 # Your organization's email.
-email: string
-# Whether it's a private, non profit, public, or collab organization. Required for transparency purposes.
+email: string # (optional)
+# Whether it's a private, non profit, public, or collab organization. Required.
 # For other types of organizations, use `OTHER`, as some organizations are hard to catalog.
 type: "PRIVATE_CORP" OR "NON_PROFIT" OR "GOVT_ORG" OR "COLLAB_ORG" OR "OTHER"
 # Your organization's biography - a text visible inside your profile.
@@ -79,6 +83,8 @@ socials: # Your organization's socials, if any. Optional - inner props are all o
     github: string
     # GitLab username
     gitlab: string
+    # Codeberg username
+    codeberg: string
 ```
 
 ## Registering a package
@@ -87,11 +93,21 @@ If you correctly did everything, your PR to the authors registry should be merge
 
 Just as when you made your profile, you will need to make a Pull Request including a manifest file (and nothing else this time). This file must be called `PACKAGE.yaml`, where PACKAGE will be the unique identifier of your package. So, if you created `cool-package.yaml`, `kbi install cool-package` would point to your package.
 
-#### Package manifest specification
+### Package manifest specification
+
+Where `REPO_SCOPE` is your repo's location (`OWNER/AUTHOR`) preceded by an identifier for the platform (`gh:` for GitHub, `gl:` for GitLab, and `cb:` for Codeberg), resulting in `id:owner/author`; `AUTHOR_ID` is your author ID as previously defined (`scope.username`); `KPS` is a [Konbini Package Scope (explained here)](./kps.md); and `LICENSE` is one of the following codes:
+
+```ts
+"MIT" or "GPLv3" or "GPLv2" or "Apache2" or "BSD2Clause" or "BSD3Clause" or "ISC" or "MPLv2" or "LGPLv3" or "EPLv2" or "Unlicense" or "Zlib" or "PublicDomain"
+```
+
+---
 
 ```yaml
+# REQUIRED STUFF
+
 # GitHub/GitLab/Codeberg repository where the package _itself_ is stored.
-repository: string/string
+repository: REPO_SCOPE
 # Supported platforms for the package, with their Konbini Package Scope (KPS).
 platforms:
     # 64-bit Linux KPS.
@@ -104,35 +120,45 @@ platforms:
     macArm: null | KPS
     # 64-bit Microsoft Windows KPS.
     win64: null | KPS
-
+# App type
+type: "cli" or "gui" or "both"
 # Package name, as displayed in the Konbini UI.
 name: string
-
 # Package slogan, as displayed in the Konbini UI and the Konbini CLI.
 slogan: string
-
 # Package description, as displayed in the Konbini UI. Supports basic MarkDown.
 desc: string
-
-# Package license.
-license: LICENSE
-
+# Package license. Can be 'null' (without colons), but must be declared.
+license: LICENSE or null
 # Author's unique identifier.
 author: AUTHOR_ID
+# Set to true if the app collects telemetry, either anonymous or not. Can be false if you don't do this, but must be declared.
+telemetry: boolean
+# Age rating of the app. This works by specifying if the following items (which restrict age) are present.
+#
+# For anyone wondering where nudity references are, that kind of content is prohibited from Konbini.
+age_rating:
+    # Does the app allow to use real currency in any way?
+    money: true
+    # Does the app allow to use unmonitored chats, media reels, whatsoever?
+    social: true
+    # Does the app reference illegal substances or legalized drugs / alcohol in any way?
+    substances: false
+    # Does the app show scenes of real, graphical violence in any case?
+    violence: false
+
+# OPTIONAL STUFF
 
 # A list of persons who have contributed to the development of this package.
 maintainers:
     - name: string
       # Optional email
       email: string
-
-# App icon to be displayed in the Konbini UI. Only WEBP over HTTPS is supported.
+# App icon to be displayed in the Konbini UI. Only WEBP and PNG over HTTPS are supported.
 icon: https://example.com/icon.webp
-
-# App screenshots to be displayed in the Konbini UI. Only WEBP over HTTPS is supported.
-screenshot_urls:
+# App screenshots to be displayed in the Konbini UI. Only WEBP and PNG over HTTPS are supported.
+images:
     - "https://example.com/image1.webp"
-
 # A category that represents the type of tool or software the app is meant to be.
 # - SYSTEM_UTIL: Tools for system management (e.g., disk cleaner, sys info viewer).
 # - PERSONAL: Personal-related tools (e.g., health, digital wellbeing).
@@ -148,42 +174,32 @@ screenshot_urls:
 categories:
     - "EDUCATION"
     # ...
-
-# Age rating of the app. This works by specifying if the following items (which restrict age) are present.
-#
-# For anyone wondering where nudity references are, that kind of content is prohibited from Konbini.
-age_rating:
-    # Does the app allow to use real currency in any way?
-    money: true
-    # Does the app allow to use unmonitored chats, media reels, whatsoever?
-    social: true
-    # Does the app reference illegal substances or legalized drugs / alcohol in any way?
-    substances: false
-    # Does the app show scenes of real, graphical violence in any case?
-    violence: false
-```
-
-Where `AUTHOR_ID` is your author ID as previously defined (`scope.username`), `KPS` is a [Konbini Package Scope](./kps.md), and `LICENSE` is one of the following codes:
-
-```ts
-| "MIT"
-| "GPLv3"
-| "GPLv2"
-| "Apache2"
-| "BSD2Clause"
-| "BSD3Clause"
-| "ISC"
-| "MPLv2"
-| "LGPLv3"
-| "EPLv2"
-| "Unlicense"
-| "Zlib"
-| "PublicDomain"
+# Main website for the app. Shouldn't be your code repository as this one's already linked when provided.
+homepage: URL
+# A documentation / manual page for the app.
+docs: URL
+# A page with the Terms of Service of the app.
+terms: URL
+# A page with the Privacy Policy of the app.
+privacy: URL
+# Hardware requirements
+requirements:
+    # OS version details
+    os_ver:
+        win: string
+        mac: string
+        lin: string
+    # Minimal RAM, in MB
+    ram_mb: number
+    # Minimal disk storage, in MB
+    disk_mb: number
 ```
 
 ## Releasing your package
 
 To avoid making a PR for each version, we use GitHub/GitLab/Codeberg releases for package publishing. Once your manifest is uploaded, if the GitHub/GitLab/Codeberg repository was properly specified and you have at least one public (Konbini compliant) release, your package becomes instantly downloadable.
+
+Your package must come in the form of a self-contained application, like an AppImage or raw EXE. Archives, DEB files, and so on, won't be extracted - this is for safety purposes (and because nothing guarantees a ZIP or a tarball will follow a reproducible format). If you want to bundle an app with assets you need extracted in the user's machine, use a [Konpak](konpak.md).
 
 This means, once you PR the manifest file, you do not need to make changes to it, and just by making a GitHub/GitLab/Codeberg release (with proper [safety practices](#safety-requirements-for-publishing)), you are done. Your package's version are taken from the tag of the release.
 
@@ -193,7 +209,7 @@ This means, once you PR the manifest file, you do not need to make changes to it
 ## Safety requirements for publishing
 
 > [!IMPORTANT]
-> **This is NOT required for aliased packages (those with a non-`kbi` source).**
+> This is NOT required for aliased packages (those with a non-`kbi` source).
 
 Suppose a normal release of your package comes with these files attached:
 

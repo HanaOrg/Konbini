@@ -4,19 +4,19 @@ import { validate, validateAgainst } from "@zakahacecosas/string-utils";
 interface COMMON_PROFILE {
     /** Name of the person or organization.
      *
-     * For persons it should be real, but doesn't have to, a username works.
+     * For persons it should be real, but doesn't have to, a username or pseudonym works.
      *
      * For organizations it HAS TO be real.
      */
     name: string;
     /** If true, it means this user has been verified by the Konbini team.
-     * Users / organization owners shall not include this in their initial Pull Request.
+     * Users / organization owners may include this in their initial Pull Request only if the requirements are met.
      */
     verified?: boolean;
     /** Their website. */
-    website: string;
+    website?: string;
     /** Their contact email address. */
-    email: string;
+    email?: string;
     /** Their biography - a text they can write inside of their profiles. */
     biography?: string;
     /** Their socials, if any. */
@@ -31,6 +31,8 @@ interface COMMON_PROFILE {
         github?: string;
         /** Their GitLab username. */
         gitlab?: string;
+        /** Their GitLab username. */
+        codeberg?: string;
     };
 }
 

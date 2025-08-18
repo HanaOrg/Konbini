@@ -25,14 +25,14 @@
     "scripts": {
         "pretty": "prettier --w .",
         "lint": "eslint . --cache --fix && tsc --noEmit",
+        "precommit": "bun run pretty && bun run lint",
         "run:cli": "bun packages/client/src/index.ts",
         "run:upd": "bun packages/update/src/index.ts",
         "run:web": "cd packages/gui && bun run dev",
         "bld": "echo 'Building the CLI...' && bun run bld:cli && echo 'Building the GUI...' && bun run bld:web && echo 'Built it all!'",
         "bld:cli": "cd packages/client && bun build.ts",
         "bld:web": "cd packages/gui && bun run build",
-        "launch:web": "cd packages/gui && bun run prod",
-        "launch:web:bld": "bun run bld:web && cd packages/gui && bun run prod",
+        "launch:web": "bun run bld:web && cd packages/gui && bun run prod",
         "launch:api": "cd packages/data && vercel --prod"
     },
     "dependencies": {

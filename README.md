@@ -41,3 +41,21 @@ Head to `https://konbini.vercel.app`. It's just a frontend, similar to Flathub, 
 Konbini is brought to you by [@ZakaHaceCosas](https://github.com/ZakaHaceCosas) and published under the name of "Hana" (this GitHub organization and a yet-to-be-born company).
 
 A huge "thank you" to [MrSerge01](https://github.com/MrSerge01), [Dimkauzh](https://github.com/dimkauzh), and especially [pico190](https://github.com/pico190) for helping out.
+
+## License
+
+_Konbini, your convenience store._
+Copyright (C) 2025 Zakaria ("ZakaHaceCosas", under "Hana" org.)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.

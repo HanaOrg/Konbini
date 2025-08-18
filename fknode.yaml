@@ -4,6 +4,7 @@ destroy:
         - "./packages/gui/dist/"
     intensities:
         - "*"
+commitCmd: precommit
 prettyCmd: "pretty"
 lintCmd: "lint"
 flagless:

@@ -165,7 +165,7 @@ export default function PackagePage() {
                             {app.telemetry && (
                                 <Badge color="#FF8C001A">Shares telemetry data</Badge>
                             )}
-                            {app.categories.map((c) => (
+                            {(app.categories || []).map((c) => (
                                 <Badge key={c} color="#FFE8BF1A">
                                     {toUpperCaseFirst(c)}
                                 </Badge>

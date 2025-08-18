@@ -6,10 +6,21 @@ There are three modules (two required); KBI, KBU, and KPAK SFX. KBI is Konbini i
 
 ```txt
 kbi-win64.exe
-kbi-linux64
+kbi-linux-x64
 ...
 kbu-win64.exe
 ...
-kpak-sfx-win64
+kpak-sfx-win64.exe
 ...
+```
+
+All releases include PGP signatures and hashes. While not published to Konbini, these follow the Konbini format (a YAML hashfile then a signature file for each binary, being our public signature the same `org.hana` uses for Konbini).
+
+The hashfile isn't fully Konbini compliant though as the keys are different (since there's more than one hash per platform). Keys look like this:
+
+```yaml
+kbi_win64: HASH
+# ...
+kbu_win64: HASH
+# ...
 ```

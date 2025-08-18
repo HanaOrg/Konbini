@@ -251,7 +251,7 @@ export interface KONBINI_MANIFEST {
      * - `COMMUNICATION`: Tools for communication (e.g., messaging apps, email clients, video conferencing).
      * - `EDUCATION`: Tools for learning and knowledge management (e.g., note-taking apps, educational platforms).
      */
-    categories: CATEGORY[];
+    categories?: CATEGORY[];
     /**
      * Age rating of the app. This works by specifying if the following items (which restrict age) are present.
      *
