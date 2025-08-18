@@ -36,7 +36,7 @@ This value differs depending on the KPS source.
 **If you write version codes in your file names**, you don't need to modify the manifest each time, don't worry. Use `[[VER]]` in the manifest to reference the place where it appears (we assume your naming is consistent, as it should be). Be sure the version is equal to your release's `tag_name`.
 
 > [!TIP]
-> If your executable is called `my-program-v2.0.0.exe`, the scope should be `std:my-program-[[VER]].exe` and your release's tag name should be exactly "`v2.0.0`". Do this for every platform scope you plan to add.
+> If your executable is called `my-program-v2.0.0.exe`, the scope should be `kbi:my-program-[[VER]].exe` and your release's tag name should be exactly "`v2.0.0`". Do this for every platform scope you plan to add.
 
 ### If KPS source equals anything else
 
