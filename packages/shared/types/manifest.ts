@@ -102,6 +102,8 @@ export type KONBINI_PARSED_SCOPE = PARSED_KPS | PARSED_SPECIFIC_KPS;
 
 export const LICENSES = [
     "MIT",
+    "LGPLv3",
+    "AGPLv3",
     "GPLv3",
     "GPLv2",
     "Apache2",
@@ -109,7 +111,6 @@ export const LICENSES = [
     "BSD3Clause",
     "ISC",
     "MPLv2",
-    "LGPLv3",
     "EPLv2",
     "Unlicense",
     "Zlib",
@@ -125,6 +126,8 @@ export function humanLicense(license: LICENSE): string {
     switch (license) {
         case "MIT":
             return "MIT License";
+        case "AGPLv3":
+            return "GNU Affero General Public License v3.0";
         case "GPLv3":
             return "GNU General Public License v3.0";
         case "GPLv2":
@@ -316,16 +319,8 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
         validateAgainst(splitAuthor[0], ["org", "usr"]) &&
         validate(splitAuthor[1]);
 
-    const repoPrefix = (m.repository || "").split(":")[0];
-    const validRepoPrefix = validateAgainst(repoPrefix, ["gh", "gl", "cb"]);
-    const splitRepo = (m.repository || "").split("/");
     const validRepository =
-        !m.repository ||
-        (validate(m.repository) &&
-            splitRepo.length == 2 &&
-            validate(splitRepo[0]) &&
-            validate(splitRepo[1]) &&
-            validRepoPrefix);
+        !m.repository || (validate(m.repository) && isRepositoryScope(m.repository));
 
     const validLicense = !is(m.license) || validateAgainst(m.license, LICENSES);
 
@@ -360,7 +355,8 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
         m.images === undefined ||
         (Array.isArray(m.images) && m.images.every((i) => isImageURL(i.link) && validate(i.text)));
 
-    const validCategories = Array.isArray(m.categories) && m.categories.every(validate);
+    const validCategories =
+        !is(m.categories) || (Array.isArray(m.categories) && m.categories.every(validate));
 
     const ar = m.age_rating;
     const validAgeRating =
