@@ -16,23 +16,34 @@ import ScreenshotSlideshow from "../components/package/screenshots";
 import SystemRequirementsTable from "../components/package/sys-req";
 import MaintainersList from "../components/package/maintainers";
 import PackageDetails from "../components/package/details";
-import { getAuthor, getPkg } from "shared/api/kdata";
+import { getAuthor, getPkg, scanPackage } from "shared/api/kdata";
 import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 import DownloadChart from "../components/package/downloads";
+import InsecurePackage from "../components/insecure";
 
 export default function PackagePage() {
     const [app, setApp] = useState<KDATA_ENTRY_PKG>();
     const [author, setAuthor] = useState<KONBINI_AUTHOR>();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [secure, setSecure] = useState<{
+        date: string;
+        results: {
+            safe: boolean;
+            authentic: boolean;
+            integral: boolean;
+        };
+    } | null>(null);
 
-    const route = window.location.pathname.split("/package/").filter(Boolean)[0]!;
+    const route = window.location.pathname.split("/package/").filter(Boolean)[0] as KONBINI_ID_PKG;
 
     useEffect(() => {
         async function getApp() {
             try {
-                const manifest = await getPkg(route as KONBINI_ID_PKG);
+                const manifest = await getPkg(route);
+                const isSecure = await scanPackage(route, true);
                 const pkgAuthor = await getAuthor(manifest.author);
+                setSecure(isSecure);
                 setAuthor(pkgAuthor);
                 setApp(manifest);
                 setLoading(false);
@@ -97,6 +108,9 @@ export default function PackagePage() {
 
     return (
         <>
+            {secure !== null && !Object.values(secure.results).every((v) => v == true) && (
+                <InsecurePackage res={secure} app={app} />
+            )}
             <div className="bg-[#8800FF] w-128 h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-50px] z-[-1]" />
             <div className="bg-[#FF07EA] w-128 h-128 blur-[300px] opacity-[0.65] absolute bottom-[50px] right-[-300px] z-[-1]" />
             <div className="bg-[#C23282] w-128 h-128 blur-[300px] opacity-[0.50] absolute top-[-150px] right-[-150px] z-[-1]" />

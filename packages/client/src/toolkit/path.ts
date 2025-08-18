@@ -85,7 +85,7 @@ export function registerGuardCronjob() {
             if (out.toString().trim() === "1") throw `task doesn't exist`;
             return;
         } catch {
-            runElevatedScript(
+            const out = runElevatedScript(
                 `
             schtasks /Create /SC DAILY /TN "Konbini Guard" /TR "${INSTALLATION_DIR + "\\kbi.exe"} ensure-security" /ST 15:00 /NP /RL HIGHEST /HRESULT /F
             
@@ -95,6 +95,8 @@ export function registerGuardCronjob() {
             $task |Set-ScheduledTask
             `,
             );
+            if (out !== true)
+                throw `Unable to schedule Konbini Guard!\nKonbini is supposed to check our database in a daily basis in case a package you installed gets reported as unsafe. While attempting to create a scheduled task (schtasks /Create) locally, an unknown error happened.`;
             return;
         }
     } else {

@@ -16,7 +16,8 @@ import { getPlatform } from "shared/api/platform";
 import { FILENAMES } from "shared/constants";
 import { assertIntegritySHA, konbiniHash, assertIntegrityPGP } from "shared/security";
 import { Unpack } from "../../../konpak/src/unpack";
-import { logAction } from "shared/api/kdata";
+import { logAction, scanPackage } from "shared/api/kdata";
+import type { KONBINI_ID_PKG } from "shared/types/author";
 
 async function installSingleExecutable(params: {
     filePath: string;
@@ -107,12 +108,12 @@ async function downloadSafetyRelatedFiles(params: {
 }
 
 export async function installPackage(
-    pkgName: string,
+    pkgId: string,
     method: "install" | "update" | "reinstall" = "install",
 ) {
-    if (pkgName.includes(":")) {
-        if (!isKps(pkgName)) throw `Cannot grab "${pkgName}", it's an invalid package scope.`;
-        const kps = parseKps(pkgName);
+    if (pkgId.includes(":")) {
+        if (!isKps(pkgId)) throw `Cannot grab "${pkgId}", it's an invalid package scope.`;
+        const kps = parseKps(pkgId);
         if (kps.src === "kbi")
             throw `Cannot grab "${kps.value}" - a Konbini scope always points to a package that IS in Konbini's repository.`;
         const conf = konsole.ask(`Are you sure you want to grab ${kps.value} from ${kps.name}?`);
@@ -122,7 +123,7 @@ export async function installPackage(
         );
         konsole.war("Proceeding...");
         const ret = installAliasedPackage({
-            pkgName: kps.value,
+            pkgId: kps.value,
             manifest: {
                 name: kps.value,
                 // idk man this needs a value in order not to fail
@@ -138,14 +139,18 @@ export async function installPackage(
         return;
     }
 
-    const manifest = await getPkgManifest(pkgName);
+    const manifest = await getPkgManifest(pkgId);
+    const isSecure = await scanPackage(pkgId as KONBINI_ID_PKG, false);
+
+    if (!isSecure)
+        throw `This package has been recently reported as insecure. While we investigate the issue, ${pkgId} cannot be installed. Sorry.`;
 
     const usrDir = USR_PATH({ author: manifest.author });
-    const pkgDir = PKG_PATH({ pkg: pkgName, author: manifest.author });
+    const pkgDir = PKG_PATH({ pkg: pkgId, author: manifest.author });
 
-    if (await packageExists(pkgName)) {
+    if (await packageExists(pkgId)) {
         if (method === "install") {
-            const conf = konsole.ask(`${pkgName} is already installed. Reinstall?`);
+            const conf = konsole.ask(`${pkgId} is already installed. Reinstall?`);
             if (!conf) {
                 konsole.suc("Got it. No actions taken.");
                 return;
@@ -155,7 +160,7 @@ export async function installPackage(
                 method = "reinstall";
             }
         } else {
-            konsole.adv("Updating package", pkgName);
+            konsole.adv("Updating package", pkgId);
         }
     }
 
@@ -168,7 +173,7 @@ export async function installPackage(
     if (!isKbiScope(platform)) {
         const ret = installAliasedPackage({
             kps,
-            pkgName,
+            pkgId,
             manifest,
             method,
         });
@@ -192,10 +197,10 @@ export async function installPackage(
 
         if (isKbiLockfile(prevLockfile) && prevLockfile.version === remotes.pkgVersion) {
             if (method === "update") {
-                konsole.suc(`${pkgName} is already up to date.`);
+                konsole.suc(`${pkgId} is already up to date.`);
             }
             if (method === "install") {
-                const conf = konsole.ask(`${pkgName} is already installed. Reinstall?`);
+                const conf = konsole.ask(`${pkgId} is already installed. Reinstall?`);
                 if (!conf) {
                     konsole.suc("Got it. No actions taken.");
                     return;
@@ -221,7 +226,7 @@ export async function installPackage(
         mkdirSync(pkgDir);
     }
 
-    konsole.adv(`Installing ${pkgName}`);
+    konsole.adv(`Installing ${pkgId}`);
     konsole.dbg(`Will write to ${outputPath}`);
 
     const safetyInfo = await downloadSafetyRelatedFiles({
@@ -274,10 +279,10 @@ export async function installPackage(
     const lockfile: KONBINI_LOCKFILE = {
         ...stuff,
         scope: platform,
-        pkg: pkgName,
+        pkg: pkgId,
         installation_hash: safetyInfo.shaHash,
     };
-    writeLockfile(lockfile, pkgName, manifest.author);
+    writeLockfile(lockfile, pkgId, manifest.author);
     konsole.dbg("Lockfile written.");
 
     if (readFileSync(outputPath).slice(0, 14).toString() == "KPAK__SIGNALER") {
@@ -287,7 +292,7 @@ export async function installPackage(
     }
 
     // generate launchpad shortcut
-    writeLaunchpadShortcut(pkgName, manifest.author, outputPath);
+    writeLaunchpadShortcut(pkgId, manifest.author, outputPath);
     konsole.dbg("Launchpad shortcut written.");
 
     chmodSync(outputPath, statSync(outputPath).mode | 0o111);
@@ -296,7 +301,7 @@ export async function installPackage(
     // if its a new installation, log it
     if (method === "install") {
         const res = await logAction({
-            app: pkgName,
+            app: pkgId,
             version: remotes.pkgVersion,
             action: "download",
         });

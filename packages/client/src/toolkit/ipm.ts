@@ -66,12 +66,16 @@ export function installPkgMgr(mgr: KPS_SOURCE): "noop" | "edge" | "success" {
             return "edge"; // TODO: do this complicated thing later on
             // already had enough with apt :sob:
         } else if (mgr === "cho") {
-            runElevatedScript(
+            const out = runElevatedScript(
                 `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))`,
             );
+            if (out === false) throw `Unable to run (elevated) installation script for Chocolatey!`;
             return "success";
         } else {
-            runElevatedScript("Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression");
+            const out = runElevatedScript(
+                "Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression",
+            );
+            if (out === false) throw `Unable to run (elevated) installation script for Chocolatey!`;
             return "success";
         }
     } catch (err) {

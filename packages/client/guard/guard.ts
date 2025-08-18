@@ -1,13 +1,5 @@
 import { execSync } from "child_process";
-import {
-    copyFileSync,
-    existsSync,
-    mkdirSync,
-    readdirSync,
-    readFileSync,
-    statSync,
-    writeFileSync,
-} from "fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { globSync } from "glob";
 import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
@@ -198,6 +190,8 @@ async function main() {
     const authors = await fetchAllManifests("Authors");
     logSection(`Fetched all manifests [${manifests.length} PKGS | ${authors.length} AUTHORS]`);
 
+    const date = new Date();
+
     if (SCAN) {
         logSection("Initializing ClamAV Daemon");
         execSync("sudo systemctl start clamav-daemon");
@@ -206,7 +200,7 @@ async function main() {
         execSync("sudo freshclam");
 
         logSection("Clearing guard.txt");
-        writeFileSync(GUARD_FILE, `コンビニ | KGuard ${new Date()} | Keeping Konbini safe\n`);
+        writeFileSync(GUARD_FILE, `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);
     }
 
     if (!existsSync("./build")) mkdirSync("build");
@@ -423,12 +417,34 @@ async function main() {
         groupedByAuthors[m.author]![user as KONBINI_ID_PKG] = m;
     });
 
+    const guardJson = {
+        date: date.toISOString(),
+        results: Object.fromEntries(
+            readFileSync(GUARD_FILE, { encoding: "utf-8" })
+                .split("\n")
+                .filter((l) => l.trim() !== "")
+                .slice(1)
+                .map((l) => {
+                    const [pkg, , plat] = l.split("@");
+                    const res = plat!.split("=")[1]!.split("|");
+                    return [
+                        pkg,
+                        {
+                            safe: res[0] === "SAFE",
+                            authentic: res[1] === "AUTHENTIC",
+                            integral: res[2] === "INTEGRAL",
+                        },
+                    ];
+                }),
+        ),
+    };
+
     writeFileSync("../../data/api/kdata_per_author_id.json", JSON.stringify(groupedByAuthors));
     writeFileSync("../../data/api/kdata_per_downloads.json", JSON.stringify(sortedByDownloads));
     writeFileSync("../../data/api/kdata_per_category.json", JSON.stringify(groupedByCategories));
     writeFileSync("../../data/api/kdata_per_releases.json", JSON.stringify(sortedByLastUpdate));
     writeFileSync("../../data/api/kdata_authors.json", JSON.stringify(sortedAuthors));
-    copyFileSync("./guard.txt", "../../data/api/guard.txt");
+    writeFileSync("../../data/api/guard_res.json", JSON.stringify(guardJson));
 
     logBlock("コンビニ GUARD // KDATA // SUCCESSFULLY ENDS");
 

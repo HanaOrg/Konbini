@@ -1,6 +1,6 @@
-import { readdirSync, rmSync, readFileSync } from "fs";
-import { join, parse } from "path";
-import { LAUNCHPAD_FILE_PATH, PACKAGES_DIR, PKG_PATH } from "shared/client";
+import { rmSync, readFileSync } from "fs";
+import { join } from "path";
+import { LAUNCHPAD_FILE_PATH, PKG_PATH } from "shared/client";
 import { konsole } from "shared/client";
 import { parse as parseYaml } from "yaml";
 import { execSync } from "child_process";
@@ -12,25 +12,10 @@ import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { logAction } from "shared/api/kdata";
 import { getPkgRemotes } from "shared/api/getters";
 import { getPlatform } from "shared/api/platform";
-
-function findPackage(pkg: string): string | null {
-    const entries = [];
-    for (const entry of readdirSync(PACKAGES_DIR)) {
-        const fullPath = join(PACKAGES_DIR, entry);
-        entries.push(fullPath);
-    }
-
-    for (const entry of entries) {
-        const paths = readdirSync(entry);
-        const result = paths.find((s) => parse(s).name == pkg);
-        if (result) return result;
-        continue;
-    }
-    return null;
-}
+import { getLocalPackages } from "../commands/list";
 
 export async function removePackage(pkg: string) {
-    const pkgToRemove = findPackage(pkg);
+    const pkgToRemove = getLocalPackages().find((p) => p.pkg === pkg);
 
     if (!pkgToRemove) {
         konsole.err(`There's NOT such thing as ${pkg} installed here.`);

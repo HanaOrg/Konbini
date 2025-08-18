@@ -1,6 +1,5 @@
 const { validate, isValidOrigin } = require("../utils.js");
-const KDATA = require("./kdata_per_downloads.json");
-const GUARD = require("./guard.txt");
+const KDATA = require("./guard_res.json");
 
 /** @type {import('@vercel/node').VercelRequest} */
 let req;
@@ -27,16 +26,14 @@ module.exports = async function handler(reqParam: any, resParam: any) {
 
         if (!validate(id))
             return res.status(400).json({ error: "Bad request: No package ID specified." });
-        if (!KDATA[id])
+        if (!KDATA.results[id])
             return res
                 .status(404)
                 .json({ error: `Not found: Package '${id}' was not found within the registry.` });
 
-        const split: string[] = GUARD.split("\n");
-
         res.status(200).json({
-            date: split[0],
-            results: split.filter((l) => l.startsWith(id)),
+            date: KDATA.date,
+            results: KDATA.results[id],
         });
         return;
     } catch (error) {

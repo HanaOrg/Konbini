@@ -25,22 +25,31 @@ function findLockFiles(dir: string, filename: string = FILENAMES.lockfile): stri
     return results;
 }
 
+export function getLocalPackages(): EXTENDED_LOCKFILE[] {
+    return findLockFiles(PACKAGES_DIR).map((result) => {
+        return {
+            ...parse(readFileSync(result, { encoding: "utf-8" })),
+            path: result,
+        };
+    });
+}
+
 type EXTENDED_LOCKFILE = KONBINI_LOCKFILE & { path: string };
 
 export async function listPackages(
     verbosity: "VERBOSE" | "STANDARD" | "SILENT",
 ): Promise<EXTENDED_LOCKFILE[]> {
-    const lockfiles = findLockFiles(PACKAGES_DIR);
+    const lockfiles = getLocalPackages();
     const pkgsToList: EXTENDED_LOCKFILE[] = [];
 
     for (const lockfile of lockfiles) {
-        const parsed = parse(readFileSync(lockfile, { encoding: "utf-8" }));
-        const exists = await packageExists(parsed.pkg).catch(() => false);
-        if (!exists && parsed.scope !== "KPAK") {
-            konsole.dbg("Asserted", parsed.pkg, "no longer is installed. Removed its lockfile.");
-            rmSync(join(lockfile, "../"), { recursive: true, force: true });
+        const exists = await packageExists(lockfile.pkg).catch(() => false);
+        // @ts-expect-error "KPAK" is a valid scope but it's not properly typed...
+        if (!exists && lockfile.scope !== "KPAK") {
+            konsole.dbg("Asserted", lockfile.pkg, "no longer is installed. Removed its lockfile.");
+            rmSync(join(lockfile.path, "../"), { recursive: true, force: true });
         } else {
-            pkgsToList.push({ ...parsed, path: lockfile });
+            pkgsToList.push(lockfile);
         }
     }
 

@@ -35,12 +35,12 @@ function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
 }
 
 export function installAliasedPackage(params: {
-    pkgName: string;
+    pkgId: string;
     kps: KONBINI_PARSED_SCOPE;
     manifest: KONBINI_MANIFEST;
     method: "install" | "update" | "reinstall";
 }): "upToDate" | "no-op" | "needsPkgMgr" | "installedOrUpdated" {
-    const { kps, manifest, pkgName, method } = params;
+    const { kps, manifest, pkgId, method } = params;
 
     // no-op
     if (kps.src === "kbi") return "no-op";
@@ -131,11 +131,11 @@ export function installAliasedPackage(params: {
     if (scope.startsWith("kbi:")) throw `Impossible error? Non-kbi scope became kbi.`;
 
     const lockfile: KONBINI_LOCKFILE = {
-        pkg: pkgName,
+        pkg: pkgId,
         scope: scope as Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>,
         timestamp: new Date().toString(),
     };
-    writeLockfile(lockfile, pkgName, manifest.author);
+    writeLockfile(lockfile, pkgId, manifest.author);
     return "installedOrUpdated";
 }
 

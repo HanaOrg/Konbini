@@ -1,6 +1,6 @@
 import { validate } from "@zakahacecosas/string-utils";
 
-/*
+/**
 no bearer exists in production; every user has his own per-IP rate limit anyway
 API key is only used locally as KGuard is expensive and needs higher limits
 */
@@ -18,7 +18,6 @@ const cacheAPI = isWeb
           }),
       };
 
-/** 48 hours. */
 const CACHE_DURATION_MS = 48 * 60 * 60 * 1000;
 
 function isNotTooOld(match: Response): boolean {
@@ -69,9 +68,7 @@ export async function fetchAPI(_url: string, method: "GET" | "POST" = "GET"): Pr
         throw e;
     });
 
-    const IRL = json.message && json.message.includes("rate limit exceeded");
-
-    if (IRL) {
+    if (json.message && json.message.includes("rate limit exceeded")) {
         throw "API rate limit exceeded. Konbini has a slightly strict per-user API limit.\nThis error occurs if you use the CLI too much in a short period of time.\n('Use it' in the sense of downloading packages; internet-less operations like 'list' do not cause this).\nPlease try again later (in an hour at most, possibly less).";
     }
 

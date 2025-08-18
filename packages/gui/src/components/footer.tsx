@@ -1,7 +1,7 @@
 export default function Footer() {
     return (
         <>
-            <footer className="p-10 bg-[#00000075] flex flex-row items-start justify-between overflow-hidden relative h-100">
+            <footer className="p-10 bg-[#00000075] flex flex-row items-start justify-between overflow-hidden relative h-120">
                 <div className="bg-[#FF0088] w-128 h-128 blur-[200px] absolute top-[-50px] left-[-150px] opacity-[0.4] z-[-1]" />
                 <div className="flex flex-col items-start justify-start">
                     <a href="/">
@@ -46,13 +46,15 @@ export default function Footer() {
                     </a>
                     <div className="bg-[#FFCF574D] flex flex-col gap-2 p-4 rounded-xl border-2 border-[#FFFFFF33]">
                         <h3 className="text-xl font-semibold text-[#FFCC96]">
-                            This is NOT release software.
+                            This is alpha software.
                         </h3>
                         <hr />
                         <p className="text-lg font-medium text-[#FFCC96]">
-                            Publicized for testing purposes.
+                            Konbini is a newly made project.
                             <br />
-                            Not expected to behave properly.
+                            Expect bugs, issues, and missing features.
+                            <br />
+                            Report any issue you find. Thanks!
                         </p>
                     </div>
                 </div>

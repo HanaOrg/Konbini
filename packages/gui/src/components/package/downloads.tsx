@@ -42,13 +42,8 @@ export default function DownloadChart({ downloads }: { downloads: DownloadData }
                 </div>
             </div>
             <p className="mt-4 text-xs">
-                Statistics aren't 100% accurate. If a user blocks our telemetry or uses manual
-                methods to remove a package, it won't be counted here. If he installs it from an
-                aliased package manager neither will it.
-            </p>
-            <p className="mt-1 text-xs">
-                These stats are only meant to provide an overall view of how many people chose to
-                keep this package and how many did remove it.
+                Statistics aren't 100% accurate. They're meant to show the overall trend, whether
+                people chooses to keep this package or tends to remove it.
             </p>
         </>
     );

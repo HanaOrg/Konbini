@@ -1,6 +1,6 @@
-コンビニ | KGuard Sun Aug 17 2025 14:34:27 GMT+0200 (Central European Summer Time) | Keeping Konbini safe
-org.fuckingnode.fuckingnode@v4.1.0@win64=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@v4.1.0@macArm=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@v4.1.0@mac64=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@v4.1.0@linuxArm=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@v4.1.0@linux64=SAFE|AUTHENTIC|INTEGRAL
+コンビニ | KGuard Mon Aug 18 2025 15:07:06 GMT+0200 (Central European Summer Time) | Keeping Konbini safe
+org.fuckingnode.fuckingnode@v4.2.0@win64=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@v4.2.0@macArm=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@v4.2.0@mac64=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@v4.2.0@linuxArm=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@v4.2.0@linux64=SAFE|AUTHENTIC|INTEGRAL

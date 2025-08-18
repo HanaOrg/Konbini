@@ -9,21 +9,28 @@ import type { KONBINI_MANIFEST } from "shared/types/manifest";
 // may it be stated:
 // this is peak windows developer experience
 
-/** Will show a UAC prompt.
- * If accepted, we're able to write to the HKLM registry hive, which is needed.
+/**
+ * Show a UAC prompt.
+ * If accepted, whatever you pass will be able to write to the HKLM registry hive, schedule elevated tasks, etc... which is needed.
  *
- * If rejected... **???** *The program shows a PowerShell error but keeps running.*
- *
- * TODO: Find out how to detect rejection to halt execution (and possibly show a proper error message).
+ * If rejected, it just returns false and does nothing.
  */
-export function runElevatedScript(scriptContent: string) {
+export function runElevatedScript(scriptContent: string): boolean {
     const tmpFile = normalize(join(tmpdir(), `temp_script_${Date.now()}.ps1`));
 
     writeFileSync(tmpFile, scriptContent);
 
-    const command = `Start-Process powershell -Verb runAs -Wait -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', '${tmpFile}'`;
+    const command = `
+try {
+    $p = Start-Process powershell -Verb runAs -Wait -PassThru -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','${tmpFile}'
+    if ($null -eq $p) { exit 1 }  # process never started (UAC rejected)
+    exit $p.ExitCode
+} catch {
+    exit 1
+}
+`;
 
-    spawnSync("powershell", ["-NoProfile", "-Command", command], { stdio: "inherit" });
+    const out = spawnSync("powershell", ["-NoProfile", "-Command", command], { stdio: "inherit" });
 
     setTimeout(() => {
         try {
@@ -31,6 +38,7 @@ export function runElevatedScript(scriptContent: string) {
         } catch {}
     }, 1500);
 
+    if (out.status !== 0) return false;
     return true;
 }
 
@@ -208,7 +216,8 @@ Terminal=${String(isCli)}
     }
 }
 
-/** Integrates the app so that the OS recognizes it as an installed app.
+/**
+ * Integrates the app so that the OS recognizes it as an installed app.
  * Global installs only.
  */
 export function IntegrateApp(params: WindowsParams | LinuxParams) {
