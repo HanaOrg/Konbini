@@ -114,7 +114,7 @@ function IntegrateWindows(params: WindowsParams) {
     const iconFilePath = join(installPath, `${appId}.ico`);
     const uninstallerScriptFilePath = join(installPath, "uninstall.ps1");
 
-    const values: Record<string, string | number> = {
+    const values: Record<string, string | number | undefined> = {
         DisplayName: appName,
         DisplayVersion: version,
         Publisher: publisher,
@@ -124,11 +124,14 @@ function IntegrateWindows(params: WindowsParams) {
         EstimatedSize: 3000, // in KB
         NoModify: 1,
         NoRepair: 1,
+        URLInfoAbout: manifest.homepage,
+        HelpLink: manifest.docs,
     };
-    // NOTE: HelpLink, URLInfoAbout, and URLUpdateInfo do exist
-    // they show links in the cp
+    // NOTE: ModifyPath (modify option in CP), and URLUpdateInfo (link in CP) do exist
+    // Comments, Contact, and HelpTelephone also exist, but i'm unsure about their purpose
 
     for (const [key, val] of Object.entries(values)) {
+        if (!val) continue;
         CMD.push(
             `Set-ItemProperty -Path "${regPath}" -Name "${key}" ${typeof val === "number" ? `-Type DWord -Value ${val}` : `-Value "${val}"`}`,
         );
