@@ -285,7 +285,7 @@ export async function installPackage(
     writeLockfile(lockfile, pkgId, manifest.author);
     konsole.dbg("Lockfile written.");
 
-    if (readFileSync(outputPath).slice(0, 14).toString() == "KPAK__SIGNALER") {
+    if (readFileSync(outputPath).subarray(0, 14).toString() == "KPAK__SIGNALER") {
         konsole.dbg("This is a Konpak. Unpacking...");
         Unpack(outputPath);
         konsole.dbg("Konpak unpacked.");

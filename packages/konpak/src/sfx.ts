@@ -9,7 +9,8 @@ import { downloadHandler } from "shared/api/download";
  * Returns its contents. If absent, prompts to download it.
  */
 export async function getKonpakSfx(): Promise<Buffer | null> {
-    const filePath = join(INSTALLATION_DIR, "kpak-sfx");
+    const fileName = `kpak-sfx-${getPlatform()}`;
+    const filePath = join(INSTALLATION_DIR, fileName);
 
     if (existsSync(filePath)) return readFileSync(filePath);
 
@@ -19,9 +20,7 @@ export async function getKonpakSfx(): Promise<Buffer | null> {
 
     const response = await fetch(`https://api.github.com/repos/HanaOrg/Konbini/releases/latest`);
     const data: RELEASE_GH_CB = await response.json();
-    const remoteUrl = data.assets.find((s) =>
-        s.name.startsWith(`kpak-sfx-${getPlatform()}`),
-    )?.browser_download_url;
+    const remoteUrl = data.assets.find((s) => s.name.startsWith(fileName))?.browser_download_url;
 
     if (!remoteUrl)
         throw "Error: Couldn't find asset URL. This is probably our fault, please file an issue.";

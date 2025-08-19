@@ -41,3 +41,10 @@ The non-SFX Konpak will be created before this prompt is shown, anyway. It uses 
 Konpaks work like DEB files; they're an archive under the hood. ZIP archives, more precisely. A KPAK file is basically a ZIP file with a `KPAK` header prepended to the file.
 
 An SFX Konpak is the above file appended to a binary with the code to extract _any_ Konpak. Its instructed to read itself and seek the last instance of `KPAK` (which should be this header), then read anything after it as a regular ZIP.
+
+## Limitations
+
+- Konpaks are not expected to work on macOS.
+- As mentioned, regular and SFX Konpaks use the same file extension on Linux.
+- Konbini cannot recognize SFX Konpaks, so a SFX Konpak cannot be used for a Konbini release.
+- On Windows, when installing Konbini (required for locally running non-SFX Konpaks), the "Choose default app" modal pops up the first time, and looks weird.

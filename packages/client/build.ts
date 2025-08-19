@@ -1,5 +1,6 @@
 import { konsole } from "shared/client";
 
+/* TODO: use standard names (win64, linuxArm, ...) */
 const platforms = {
     "kbi.exe": "bun-windows-x64",
     "kbi-linux-x64": "bun-linux-x64",
@@ -33,10 +34,11 @@ for (const [name, platform] of Object.entries(platforms)) {
         "--sourcemap",
         "--outfile",
         // TODO: remove
-        `./dist/alpha-${name}`,
+        `./dist/beta-${name}`,
+        `${name.endsWith("exe") ? "--windows-icon=./konbini.ico" : ""}`,
         `--target=${platform}`,
         src,
-    ];
+    ].filter((s) => s !== "");
 
     const exec = Bun.spawnSync({
         cmd,

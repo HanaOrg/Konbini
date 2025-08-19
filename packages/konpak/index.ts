@@ -13,10 +13,10 @@ function main() {
     konsole.dbg("DEBUG INFO ---");
     konsole.dbg("KPAK-SFX at", process.execPath);
     konsole.dbg("konpak size", statSync(process.execPath).size);
-    konsole.dbg("1st 16bytes", self.slice(0, 16).toString("hex"));
+    konsole.dbg("1st 16bytes", self.subarray(0, 16).toString("hex"));
     konsole.dbg("signaler at", kpakIndex);
 
-    const kpak = self.slice(kpakIndex);
+    const kpak = self.subarray(kpakIndex);
     Unpack(kpak);
 }
 

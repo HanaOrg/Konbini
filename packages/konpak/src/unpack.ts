@@ -1,6 +1,6 @@
 import AdmZip from "adm-zip";
 import { existsSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "fs";
-import { IntegrateApp, type LinuxParams, type WindowsParams } from "./integrate";
+import { IntegrateApp, type WindowsParams } from "./integrate";
 import { parse, stringify } from "yaml";
 import { PKG_PATH } from "shared/client";
 import type { KONBINI_MANIFEST } from "shared/types/manifest";
@@ -14,10 +14,10 @@ export function Unpack(filepath: string | Buffer): void {
     if (typeof filepath === "string" && !existsSync(filepath))
         throw new Error("Specified filepath does not exist.");
     const bin = typeof filepath === "string" ? readFileSync(filepath) : filepath;
-    const header = bin.slice(0, 14).toString("ascii");
+    const header = bin.subarray(0, 14).toString("ascii");
     if (header !== "KPAK__SIGNALER")
-        throw new Error(`Not a KPAK. Header is '${header}' (ASCII), should be a proper signaler.`);
-    const buff = bin.slice(14);
+        throw new Error(`Not a KPAK. Header '${header}' (ASCII) is not a proper signaler.`);
+    const buff = bin.subarray(14);
     writeFileSync("./test-buff.zip", buff);
     const zip = new AdmZip(buff);
 
@@ -69,7 +69,7 @@ export function Unpack(filepath: string | Buffer): void {
     });
 
     if (platform === "linux") {
-        const lParams: LinuxParams = {
+        IntegrateApp({
             ...wParams,
             installPath,
             // in case "both", we can assume the user prefers a GUI
@@ -77,12 +77,11 @@ export function Unpack(filepath: string | Buffer): void {
             // thus check just for "cli"
             isCli: manifest.type === "cli",
             comment: manifest.slogan,
-            categories: manifest.categories
+            categories: (manifest.categories || [])
                 .map(String.prototype.toLowerCase)
                 .map(toUpperCaseFirst)
                 .join(","),
-        };
-        IntegrateApp(lParams);
+        });
     } else {
         IntegrateApp({ ...wParams, installPath });
     }
