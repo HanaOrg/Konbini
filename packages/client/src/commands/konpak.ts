@@ -70,7 +70,7 @@ export async function konpakFromDir(
           );
 
     if (sfx) {
-        const sfx = await getKonpakSfx();
+        const sfx = await getKonpakSfx(platform);
         if (!sfx) {
             konsole.err("KPAK SFX not downloaded.");
             return;
