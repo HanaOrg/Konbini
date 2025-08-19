@@ -291,8 +291,8 @@ async function main() {
             }
 
             try {
-                const promises = fetches.map((f) => fetchIfNotExists(f[0], f[1]));
-                await Promise.all(promises);
+                // ik promise.all() exists, but it kinda gives problems here
+                for (const toFetch of fetches) await fetchIfNotExists(toFetch[0], toFetch[1]);
             } catch (error) {
                 err("[XXX] Error downloading assets", error);
             }
