@@ -1,3 +1,10 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.4.14,
+* Autoprefixer: v10.4.7
+* Browsers: last 4 version
+*/
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 
@@ -54,6 +61,8 @@ hr {
 
 body {
     margin: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     place-items: center;
     min-width: 320px;
@@ -111,10 +120,18 @@ button {
     font-family: inherit;
     background-color: var(--bg-button);
     cursor: pointer;
+    -webkit-transition: background-color 0.25s;
+    -o-transition: background-color 0.25s;
     transition: background-color 0.25s;
 }
 button {
     background-color: var(--k);
+    -webkit-transition:
+        scale 0.15s,
+        opacity 0.15s;
+    -o-transition:
+        scale 0.15s,
+        opacity 0.15s;
     transition:
         scale 0.15s,
         opacity 0.15s;
@@ -131,10 +148,12 @@ button.button-unsupported {
     cursor: auto;
     opacity: 1;
     scale: 1;
+    -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
 }
 
 .app-grid {
+    display: -ms-grid;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 10px;
@@ -144,6 +163,8 @@ button.button-unsupported {
     padding: 20px;
     max-width: 100%;
     width: 100%;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
 }
 
@@ -155,12 +176,22 @@ button.button-unsupported {
     overflow-x: hidden;
     overflow-y: visible;
     position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
 }
 
 .hidden {
     display: none;
+}
+
+dialog::-webkit-backdrop {
+    background-color: #00000040;
+    pointer-events: none;
 }
 
 dialog::backdrop {
@@ -169,13 +200,35 @@ dialog::backdrop {
 }
 
 .grad {
+    background: -webkit-gradient(
+        linear,
+        left top,
+        right top,
+        from(var(--k)),
+        color-stop(var(--k-lighter)),
+        to(var(--k))
+    );
+    background: -o-linear-gradient(left, var(--k), var(--k-lighter), var(--k));
     background: linear-gradient(90deg, var(--k), var(--k-lighter), var(--k));
     background-size: 800% 800%;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    -webkit-animation: gradientMove 10s ease infinite;
     animation: gradientMove 10s ease infinite;
     line-height: 120%;
+}
+
+@-webkit-keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    70% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 @keyframes gradientMove {
@@ -199,6 +252,9 @@ dialog::backdrop {
 }
 
 .slides {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     gap: 10px;
     height: 500px;
@@ -220,7 +276,12 @@ dialog::backdrop {
     color: white;
     font-weight: bold;
     font-size: 18px;
+    -webkit-transition: 0.6s ease;
+    -o-transition: 0.6s ease;
     transition: 0.6s ease;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 
@@ -259,6 +320,8 @@ dialog::backdrop {
     background-color: #3a2a3a;
     border-radius: 50%;
     display: inline-block;
+    -webkit-transition: background-color 0.6s ease;
+    -o-transition: background-color 0.6s ease;
     transition: background-color 0.6s ease;
 }
 
@@ -275,18 +338,39 @@ dialog::backdrop {
     max-height: 400px;
     margin-left: auto;
     margin-right: auto;
+    -o-object-fit: contain;
     object-fit: contain;
     border-radius: 10px;
+    -webkit-animation: fade 1s;
     animation: fade 1s;
+}
+
+@-webkit-keyframes fade {
+    0% {
+        -webkit-transform: translateY(-20px);
+        transform: translateY(-20px);
+        -webkit-filter: blur(5px);
+        filter: blur(5px);
+    }
+    100% {
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        -webkit-filter: blur(0px);
+        filter: blur(0px);
+    }
 }
 
 @keyframes fade {
     0% {
+        -webkit-transform: translateY(-20px);
         transform: translateY(-20px);
+        -webkit-filter: blur(5px);
         filter: blur(5px);
     }
     100% {
+        -webkit-transform: translateX(0px);
         transform: translateX(0px);
+        -webkit-filter: blur(0px);
         filter: blur(0px);
     }
 }
@@ -297,12 +381,20 @@ dialog::backdrop {
     }
 
     .platforms {
+        -ms-flex-wrap: wrap;
         flex-wrap: wrap;
     }
 
     .details {
+        -ms-grid-columns: 50%;
         grid-template-columns: 50%;
+        -ms-grid-rows: auto;
         grid-template-rows: auto;
+    }
+
+    .details > *:nth-child(1) {
+        -ms-grid-row: 1;
+        -ms-grid-column: 1;
     }
 }
 
@@ -322,18 +414,34 @@ dialog::backdrop {
     }
 }
 
-@keyframes fadeInDialog {
+@-webkit-keyframes fadeInDialog {
     0% {
         opacity: 0;
+        -webkit-transform: scale(0.95);
         transform: scale(0.95);
     }
     100% {
         opacity: 1;
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeInDialog {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(0.95);
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: scale(1);
         transform: scale(1);
     }
 }
 
 dialog[open] {
+    -webkit-animation: fadeInDialog 0.3s ease-out forwards;
     animation: fadeInDialog 0.3s ease-out forwards;
 }
 
