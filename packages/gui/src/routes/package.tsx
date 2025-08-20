@@ -192,9 +192,13 @@ export default function PackagePage() {
                         >
                             Download
                         </button>
-                        <div className="text-base" style={{ color: supportColor }}>
+                        <div className="text-base text-end" style={{ color: supportColor }}>
                             {supportString}.<br />
-                            {app.type === "both" ? "Both CLI and GUI" : app.type.toUpperCase()}
+                            {app.type === "both"
+                                ? "Both CLI and GUI app."
+                                : app.type === "cli"
+                                  ? "Command Line app."
+                                  : "Graphical app."}
                         </div>
                     </div>
                 </div>
