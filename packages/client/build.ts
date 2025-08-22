@@ -3,7 +3,7 @@ import { konsole } from "shared/client";
 const platforms = {
     "kbi.exe": "bun-windows-x64",
     "kbi-linux64": "bun-linux-x64",
-    "kbi-linuxAr,": "bun-linux-arm64",
+    "kbi-linuxArm": "bun-linux-arm64",
     "kbi-mac64": "bun-darwin-x64",
     "kbi-macArm": "bun-darwin-arm64",
     "kbu.exe": "bun-windows-x64",
@@ -32,9 +32,8 @@ for (const [name, platform] of Object.entries(platforms)) {
         "--minify",
         "--sourcemap",
         "--outfile",
-        // TODO: remove
-        `./dist/alpha-four-${name}`,
-        `${name.endsWith("exe") ? "--windows-icon=./konbini.ico" : ""}`,
+        `./dist/${name}`,
+        `${platform.includes("windows") ? "--windows-icon=./konbini.ico" : ""}`,
         `--target=${platform}`,
         src,
     ].filter((s) => s !== "");
@@ -44,7 +43,7 @@ for (const [name, platform] of Object.entries(platforms)) {
         cwd: process.cwd(),
     });
 
-    if (exec.exitCode !== 0) {
+    if (!exec.success) {
         konsole.err(`Error building ${name}: ${exec.stderr} + ${exec.stdout}.`);
         process.exit(1);
     } else {

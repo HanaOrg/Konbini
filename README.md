@@ -1,5 +1,5 @@
 > [!CAUTION]
-> THIS IS NOT RELEASE READY.
+> **THIS IS NOT RELEASE READY.** Do not download releases, they're not expected to work properly.
 
 # Konbini &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue)](https://github.com/hanaorg/konbini/blob/master/CONTRIBUTING.md) &middot; [![CLI-ready](https://img.shields.io/badge/CLI-ready-white)](#command-line-interface) &middot; [![GUI-ready](https://img.shields.io/badge/GUI-ready-white)](#graphical-user-interface) &middot; [![Cross-platform](https://img.shields.io/badge/Cross_platform-ready-white)](#availability)
 

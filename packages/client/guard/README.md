@@ -6,7 +6,7 @@
 
 Only if you're running the antivirus scan:
 
-- A Linux machine (preferably Debian, though any distribution should do). Otherwise, WSL.
+- A Linux machine (preferably Debian, though any distribution should do). Otherwise, WSL2.
 - ClamAV installed.
 
 Overall:
@@ -15,21 +15,21 @@ Overall:
 
 ## How it works
 
-This basically goes through every package, downloads its manifest and CHANGELOG.md file, and updates certain .JSON files to later be automatically uploaded to our data server.
+This basically goes through every package, downloads its manifest and CHANGELOG.md file (if any), and updates certain JSON files to later be automatically uploaded to our data server.
 
-For _pure_ Konbini packages, it also downloads all executables, validates SHA hashes and GPA signatures, and scans them with ClamAV.
+For _pure_ Konbini packages, it also downloads all executables, validates SHA hashes and GPA signatures, and scans them with [ClamAV](https://github.com/Cisco-Talos/clamav/).
 
-Then the results are written to the guard file, and if a package is infected, it'll also add its name to a list that Konbini is scheduled to query every hour, to notify the user.
+Then the results are written to the `guard.txt` file. Results are available from Konbini's API, from an endpoint that Konbini is scheduled to query every day, to automatically remove the package and notify the user.
 
-The guard file is automatically committed and pushed for transparency purposes. It uses a fairly readable format:
+The guard file itself is also committed for transparency purposes. It uses a fairly readable format:
 
 ```txt
 KGuard Mon Aug 11 2025 17:02:21 GMT+0200 (Central European Summer Time) | Keeping Konbini safe
-PACKAGE ID@VERSION@PLATFORM=STATUS FLAGS
+PACKAGE-ID@VERSION@PLATFORM=FLAGS
 ...
 ```
 
-Flags are pipe-separated keywords, allowing to instantly find infected packages even if the list grows large.
+Flags are pipe-separated keywords, allowing to instantly search for invalid packages even if the list grows large.
 
 | Item         | Description                                                                                     | Keyword if good | Keyword if bad |
 | ------------ | ----------------------------------------------------------------------------------------------- | --------------: | -------------: |
@@ -39,6 +39,6 @@ Flags are pipe-separated keywords, allowing to instantly find infected packages 
 
 ## Konbini's schedule
 
-This is scheduled on [our own hardware](https://icecat.biz/rest/product-pdf?productId=16700539&lang=en) to run periodically. Package data is updated every 48 hours. Antivirus scans happen on an irregular basis, but at least one per week is supposed to happen.
+This is scheduled on [our own hardware](https://icecat.biz/rest/product-pdf?productId=16700539&lang=en) to run periodically. Package data is updated every 48 hours at most. Antivirus scans happen on an irregular basis, but at least one per week is supposed to run.
 
-You don't have to commit any updates to the `guard.txt` file by yourself (and for trust reasons, PRs that modify it won't be accepted). You're only supposed to rn this script just for testing (if you want to), in case you wanted to contribute a fix or improvement (which we're REALLY thankful for!).
+You're not supposed to commit updates to the `guard.txt` file by yourself (and for trust reasons, PRs that modify it won't be accepted). You should only run this script for testing ot, in case you wanted to contribute a fix or improvement (which we're REALLY thankful for!).
