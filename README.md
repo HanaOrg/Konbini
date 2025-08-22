@@ -1,4 +1,9 @@
+> [!DANGER]
+> THIS IS NOT RELEASE READY.\*\*
+
 # Konbini &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue)](https://github.com/hanaorg/konbini/blob/master/CONTRIBUTING.md) &middot; [![CLI-ready](https://img.shields.io/badge/CLI-ready-white)](#command-line-interface) &middot; [![GUI-ready](https://img.shields.io/badge/GUI-ready-white)](#graphical-user-interface) &middot; [![Cross-platform](https://img.shields.io/badge/Cross_platform-ready-white)](#availability)
+
+![Konbini cover](./branding/readme.png)
 
 > Konbini, Your convenience store.
 

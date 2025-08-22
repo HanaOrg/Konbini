@@ -1,4 +1,4 @@
-// this is the only test in here because of how complex the KPS system is getting
+// first test in here because of how complex the KPS system is getting
 import { describe, expect, test } from "bun:test";
 import { locatePkg, locateUsr, parseID } from "shared/api/core";
 import { constructKps, parseKps } from "shared/api/manifest";

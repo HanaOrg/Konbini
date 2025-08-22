@@ -28,10 +28,10 @@ export async function getPkgRemotes(
 }> {
     const kv = parseKps(kps);
     if (!isKbiScope(kps)) {
-        throw `KPI attempt to fetch remotes for a non-Konbini package (KPS: ${kps}). Aliased scopes don't work this way.\nThis is likely a bug in Konbini's code.`;
+        throw `KonbiniAPI attempt to fetch remotes for a non-Konbini package (KPS: ${kps}). Aliased scopes don't work this way.\nThis is likely a bug in Konbini's code.`;
     }
     if (!manifest.repository) {
-        throw `KPI attempt to fetch remotes without a repository. The author of this package didn't specify the repository where his package is hosted.`;
+        throw `KonbiniAPI attempt to fetch remotes without a repository. The author of this package didn't specify the repository where his package is hosted.`;
     }
 
     /** rs as in repository scope */
@@ -110,7 +110,7 @@ export async function getUsrSignature(authorId: string, folderPath: string): Pro
         throw `Author ${authorId} does NOT have a valid signature (or at least, we didn't find one). Report this issue, please.`;
     }
     if (!response.ok) {
-        throw `Could not access KPI remote for ${authorId}'s PGP signature (HTTP:${response.status}).`;
+        throw `Could not access KonbiniAPI remote for ${authorId}'s PGP signature (HTTP:${response.status}).`;
     }
 
     await downloadHandler({

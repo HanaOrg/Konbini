@@ -37,7 +37,7 @@ export function parseID(str: string): {
 }
 
 /**
- * Given a package ID, returns an object with its KPI SOURCE routes and public routes to manifest file.
+ * Given a package ID, returns an object with its routes to both API and public manifest file.
  *
  * @param {string} pkg Package ID.
  * @returns All URLs.
@@ -59,7 +59,7 @@ export function locatePkg(pkg: string): {
 }
 
 /**
- * Given a user / org ID, returns an object with its KPI SOURCE routes and public routes to manifest and signature files.
+ * Given a user / org ID, returns an object with its API routes and public routes to manifest and signature files.
  *
  * @param {string} usr User / org ID.
  * @returns All URLs.
@@ -109,7 +109,7 @@ export async function getPkgManifest(packageName: string): Promise<KDATA_ENTRY_P
         throw `Package ${packageName} does NOT exist. Perhaps you misspelled it.`;
     }
     if (!response.ok) {
-        throw `Could not access KPI remote for ${packageName} (HTTP:${response.status}).`;
+        throw `Could not access KonbiniAPI remote for ${packageName} (HTTP:${response.status}).`;
     }
 
     const json = await response.json();
@@ -126,7 +126,7 @@ export async function getUsrManifest(authorId: string): Promise<KONBINI_AUTHOR> 
         throw `Author ${authorId} does NOT exist. Perhaps the author misspelled it on their manifest, or something else's not alright.`;
     }
     if (!response.ok) {
-        throw `Could not access KPI remote for ${authorId}'s manifest (HTTP:${response.status}).`;
+        throw `Could not access KonbiniAPI remote for ${authorId}'s manifest (HTTP:${response.status}).`;
     }
 
     const authorData = await response.text();
