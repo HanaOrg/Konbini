@@ -25,14 +25,14 @@ export default function Search() {
         handler();
     }, []);
 
-    if (loading) return <h1>loading</h1>;
-
     return (
         <>
             <Nav />
             <div className="app-main-cont">
                 <div className="bg-[#c23282] w-350 h-200 blur-[200px] opacity-[0.2] absolute top-[-300px] left-[-300px] z-[-1]" />
-                {results.length ? (
+                {loading ? (
+                    <h1>Searching "{query["q"]}" up...</h1>
+                ) : results.length ? (
                     <AppGrid
                         apps={results}
                         title={`Results for "${query["q"]}".`}

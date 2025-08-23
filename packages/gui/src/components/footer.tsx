@@ -41,6 +41,14 @@ export default function Footer() {
                     >
                         How to publish your app
                     </a>
+                    <a
+                        href="https://github.com/HanaOrg/Konbini/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lg font-medium"
+                    >
+                        Konbini ♥ Open Source
+                    </a>
                     <a href="/privacy" className="text-lg font-medium">
                         Privacy Policy
                     </a>

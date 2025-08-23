@@ -39,7 +39,7 @@ export default function PublisherDetails({
                 ) : (
                     <>
                         {" "}
-                        See other apps from them{" "}
+                        See more details and other apps from them{" "}
                         <a href={`https://konbini.vercel.app/author/${authorId}`}>here</a>.
                     </>
                 )}

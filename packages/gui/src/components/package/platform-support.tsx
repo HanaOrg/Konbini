@@ -68,7 +68,7 @@ export default function PlatformSupport({
                     <div className="h-45 p-6 border-1 border-[#2A2A2A] rounded-2xl bg-[#151515] hover:bg-[#1F1F1F] relative overflow-hidden">
                         <p className="text-3xl text-white font-semibold">{p.plat}</p>
                         <p className="text-xl text-white font-light opacity-[0.7]">{p.arch}</p>
-                        <div className="absolute top-8 right-6">
+                        <div className="absolute top-8 right-6 opacity-[0.9]">
                             {p.plat === "Linux" && <IconTux />}
                             {p.plat === "macOS" && <IconMac />}
                             {p.plat === "Windows" && <IconWin />}
@@ -77,7 +77,7 @@ export default function PlatformSupport({
                             {toUpperCaseFirst(p.support)}
                         </p>
                         <div
-                            className="w-[100%] m-auto h-14 absolute bottom-2 blur-[80px]"
+                            className="w-[100%] m-auto h-14 absolute bottom-2 left-0 blur-[65px]"
                             style={{
                                 backgroundColor: p.support.startsWith("aliased")
                                     ? "#65A5FF"
