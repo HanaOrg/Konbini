@@ -16,7 +16,7 @@ kpak-sfx-win64.exe
 
 All releases include PGP signatures and hashes. While not published to Konbini, these follow the Konbini format (a YAML hashfile then a signature file for each binary, being our public signature the same `org.hana` uses for Konbini).
 
-The hashfile isn't fully Konbini compliant though as the keys are different (since there's more than one hash per platform). Keys look like this:
+The hashfile isn't fully Konbini compliant though, as the keys are different (since there's more than one hash per platform). Keys look like this:
 
 ```yaml
 kbi_win64: HASH
