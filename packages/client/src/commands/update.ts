@@ -3,7 +3,7 @@ import { installPackage } from "./install";
 import { konsole } from "shared/client";
 
 export async function updatePackages() {
-    const packages = await listPackages("SILENT");
+    const packages = listPackages("SILENT");
 
     if (packages.length == 0) {
         konsole.adv("Uh... No packages are installed!");
@@ -11,7 +11,7 @@ export async function updatePackages() {
     }
 
     for (const pkg of packages) {
-        await installPackage(pkg.pkg, "update");
+        await installPackage(pkg.pkg_id, "update");
     }
 
     konsole.suc(`Successfully updated all (${packages.length}) your packages!`);

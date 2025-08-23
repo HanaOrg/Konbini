@@ -13,7 +13,7 @@ export async function showPkgInfo(pkg: string) {
     const name = `${konsole.clr("deeppink", manifest.name)} · ${konsole.clr("pink", manifest.slogan)}`;
     const categories = konsole.clr(
         "grey",
-        (manifest.categories && manifest.categories.filter((s) => s.trim() != "").length) > 0
+        manifest.categories && manifest.categories.length > 0
             ? "Categories: " + manifest.categories.join(", ")
             : "Unspecified categories",
     );

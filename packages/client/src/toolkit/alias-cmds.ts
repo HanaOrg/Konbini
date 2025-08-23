@@ -87,7 +87,7 @@ export const ALIASED_CMDs: Record<
         reinstall: (pkg) => `choco install ${pkg} --force -y`,
         update: (pkg) => `choco upgrade ${pkg} -y`,
         // * see aliased.ts/installAliasedPackage() right after return "needsPkgMgr"
-        exists: (pkg) => `choco list --exact ${pkg} | findstr -e "1 packages installed."`,
+        exists: (pkg) => `choco list --exact ${pkg}"`,
         uninstall: (pkg) => `choco uninstall ${pkg} -y`,
         check: (_) => "choco outdated",
     },

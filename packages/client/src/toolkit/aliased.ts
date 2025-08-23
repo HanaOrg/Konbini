@@ -12,13 +12,12 @@ import {
     type KONBINI_PKG_SCOPE,
 } from "shared/types/manifest";
 import { normalize, validateAgainst } from "@zakahacecosas/string-utils";
-import { getPkgManifest } from "shared/api/core";
 import { constructKps, parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { installPkgMgr } from "./ipm";
 import { exists } from "./path";
-import type { KONBINI_ID_PKG } from "shared/types/author";
+import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "shared/types/author";
 
 // TODO: review this dumpster fire
 
@@ -38,7 +37,7 @@ function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
             .split("\n")
             .map((line) => line.trim());
     }
-    // 7.0.0 < 7.0.1
+    // foobar 7.0.0 < 7.0.1
     if (scope.src === "nix") return !out.includes("<");
     // outdated packages:
     // foobar (7.0.1)
@@ -142,21 +141,21 @@ export function installAliasedPackage(params: {
     if (scope.startsWith("kbi:")) throw `Impossible error? Non-kbi scope became kbi.`;
 
     const lockfile: KONBINI_LOCKFILE = {
-        pkg: pkgId,
+        pkg_id: pkgId,
         scope: scope as Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>,
         timestamp: new Date().toString(),
+        author: manifest.author,
     };
     writeLockfile(lockfile, pkgId, manifest.author);
     writeLaunchpadShortcut(pkgId, manifest.author, "", scope);
     return "installedOrUpdated";
 }
 
-export async function packageExists(pkg: string): Promise<boolean> {
-    const manifest = await getPkgManifest(pkg);
-    const { author } = manifest;
-    const currentKps = manifest.platforms[getPlatform()];
-    const kps = parseKps(currentKps);
+export function packageExists(pkg: KONBINI_PKG_SCOPE, author?: KONBINI_ID_USR): boolean {
+    const kps = parseKps(pkg);
     if (kps.src === "kbi") {
+        if (!author)
+            throw `Internal error: Attempt to check for existence of Konbini package without USR ID.`;
         const pkgPath = PKG_PATH({ author, pkg });
         return existsSync(join(pkgPath, kps.value));
     }
@@ -169,12 +168,9 @@ export async function packageExists(pkg: string): Promise<boolean> {
         out = new TextDecoder().decode((error as any).stdout).trim();
     }
 
-    // TODO: review why the fuck did i make this
-    // chocolatey is stupid...
-    if (kps.src === "cho") return out.length === "1 packages installed.".length;
     // NOTE - be sure to test all pkg managers to ensure behavior is consistent
     // (if someone returned 'pkg A not found' this code wouldn't work, that's what i mean)
-    // except for chocolatey, I BELIEVE all packages do it the same way (tested it a while ago)
+    // I BELIEVE all packages do it the same way (tested it a while ago)
     // if konbini starts messing around with whether a package is installed or not, maybe the solution
     // is to add here a diff behavior for a specific pkg manager
     if (out.includes(kps.value)) return true;

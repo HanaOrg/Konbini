@@ -148,7 +148,13 @@ export async function installPackage(
     const usrDir = USR_PATH({ author: manifest.author });
     const pkgDir = PKG_PATH({ pkg: pkgId, author: manifest.author });
 
-    if (await packageExists(pkgId)) {
+    const platform = manifest.platforms[getPlatform()];
+    if (!platform) {
+        konsole.err(`${manifest.name} is not supported on your platform. Sorry.`);
+        process.exit(1);
+    }
+
+    if (packageExists(platform, manifest.author)) {
         if (method === "install") {
             const conf = konsole.ask(`${pkgId} is already installed. Reinstall?`);
             if (!conf) {
@@ -164,11 +170,6 @@ export async function installPackage(
         }
     }
 
-    const platform = manifest.platforms[getPlatform()];
-    if (!platform) {
-        konsole.err(`${manifest.name} is not supported on your platform. Sorry.`);
-        process.exit(1);
-    }
     const kps = parseKps(platform);
     if (!isKbiScope(platform)) {
         const ret = installAliasedPackage({
@@ -279,8 +280,9 @@ export async function installPackage(
     const lockfile: KONBINI_LOCKFILE = {
         ...stuff,
         scope: platform,
-        pkg: pkgId,
+        pkg_id: pkgId,
         installation_hash: safetyInfo.shaHash,
+        author: manifest.author,
     };
     writeLockfile(lockfile, pkgId, manifest.author);
     konsole.dbg("Lockfile written.");

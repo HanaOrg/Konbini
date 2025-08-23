@@ -1,19 +1,18 @@
+import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "./author.ts";
 import type { KONBINI_PKG_SCOPE } from "./manifest.ts";
 
 interface KONBINI_ALI_LOCKFILE {
     /** Package name. */
-    pkg: string;
+    pkg_id: KONBINI_ID_PKG;
     /** Exact timestamp of the installation. */
     timestamp: string;
     /** Package scope. */
     scope: Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>;
+    /** Package author. */
+    author: KONBINI_ID_USR;
 }
 
-interface KONBINI_KBI_LOCKFILE {
-    /** Package name. */
-    pkg: string;
-    /** Exact timestamp of the installation. */
-    timestamp: string;
+interface KONBINI_KBI_LOCKFILE extends Omit<KONBINI_ALI_LOCKFILE, "scope"> {
     /** Package scope. */
     scope: `kbi:${string}`;
     /** Version of the package. */

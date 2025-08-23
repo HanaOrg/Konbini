@@ -36,20 +36,26 @@ export function getLocalPackages(): EXTENDED_LOCKFILE[] {
 
 type EXTENDED_LOCKFILE = KONBINI_LOCKFILE & { path: string };
 
-export async function listPackages(
-    verbosity: "VERBOSE" | "STANDARD" | "SILENT",
-): Promise<EXTENDED_LOCKFILE[]> {
+export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTENDED_LOCKFILE[] {
     const lockfiles = getLocalPackages();
     const pkgsToList: EXTENDED_LOCKFILE[] = [];
 
     for (const lockfile of lockfiles) {
-        const exists = await packageExists(lockfile.pkg).catch(() => false);
-        // @ts-expect-error "KPAK" is a valid scope but it's not properly typed...
-        if (!exists && lockfile.scope !== "KPAK") {
-            konsole.dbg("Asserted", lockfile.pkg, "no longer is installed. Removed its lockfile.");
-            rmSync(join(lockfile.path, "../"), { recursive: true, force: true });
-        } else {
-            pkgsToList.push(lockfile);
+        try {
+            const exists = packageExists(lockfile.scope, lockfile.author);
+            // @ts-expect-error "KPAK" is a valid scope but it's not properly typed...
+            if (!exists && lockfile.scope !== "KPAK") {
+                konsole.dbg(
+                    "Asserted",
+                    lockfile.pkg_id,
+                    "no longer is installed. Removed its lockfile.",
+                );
+                rmSync(join(lockfile.path, "../"), { recursive: true, force: true });
+            } else {
+                pkgsToList.push(lockfile);
+            }
+        } catch {
+            continue;
         }
     }
 
@@ -62,7 +68,7 @@ export async function listPackages(
 
     for (const pkg of pkgsToList) {
         const stuff = [
-            pkg.pkg,
+            pkg.pkg_id,
             konsole.clr("grey", "from"),
             konsole.clr(
                 "cyan",

@@ -88,7 +88,7 @@ async function main() {
             await installPackage(subcommand as KONBINI_ID_PKG);
             break;
         case "list":
-            const len = await listPackages(subcommand === "-v" ? "VERBOSE" : "STANDARD");
+            const len = listPackages(subcommand === "-v" ? "VERBOSE" : "STANDARD");
             if (len.length > 0)
                 konsole.adv(
                     "Totalling",

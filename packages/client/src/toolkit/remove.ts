@@ -15,7 +15,7 @@ import { getPlatform } from "shared/api/platform";
 import { getLocalPackages } from "../commands/list";
 
 export async function removePackage(pkg: string) {
-    const pkgToRemove = getLocalPackages().find((p) => p.pkg === pkg);
+    const pkgToRemove = getLocalPackages().find((p) => p.pkg_id === pkg);
 
     if (!pkgToRemove) {
         konsole.err(`There's NOT such thing as ${pkg} installed here.`);
@@ -36,7 +36,7 @@ export async function removePackage(pkg: string) {
     const kps = parseKps(lockfile.scope);
     if (kps.src !== "kbi") {
         konsole.dbg(`Invoking aliased (${kps.cmd}) uninstallation command.`);
-        execSync(ALIASED_CMDs[kps.src]["uninstall"](lockfile.pkg));
+        execSync(ALIASED_CMDs[kps.src]["uninstall"](lockfile.pkg_id));
     }
     konsole.dbg(`Applying rm -rf at ${removePath}.`);
     rmSync(removePath, { force: true, recursive: true });

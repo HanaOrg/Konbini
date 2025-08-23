@@ -7,7 +7,7 @@ import type { KONBINI_ID_PKG } from "shared/types/author";
 
 export async function ensureSecurity() {
     konsole.dbg("UPDATING SECURITY INFO");
-    const pkgs = (await listPackages("SILENT")).map((p) => p.pkg);
+    const pkgs = listPackages("SILENT").map((p) => p.pkg_id);
 
     for (const pkg of pkgs) {
         const isSecure = await scanPackage(pkg as KONBINI_ID_PKG, false);
