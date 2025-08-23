@@ -14,6 +14,9 @@ export async function updateKonbini() {
         await fetchAPI("https://api.github.com/repos/HanaOrg/Konbini/releases/latest")
     ).json();
 
+    if (!res)
+        throw `There's no latest release. Check our repository and file an issue, this is probably a mistake from us.`;
+
     if (Bun.semver.order(res.tag_name, kVersion) !== 1) {
         konsole.suc("You're up to date!");
         return;
@@ -24,7 +27,7 @@ export async function updateKonbini() {
     );
 
     const plat = getPlatform();
-    const asset = res.assets.find((a) => a.name === `kbi-${plat}`);
+    const asset = res.assets.find((a) => a.name === `kbi-${plat}${plat === "win64" ? ".exe" : ""}`);
 
     if (!asset)
         throw "No executable for your platform. This is likely our fault for messing up somewhere when releasing our last update, please notify us.";
@@ -34,5 +37,5 @@ export async function updateKonbini() {
         filePath: join(INSTALLATION_DIR, plat === "win64" ? "kbi.exe" : "kbi"),
     });
 
-    konsole.suc("There we go!");
+    konsole.suc("There we go! Updated to", res.tag_name);
 }

@@ -31,9 +31,9 @@ export async function konpakFromDir(
     if (!validate(icon)) throw "No icon provided. Provide the FILENAME with --icon=[...].";
     if (!validate(version)) throw "No version provided. Provide it with --ver=[...].";
 
-    const pathToManifest = join(dir, "manifest.yaml");
-    const pathToBinary = join(dir, binary);
     const pathToIcon = join(dir, icon);
+    const pathToBinary = join(dir, binary);
+    const pathToManifest = join(dir, "manifest.yaml");
     const pathToDirected = join(dir, "directed");
 
     if (![pathToManifest, pathToBinary, pathToIcon].every((p) => existsSync(p)))
