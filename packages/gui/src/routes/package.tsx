@@ -20,6 +20,7 @@ import { getAuthor, getPkg, scanPackage } from "shared/api/kdata";
 import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 import DownloadChart from "../components/package/downloads";
 import InsecurePackage from "../components/insecure";
+import { lightenHex, getContrastingTextColor } from "../hex";
 
 export default function PackagePage() {
     const [app, setApp] = useState<KDATA_ENTRY_PKG>();
@@ -84,6 +85,11 @@ export default function PackagePage() {
             </>
         );
 
+    const accent = app.accent ? lightenHex(app.accent, 40) : "#c23282";
+    document.documentElement.style.setProperty("--k", accent);
+    document.documentElement.style.setProperty("--k-dimmed", lightenHex(accent, -40) + "40");
+    document.documentElement.style.setProperty("--k-lighter", lightenHex(accent, 80));
+
     const plat = getDesktopPlatform();
 
     const isSupported = app.platforms
@@ -103,7 +109,11 @@ export default function PackagePage() {
         : isPossiblySupported
           ? "Maybe works on your device"
           : "Does not work on your device";
-    const supportColor = isSupported ? "#FFC3C4" : isPossiblySupported ? "#FF7C65" : "#FF3863";
+    const supportColor = isSupported
+        ? "var(--k-lighter)"
+        : isPossiblySupported
+          ? "#FF7C65"
+          : "#FF3863";
     const age = getAgeRating(app.age_rating);
 
     return (
@@ -111,9 +121,15 @@ export default function PackagePage() {
             {secure !== null && !Object.values(secure.results).every((v) => v == true) && (
                 <InsecurePackage res={secure} app={app} />
             )}
-            <div className="bg-[#8800FF] w-128 h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-50px] z-[-1]" />
+            <div
+                className="bg-[#8800FF] w-128 h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-150px] z-[-1]"
+                style={{ backgroundColor: "var(--k)" }}
+            />
             <div className="bg-[#FF07EA] w-128 h-128 blur-[300px] opacity-[0.65] absolute bottom-[50px] right-[-300px] z-[-1]" />
-            <div className="bg-[#C23282] w-128 h-128 blur-[300px] opacity-[0.50] absolute top-[-150px] right-[-150px] z-[-1]" />
+            <div
+                className="w-128 h-128 blur-[300px] opacity-[0.60] absolute top-[-150px] right-[-150px] z-[-1]"
+                style={{ backgroundColor: "var(--k-lighter)" }}
+            />
             <Nav />
             <InstallDialog appName={app.name} appId={route} />
             <div className="app-main-cont">
@@ -134,13 +150,22 @@ export default function PackagePage() {
                             {app.downloads.active} active installs (est.)
                         </h2>
                         <div className="flex flex-row gap-1">
-                            <Badge color="#ffffff1a">
+                            <Badge color="var(--k-dimmed)">
                                 By{" "}
                                 <a href={`https://konbini.vercel.app/author/${app.author}`}>
                                     {app.author}
                                 </a>
                             </Badge>
-                            {author.verified && <Badge color="#c232826a">Verified developer</Badge>}
+                            {author.verified && (
+                                <Badge
+                                    color="var(--k)"
+                                    text={getContrastingTextColor(
+                                        document.documentElement.style.getPropertyValue("--k"),
+                                    )}
+                                >
+                                    Verified developer
+                                </Badge>
+                            )}
                         </div>
                         <div className="flex flex-row gap-1 mt-1">
                             <Badge
@@ -189,6 +214,16 @@ export default function PackagePage() {
                             className={
                                 isSupported || isPossiblySupported ? "" : "button-unsupported"
                             }
+                            style={{
+                                color:
+                                    isSupported || isPossiblySupported
+                                        ? getContrastingTextColor(
+                                              document.documentElement.style.getPropertyValue(
+                                                  "--k",
+                                              ),
+                                          )
+                                        : undefined,
+                            }}
                         >
                             Download
                         </button>

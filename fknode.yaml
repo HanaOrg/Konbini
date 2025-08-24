@@ -12,3 +12,4 @@ flagless:
     flaglessDestroy: true
     flaglessPretty: true
     flaglessLint: true
+buildCmd: "bun bld:cli"

@@ -4,6 +4,7 @@ import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 import Detail from "../detail";
 import { locateUsr } from "shared/api/core";
 import type { KDATA_FILE_PKG } from "shared/types/kdata";
+import { getContrastingTextColor } from "../../hex";
 
 export default function PublisherDetails({
     authorId,
@@ -46,23 +47,32 @@ export default function PublisherDetails({
             </p>
             <div className="flex flex-row gap-1 mt-2 mb-1">
                 <Badge color="#ffffff3a">{usr.name}</Badge>
-                {usr.verified && <Badge color="#c232826a">This organization got verified</Badge>}
+                {usr.verified && (
+                    <Badge
+                        color="var(--k)"
+                        text={getContrastingTextColor(
+                            document.documentElement.style.getPropertyValue("--k"),
+                        )}
+                    >
+                        This {orgStr === "a regular user" ? "user" : "organization"} is verified
+                    </Badge>
+                )}
             </div>
             <div className="flex flex-row gap-1 mb-2">
                 {usr.email && (
-                    <Badge color="#ffffff0f">
+                    <Badge color="var(--k-dimmed)">
                         <a href={`mailto:${usr.email}`}>{usr.email}</a>
                     </Badge>
                 )}
                 {usr.website && (
-                    <Badge color="#ffffff0f">
+                    <Badge color="var(--k-dimmed)">
                         <a href={`https://:${usr.website}`}>{usr.website}</a>
                     </Badge>
                 )}
                 {(org ? usr.hiring : usr.for_hire) ? (
                     <Badge color="#30ff801a">Currently {org ? "hiring" : "for hire"}</Badge>
                 ) : (
-                    <Badge color="#ffc8301a">Not currently {org ? "hiring" : "for hire"}</Badge>
+                    <Badge color="#ff30301a">Not currently {org ? "hiring" : "for hire"}</Badge>
                 )}
             </div>
             {usr.socials && (

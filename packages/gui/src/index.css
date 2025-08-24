@@ -11,6 +11,7 @@
 
 :root {
     --k: #c23282;
+    --k-dimmed: #c2328260;
     --k-lighter: #ff9fd9;
 
     --bg-button: #241424;
@@ -20,6 +21,7 @@
     font-weight: 400;
 
     color-scheme: dark;
+    background: #090909;
     color: rgba(255, 255, 255, 0.8);
 
     font-synthesis: none;

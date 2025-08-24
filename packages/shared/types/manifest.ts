@@ -1,4 +1,9 @@
-import { isValidEmail, validate, validateAgainst } from "@zakahacecosas/string-utils";
+import {
+    isValidEmail,
+    isValidHexColor,
+    validate,
+    validateAgainst,
+} from "@zakahacecosas/string-utils";
 import { parseKps } from "../api/manifest.ts";
 import type { KONBINI_ID_USR } from "./author.ts";
 
@@ -263,6 +268,10 @@ export interface KONBINI_MANIFEST {
     age_rating: AGE_RATING;
     /** True if the app collects user data, with or without consent. */
     telemetry: boolean;
+    /** An accept color for the app in the hexadecimal format.
+     * If not provided, Konbini pink is used.
+     */
+    accent?: `#${string}`;
 }
 
 /** Validates if the given string is a valid KPS. */
@@ -326,6 +335,8 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const validIcon = !is(m.icon) || isImageURL(m.icon);
 
+    const validAccent = !is(m.accent) || m.accent == undefined || isValidHexColor(m.accent);
+
     const validMaintainers =
         m.maintainers === undefined ||
         (Array.isArray(m.maintainers) &&
@@ -385,6 +396,7 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
         validHomepage,
         validDocs,
         validType,
+        validAccent,
     ].every((i) => i == true);
 }
 
