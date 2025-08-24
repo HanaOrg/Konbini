@@ -4,7 +4,7 @@ import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 import Detail from "../detail";
 import { locateUsr } from "shared/api/core";
 import type { KDATA_FILE_PKG } from "shared/types/kdata";
-import { getContrastingTextColor } from "../../hex";
+import { getContrastingTextColor } from "../../colors";
 
 export default function PublisherDetails({
     authorId,

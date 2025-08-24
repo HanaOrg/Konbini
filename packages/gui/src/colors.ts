@@ -26,3 +26,10 @@ export function getContrastingTextColor(hex: string) {
 
     return bright > 125 ? "#000000" : "#FFFFFF";
 }
+
+export function accentPage(color: string | undefined) {
+    const accent = color ? lightenHex(color, 40) : "#c23282";
+    document.documentElement.style.setProperty("--k", accent);
+    document.documentElement.style.setProperty("--k-dimmed", lightenHex(accent, -40) + "40");
+    document.documentElement.style.setProperty("--k-lighter", lightenHex(accent, 80));
+}

@@ -4,6 +4,7 @@ import Footer from "../components/footer";
 import Nav from "../components/nav";
 import { getPkgs } from "shared/api/kdata";
 import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
+import { accentPage } from "../colors";
 
 export default function Home() {
     const [mostDownloadedApps, setMostDownloadedApps] = useState<KDATA_ENTRY_PKG[]>([]);
@@ -16,6 +17,7 @@ export default function Home() {
             const recent = await getPkgs("r", 6);
             setMostDownloadedApps(Object.values(popular));
             setMostRecentApps(Object.values(recent));
+            accentPage(undefined);
             setLoading(false);
         }
         fetchApps();

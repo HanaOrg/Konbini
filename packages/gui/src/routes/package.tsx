@@ -20,7 +20,7 @@ import { getAuthor, getPkg, scanPackage } from "shared/api/kdata";
 import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 import DownloadChart from "../components/package/downloads";
 import InsecurePackage from "../components/insecure";
-import { lightenHex, getContrastingTextColor } from "../hex";
+import { lightenHex, getContrastingTextColor, accentPage } from "../colors";
 
 export default function PackagePage() {
     const [app, setApp] = useState<KDATA_ENTRY_PKG>();
@@ -85,10 +85,9 @@ export default function PackagePage() {
             </>
         );
 
-    const accent = app.accent ? lightenHex(app.accent, 40) : "#c23282";
-    document.documentElement.style.setProperty("--k", accent);
-    document.documentElement.style.setProperty("--k-dimmed", lightenHex(accent, -40) + "40");
-    document.documentElement.style.setProperty("--k-lighter", lightenHex(accent, 80));
+    useEffect(() => {
+        accentPage(app.accent);
+    }, []);
 
     const plat = getDesktopPlatform();
 
