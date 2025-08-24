@@ -24,7 +24,7 @@ import { join } from "path";
 import type { MANIFEST_WITH_ID, KDATA_FILE_PKG, KDATA_ENTRY_PKG } from "shared/types/kdata";
 import { parseKAChangelog } from "shared/changelog";
 
-const SCAN = true;
+const SCAN = process.argv[3]?.includes("scan");
 
 function log(...a: any[]): void {
     console.log(...a);
