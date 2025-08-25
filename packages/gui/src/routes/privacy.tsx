@@ -12,7 +12,7 @@ export default function Privacy() {
                 </h4>
                 <p className="mb-6">
                     Seriously, we handle minimal data. We have this privacy policy because it's
-                    legally required.
+                    legally required. <b>Last update: never.</b>
                 </p>
                 <hr />
                 <h2 className="mt-6 text-white text-3xl font-semibold mb-2">

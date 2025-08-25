@@ -48,3 +48,4 @@ An SFX Konpak is the above file appended to a binary with the code to extract _a
 - As mentioned, regular and SFX Konpaks use the same file extension on Linux.
 - Konbini cannot recognize SFX Konpaks, so a SFX Konpak cannot be used for a Konbini release.
 - On Windows, when installing Konbini (required for locally running non-SFX Konpaks), the "Choose default app" modal pops up the first time, and looks weird.
+- It's an overall incomplete and unstable system (for now, of course).

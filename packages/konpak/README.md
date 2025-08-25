@@ -18,8 +18,8 @@ All dependencies are stored alongside the main executable of the package.
 
 Konpak files are essentially ZIP archives, similar in spirit to `.deb` packages on Linux. When a user installs a Konpak file, Konbini extracts its contents, places everything in the appropriate location, and registers the app on the system.
 
-- On **Linux**, this is straightforward: create a `.desktop` file and you're done.
-- On **Windows** however, it's more complex. Konbini performs a system-wide installation (using the HKLM registry), adds the app to the Start Menu, and makes it appear in “Programs and Features”. A proper uninstaller is also included.
+- On **Linux**, this is straightforward, a `.desktop` file is created and filled up.
+- On **Windows** however, it's more complex. Konbini performs a system-wide installation, using the HKLM registry hive, to add the app to the Start Menu and make it appear in “Programs and Features”. A basic uninstaller is also included.
 
 > [!NOTE]
 > On Windows, support for user-based (non-admin) installs is viable and planned for a future update.

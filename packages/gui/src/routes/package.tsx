@@ -20,7 +20,7 @@ import { getAuthor, getPkg, scanPackage } from "shared/api/kdata";
 import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 import DownloadChart from "../components/package/downloads";
 import InsecurePackage from "../components/insecure";
-import { lightenHex, getContrastingTextColor, accentPage } from "../colors";
+import { getContrastingTextColor, accentPage } from "../colors";
 
 export default function PackagePage() {
     const [app, setApp] = useState<KDATA_ENTRY_PKG>();

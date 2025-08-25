@@ -11,4 +11,8 @@ export default defineConfig({
             "react-dom": "preact/compat",
         },
     },
+    build: {
+        target: "esnext",
+        reportCompressedSize: false,
+    },
 });

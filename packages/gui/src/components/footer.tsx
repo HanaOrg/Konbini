@@ -49,6 +49,9 @@ export default function Footer() {
                     >
                         Konbini ♥ Open Source
                     </a>
+                    <a href="/tos" className="text-lg font-medium">
+                        Terms of Service
+                    </a>
                     <a href="/privacy" className="text-lg font-medium">
                         Privacy Policy
                     </a>
