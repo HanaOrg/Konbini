@@ -6,13 +6,18 @@ import { exec, execSync } from "child_process";
 import { normalizer } from "shared/constants";
 import { getPlatform } from "shared/api/platform";
 import { runElevatedScript } from "../../../konpak/src/integrate";
+import { validate } from "@zakahacecosas/string-utils";
 
 export function addToUserPathEnvVariable(dir: string): void {
     // windows behavior
     if (getPlatform() === "win64") {
         try {
-            const currentPath = execSync("echo %PATH%", { encoding: "utf-8" }).trim();
+            const currentPath = execSync(
+                `powershell -Command "[Environment]::GetEnvironmentVariable(\\"PATH\\", \\"User\\")"`,
+                { encoding: "utf-8" },
+            );
 
+            if (!validate(currentPath)) throw `Unable to get PATH`;
             if (normalizer(currentPath).includes(normalizer(dir))) return;
 
             const path = new Set(currentPath.split(";").filter(Boolean));

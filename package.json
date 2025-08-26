@@ -36,9 +36,11 @@
         "launch:api": "cd packages/data && vercel --prod"
     },
     "dependencies": {
+        "vercel": "^46.0.4"
+    },
+    "devDependencies": {
         "eslint": "^9.34.0",
-        "prettier": "^3.6.2",
-        "vercel": "^46.0.2"
+        "prettier": "^3.6.2"
     },
     "trustedDependencies": [
         "@tailwindcss/oxide",

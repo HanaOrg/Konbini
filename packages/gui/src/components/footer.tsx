@@ -6,6 +6,7 @@ export default function Footer() {
                 <div className="flex flex-col items-start justify-start">
                     <a href="/">
                         <img
+                            height={80}
                             className="h-20 object-scale-down cursor-pointer mb-6"
                             src="/konball.png"
                             alt="Konbini logo"

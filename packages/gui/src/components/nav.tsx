@@ -3,6 +3,7 @@ export default function Nav() {
         <nav className="p-8 flex flex-row items-center justify-between">
             <a href="/">
                 <img
+                    height={80}
                     className="h-8 object-scale-down cursor-pointer"
                     src="/konball.png"
                     alt="Konbini logo"

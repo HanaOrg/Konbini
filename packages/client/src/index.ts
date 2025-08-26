@@ -36,10 +36,16 @@ async function main() {
     const command = args[0];
     const subcommand = args[1];
 
+    // TODO: remove logs on prod
+    console.debug("CHECKING PACKAGES_DIR");
     if (!existsSync(PACKAGES_DIR)) mkdirSync(PACKAGES_DIR, { recursive: true });
+    console.debug("CHECKING LAUNCHPAD_DIR");
     if (!existsSync(LAUNCHPAD_DIR)) mkdirSync(LAUNCHPAD_DIR, { recursive: true });
+    console.debug("PATH");
     addToUserPathEnvVariable(LAUNCHPAD_DIR);
+    console.debug("KONPAK WINDOWS");
     registerKonpakForWindows();
+    console.debug("GUARD CRONJOB");
     registerGuardCronjob();
 
     if (!command) {

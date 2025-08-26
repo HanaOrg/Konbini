@@ -8,6 +8,8 @@
 
 ## SHORT TERM / High priority
 
+- [ ] Speed up startup by moving overhead to setup.
+    - I mean, setup cronjobs and PATH from installer scripts, then rely on them existing. If they don't, and error will throw anyway.
 - [ ] Cache everything; cache locally too.
     - [ ] In exchange, perhaps lower cache duration? Now it doesn't depend on the GitHub API so...
 - [ ] Support things other than standalone executables.
@@ -22,9 +24,10 @@
 - [ ] Improve Konpak.
     - [ ] Allow to define where does each thing go (maybe APPDATA or that kind of stuff).
     - [ ] Different file extensions for Konpaks and SFX Konpaks outside of Windows.
-    - [ ] Rewrite to Tauri to add GUI (Tauri supports CLI too, for "silent" install) and reduce bundle size.
-        - Because of WebView this actually may increase bundle size... Having the user to download WV is an option tho. Anyway, just in case, consider other options.
-        - Or perhaps a native rewrite? Best option (if I knew how to do that :/).
+    - [ ] Add the option to make GUI installers.
+    - [ ] Rewrite to native and reduce bundle size.
+        - Tauri (Rust, native) is easier, but because of WebView this actually may increase bundle size... Having the user to download WebView is an option, though.
+        - Go seems like a better option, though the thing in general and specially the UI will be harder to figure out.
     - [ ] Make Konbini able to handle SFX Konpaks as regular ones.
 - [ ] Avoid launchpad duplications.
 - [ ] Make KBU script-based and not a fucking binary.

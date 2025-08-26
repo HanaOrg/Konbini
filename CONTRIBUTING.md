@@ -4,16 +4,16 @@
 
 Konbini is structured as a monorepo.
 
-| Project                           | Path (`packages/*`) | Stack                     |
-| :-------------------------------- | :------------------ | ------------------------- |
-| Command Line Interface            | `client/`           | TypeScript + Bun          |
-| Data HTTP API                     | `data/`             | TypeScript (CJS) + PNPM   |
-| Updater for the CLI client        | `update/`           | TypeScript + Bun[^1]      |
-| Safety system and API data source | `client/guard/`     | TypeScript + Bun          |
-| Konpak                            | `konpak/`           | TypeScript + Bun[^2]      |
-| Main website                      | `gui/`              | TypeScript + React + PNPM |
-| Code shared between all packages  | `shared/`           | TypeScript                |
-| Tests                             | `tests/`            | TypeScript + Bun          |
+| Project                           | Path (`packages/*`) | Stack                |
+| :-------------------------------- | :------------------ | -------------------- |
+| Command Line Interface            | `client/`           | TypeScript + Bun     |
+| Data HTTP API                     | `data/`             | TypeScript (CJS)     |
+| Updater for the CLI client        | `update/`           | TypeScript + Bun[^1] |
+| Safety system and API data source | `client/guard/`     | TypeScript + Bun     |
+| Konpak                            | `konpak/`           | TypeScript + Bun[^2] |
+| Main website                      | `gui/`              | TypeScript + React   |
+| Code shared between all packages  | `shared/`           | TypeScript           |
+| Tests                             | `tests/`            | TypeScript + Bun     |
 
 ## Reporting issues
 
@@ -25,7 +25,7 @@ Raise a GitHub issue properly explaining it everything and we'll do our best at 
 
 We're glad you want to contribute! First step is to fork Konbini. [Make your own fork](https://github.com/HanaOrg/Konbini/fork), then create a new branch using a `type/description` name (as defined by [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)). For example, `feat/cool-new-feature`.
 
-You'll need to have BunJS installed. PNPM is recommended as some workspaces use it, but they work fine with Bun as well (as long as you don't touch dependency versions too much).
+You'll need to have BunJS installed.
 
 Clone your fork, run `bun install` from the root, then start working code! Once done, make sure to run the precommit (`bun run precommit`) script before committing. Commit names don't really matter as your contribution will be squashed before merging.
 
