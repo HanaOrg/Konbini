@@ -108,30 +108,32 @@ export function registerGuardCronjob() {
         // TODO: macOS now prefers launchd over crontab
         // https://support.apple.com/guide/terminal/script-management-with-launchd-apdc6c1077b-5d5d-4d35-9c19-60f2397b2369/mac
 
-        exec("crontab -l 2>/dev/null", (err, stdout, _) => {
-            if (err) {
+        exec("crontab -l", (err, stdout, stderr) => {
+            if (err && !stderr.includes("no crontab for")) {
                 konsole.err(
                     "Failed to create KGuard cronjob! This is used to ensure package safety.",
                 );
                 konsole.err(err);
+                konsole.err(stdout);
+                konsole.err(stderr);
                 process.exit(1);
             }
 
             const existing = stdout.split("\n");
-            if (existing.includes(`15 * * * * kbi ${INSTALLATION_DIR + "/kbi ensure-security"}`))
-                return;
+            const job = `15 * * * * ${INSTALLATION_DIR + "/kbi ensure-security"}`;
+            if (existing.includes(job)) return;
 
             // avoid overwriting
-            const newCrontab = [...existing, `15 * * * * kbi ${INSTALLATION_DIR + "/kbi"}`].join(
-                "\n",
-            );
+            const newCrontab = [...existing, job].join("\n").trim();
 
-            exec(`echo "${newCrontab}" | crontab -`, (err2) => {
+            exec(`echo "${newCrontab}" | crontab -`, (err2, stdout2, stderr2) => {
                 if (err2) {
                     konsole.err(
                         "Failed to create KGuard cronjob! This is used to ensure package safety.",
                     );
                     konsole.err(err2);
+                    konsole.err(stdout2);
+                    konsole.err(stderr2);
                     process.exit(1);
                 }
             });

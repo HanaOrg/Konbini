@@ -37,6 +37,7 @@ async function main() {
     const subcommand = args[1];
 
     // TODO: remove logs on prod
+    console.log(args);
     console.debug("CHECKING PACKAGES_DIR");
     if (!existsSync(PACKAGES_DIR)) mkdirSync(PACKAGES_DIR, { recursive: true });
     console.debug("CHECKING LAUNCHPAD_DIR");
@@ -195,7 +196,7 @@ async function main() {
             break;
         default:
             konsole.err(
-                "Unknown command. Run Konbini with no arguments to see all available commands.",
+                `Unknown command '${command}'. Run Konbini with no arguments to see all available commands.`,
             );
             process.exit(1);
     }

@@ -19,28 +19,19 @@ import { installPkgMgr } from "./ipm";
 import { exists } from "./path";
 import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "shared/types/author";
 
-// TODO: review this dumpster fire
-
 /** true if it IS up to date, false if it NEEDS to update */
 function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
     if (scope.src === "kbi")
-        throw new Error("You should not be able to see this (KBI KPS over alias-only func).");
-    let out;
+        throw "You should not be able to see this (KBI KPS over alias-only func).";
+    let out: string[];
     try {
-        out = execSync(ALIASED_CMDs[scope.src]["check"](scope.value))
-            .toString()
-            .split("\n")
-            .map((line) => line.trim());
+        out = execSync(ALIASED_CMDs[scope.src]["check"](scope.value)).toString().split("\n");
     } catch (error) {
-        out = new TextDecoder()
-            .decode((error as any).stdout)
-            .split("\n")
-            .map((line) => line.trim());
+        out = new TextDecoder().decode((error as any).stdout ?? String(error)).split("\n");
     }
     // foobar 7.0.0 < 7.0.1
     if (scope.src === "nix") return !out.includes("<");
-    // outdated packages:
-    // foobar (7.0.1)
+    // outdated packages: foobar (7.0.1)
     return !out.some((line) => line.includes(scope.value));
 }
 
@@ -155,7 +146,7 @@ export function packageExists(pkg: KONBINI_PKG_SCOPE, author?: KONBINI_ID_USR): 
     const kps = parseKps(pkg);
     if (kps.src === "kbi") {
         if (!author)
-            throw `Internal error: Attempt to check for existence of Konbini package without USR ID.`;
+            throw "Internal error: Attempt to check for existence of Konbini package without USR ID.";
         const pkgPath = PKG_PATH({ author, pkg });
         return existsSync(join(pkgPath, kps.value));
     }
@@ -163,9 +154,9 @@ export function packageExists(pkg: KONBINI_PKG_SCOPE, author?: KONBINI_ID_USR): 
     let out: string;
 
     try {
-        out = execSync(cmd).toString().trim();
+        out = execSync(cmd).toString();
     } catch (error) {
-        out = new TextDecoder().decode((error as any).stdout).trim();
+        out = new TextDecoder().decode((error as any).stdout ?? String(error));
     }
 
     // NOTE - be sure to test all pkg managers to ensure behavior is consistent
