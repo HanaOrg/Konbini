@@ -40,8 +40,6 @@ Once done, make a Pull Request properly describing your contribution and we'll r
 - If a change you made implies changes to documentation (and you haven't done them yourself, which is acceptable), be sure to highlight it in your PR.
 - Adding tests is not mandatory, but HIGHLY encouraged.
 
----
-
 [^1]: This has to be rewritten to use shell scripts, as it's sole purpose is to download newer versions of the CLI (which are downloaded via the shell). Being brutally honest it's made in TypeScript out of laziness.
 
-[^2]: Intention is to rewrite this to TypeScript + Rust via Tauri.
+[^2]: Intention is to rewrite this to Golang.

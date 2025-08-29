@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "fs";
 import { globSync } from "glob";
 import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
@@ -24,7 +24,8 @@ import { join } from "path";
 import type { MANIFEST_WITH_ID, KDATA_FILE_PKG, KDATA_ENTRY_PKG } from "shared/types/kdata";
 import { parseKAChangelog } from "shared/changelog";
 
-const SCAN = process.argv[3]?.includes("scan");
+const SCAN = process.argv.includes("scan");
+const CLEAR = process.argv.includes("clear");
 
 function log(...a: any[]): void {
     console.log(...a);
@@ -193,14 +194,19 @@ async function main() {
     const date = new Date();
 
     if (SCAN) {
-        logSection("Initializing ClamAV Daemon");
+        logSection("Initializing ClamAV daemon");
         execSync("sudo systemctl start clamav-daemon");
 
-        logSection("Updating DB");
+        logSection("Updating ClamAV database");
         execSync("sudo freshclam");
 
         logSection("Clearing guard.txt");
         writeFileSync(GUARD_FILE, `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);
+    }
+
+    if (CLEAR) {
+        logSection("Clearing out BUILD/ directory")
+        rmSync("./build", {recursive:true,force:true});
     }
 
     if (!existsSync("./build")) mkdirSync("build");
@@ -234,21 +240,21 @@ async function main() {
                 } catch (error) {
                     if (String(error).includes("404")) {
                         writeFileSync(`./build/${manifest.id}.changes.md`, "# No");
-                        log(`[ ! ] No CHANGELOG file for ${manifest.id}`);
+                        log(`[ / ] No CHANGELOG file for ${manifest.id}`);
                     } else {
-                        log(`[ ! ] Error reading CHANGELOG for ${manifest.id}: ${error}`);
+                        log(`[ ! ] Error seeking CHANGELOG for ${manifest.id}: ${error}`);
                     }
                 }
             }
             if (!existsSync(`./build/${manifest.id}.downloads.yaml`)) {
                 try {
-                    log("[|||] Seeking download history for", manifest.repository);
+                    log("[|||] Seeking download history for", manifest.name);
                     writeFileSync(
                         `./build/${manifest.id}.downloads.yaml`,
                         stringify(await getDownloads(manifest.id)),
                     );
                 } catch (error) {
-                    log(`[ ! ] Error reading downloads for ${manifest.id}: ${error}`);
+                    log(`[ ! ] Error seeking downloads for ${manifest.id}: ${error}`);
                 }
             }
 

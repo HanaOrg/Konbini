@@ -34,8 +34,7 @@
     - [ ] Different file extensions for Konpaks and SFX Konpaks outside of Windows.
     - [ ] Add the option to make GUI installers.
     - [ ] Rewrite to native and reduce bundle size.
-        - Tauri (Rust, native) is easier, but because of WebView this actually may increase bundle size... Having the user to download WebView is an option, though.
-        - Go seems like a better option, though the thing in general and specially the UI will be harder to figure out.
+        - Probably will use Golang, though the thing in general and specially the UI will be hard to figure out.
     - [ ] Make Konbini able to handle SFX Konpaks as regular ones.
 - [ ] Avoid launchpad duplications.
 - [ ] Make KBU script-based and not a fucking binary.
