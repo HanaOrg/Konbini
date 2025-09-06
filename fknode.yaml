@@ -13,3 +13,4 @@ flagless:
     flaglessPretty: true
     flaglessLint: true
 buildCmd: "bun bld:cli"
+# [NOTE (04-09-2025 18:22:32): Invalid config file! (Auto-added by FuckingNode). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS M*THERF*CKER UNTIL YOU FIX THIS FILE! Refer to https://fuckingnode.github.io/ to learn about how fknode.yaml works.]

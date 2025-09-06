@@ -1,5 +1,13 @@
 import { execSync } from "child_process";
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "fs";
+import {
+    existsSync,
+    mkdirSync,
+    readdirSync,
+    readFileSync,
+    rmSync,
+    statSync,
+    writeFileSync,
+} from "fs";
 import { globSync } from "glob";
 import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
@@ -205,8 +213,8 @@ async function main() {
     }
 
     if (CLEAR) {
-        logSection("Clearing out BUILD/ directory")
-        rmSync("./build", {recursive:true,force:true});
+        logSection("Clearing out BUILD/ directory");
+        rmSync("./build", { recursive: true, force: true });
     }
 
     if (!existsSync("./build")) mkdirSync("build");

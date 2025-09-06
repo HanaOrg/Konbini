@@ -7,13 +7,13 @@ Konbini is structured as a monorepo.
 | Project                           | Path (`packages/*`) | Stack                |
 | :-------------------------------- | :------------------ | -------------------- |
 | Command Line Interface            | `client/`           | TypeScript + Bun     |
-| Data HTTP API                     | `data/`             | TypeScript (CJS)     |
-| Updater for the CLI client        | `update/`           | TypeScript + Bun[^1] |
 | Safety system and API data source | `client/guard/`     | TypeScript + Bun     |
+| Updater for the CLI client        | `update/`           | TypeScript + Bun[^1] |
 | Konpak                            | `konpak/`           | TypeScript + Bun[^2] |
-| Main website                      | `gui/`              | TypeScript + React   |
 | Code shared between all packages  | `shared/`           | TypeScript           |
 | Tests                             | `tests/`            | TypeScript + Bun     |
+| Data HTTP API                     | `data/`             | TypeScript (CJS)     |
+| Main website                      | `gui/`              | TypeScript + Preact  |
 
 ## Reporting issues
 

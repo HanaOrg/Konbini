@@ -36,10 +36,10 @@
         "launch:api": "cd packages/data && vercel --prod"
     },
     "dependencies": {
-        "vercel": "^46.0.4"
+        "vercel": "^46.1.1"
     },
     "devDependencies": {
-        "eslint": "^9.34.0",
+        "eslint": "^9.35.0",
         "prettier": "^3.6.2"
     },
     "trustedDependencies": [
