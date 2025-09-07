@@ -30,6 +30,7 @@ jobs:
 
       - name: Run guard
         run: |
+          bun install
           bun run ./packages/client/guard/guard.ts clear scan
 
       - name: Push changes
