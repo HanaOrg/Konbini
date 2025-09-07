@@ -206,7 +206,7 @@ async function main() {
         execSync("sudo systemctl start clamav-daemon");
 
         logSection("Updating ClamAV database");
-        execSync("sudo freshclam");
+        execSync("sudo freshclam --stdout --verbose --datadir=/tmp/clamav");
 
         logSection("Clearing guard.txt");
         writeFileSync(GUARD_FILE, `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);
