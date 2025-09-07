@@ -155,7 +155,7 @@ button.button-unsupported {
 }
 
 .app-main-cont {
-    padding: 20px;
+    padding: 20px 5%;
     max-width: 100%;
     width: 100%;
     -webkit-box-flex: 1;

@@ -5,7 +5,6 @@ import { type KONBINI_ID_USR } from "shared/types/author";
 import PublisherDetails from "../components/package/publisher-details";
 import { getAuthor } from "shared/api/kdata";
 import type { KDATA_ENTRY_USR } from "shared/types/kdata";
-import { accentPage } from "../colors";
 
 export default function AuthorPage() {
     const [author, setAuthor] = useState<KDATA_ENTRY_USR>();
@@ -18,7 +17,6 @@ export default function AuthorPage() {
             try {
                 const pkgAuthor = await getAuthor(route as KONBINI_ID_USR);
                 setAuthor(pkgAuthor);
-                accentPage(undefined);
                 setLoading(false);
             } catch (error) {
                 if (String(error).includes("does NOT exist")) {

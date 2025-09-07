@@ -1,4 +1,11 @@
+import { useEffect } from "preact/hooks";
+import { accentPage } from "../colors";
+
 export default function Nav() {
+    useEffect(() => {
+        if (!window.location.pathname.includes("/package/")) accentPage(undefined);
+    }, []);
+
     return (
         <nav className="p-8 flex flex-row items-center justify-between">
             <a href="/">

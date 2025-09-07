@@ -13,7 +13,7 @@ export default function PlatformSupport({
     function supported(plat: KONBINI_PKG_SCOPE | null): string {
         if (!plat) return "unsupported";
         if (isKbiScope(plat)) return "supported";
-        return `aliased to ${parseKps(plat).name}`;
+        return `alias -> ${parseKps(plat).name}`;
     }
 
     const linux64 = supported(platforms.linux64);
@@ -63,23 +63,34 @@ export default function PlatformSupport({
                     </i>
                 </p>
             )}
-            <div className="w-full grid grid-cols-5 grid-rows-1 gap-4">
+            <div className="w-full grid grid-cols-5 grid-rows-1">
                 {platformsToRender.map((p) => (
-                    <div className="h-45 p-6 border-1 border-[#2A2A2A] rounded-2xl bg-[#151515] hover:bg-[#1F1F1F] relative overflow-hidden">
+                    <div
+                        title={
+                            p.support.startsWith("alias")
+                                ? `For ${p.plat}${p.arch} this package can be installed through Konbini,\nthough it is actually published to the shown package manager.`
+                                : p.support === "unsupported"
+                                  ? `This package is not supported for ${p.plat}${p.arch}. How sad :(`
+                                  : `This package can be installed for ${p.plat}${p.arch} through Konbini! How cool.`
+                        }
+                        className={`h-45 p-6 border-1 border-[#303030] rounded${p.plat === "Linux" && p.arch === "64" ? "-l-2xl" : p.plat === "Windows" ? "-r-2xl" : "-0"} bg-[#151515] hover:bg-[#1F1F1F] relative overflow-hidden`}
+                    >
                         <p className="text-3xl text-white font-semibold">{p.plat}</p>
                         <p className="text-xl text-white font-light opacity-[0.7]">{p.arch}</p>
-                        <div className="absolute top-8 right-6 opacity-[0.9]">
+                        <div
+                            className={`absolute top-${p.plat === "macOS" ? "7" : "8"} right-4 opacity-[0.95]`}
+                        >
                             {p.plat === "Linux" && <IconTux />}
                             {p.plat === "macOS" && <IconMac />}
                             {p.plat === "Windows" && <IconWin />}
                         </div>
-                        <p className="text-xl font-normal absolute bottom-6 text-center left-6">
+                        <p className="text-xl font-normal absolute bottom-4 text-center left-5">
                             {toUpperCaseFirst(p.support)}
                         </p>
                         <div
-                            className="w-[100%] m-auto h-14 absolute bottom-2 left-0 blur-[65px]"
+                            className="w-[120%] m-auto h-14 absolute top-2 right-5 blur-[65px]"
                             style={{
-                                backgroundColor: p.support.startsWith("aliased")
+                                backgroundColor: p.support.startsWith("alias")
                                     ? "#65A5FF"
                                     : p.support === "unsupported"
                                       ? "#FF7C65"
