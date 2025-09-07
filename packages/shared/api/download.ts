@@ -1,3 +1,4 @@
+import { validate } from "@zakahacecosas/string-utils";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 
 export async function downloadHandler(params: {
@@ -14,6 +15,11 @@ export async function downloadHandler(params: {
             signal: controller.signal,
             redirect: "follow",
             method: "GET",
+            headers: validate(import.meta.env["BEARER"])
+                ? {
+                      Authorization: import.meta.env["BEARER"],
+                  }
+                : undefined,
         });
 
         if (!res.ok) throw `HTTP ${res.status} error fetching remote for download ${filePath}.`;

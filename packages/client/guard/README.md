@@ -41,6 +41,6 @@ Flags are pipe-separated keywords, allowing to instantly search for invalid pack
 
 ## Konbini's schedule
 
-This is scheduled on [our own hardware](https://icecat.biz/rest/product-pdf?productId=16700539&lang=en) to run periodically. Package data is updated every 48 hours at most. Antivirus scans happen on an irregular basis, but at least one per week is supposed to run.
+This is scheduled to run periodically on a GitHub Action every 48 hours.
 
 You're not supposed to commit updates to the `guard.txt` file by yourself (and for trust reasons, PRs that modify it won't be accepted). You should only run this script for testing ot, in case you wanted to contribute a fix or improvement (which we're REALLY thankful for!).

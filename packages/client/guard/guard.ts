@@ -171,7 +171,7 @@ function fromSorting<T extends Record<any, any>>(o: T, sorter: any): T {
 async function main() {
     logBlock("コンビニ GUARD BEGINS");
 
-    logBlock(import.meta.env["BEARER"] ? "LOADED BEARER" : "DID NOT LOAD TOKEN!");
+    logSection(import.meta.env["BEARER"] ? "LOADED BEARER :D" : "DID NOT LOAD BEARER!");
 
     logBlock("コンビニ GUARD // PREFETCH // BEGINS");
 

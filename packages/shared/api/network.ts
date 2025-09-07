@@ -2,7 +2,7 @@ import { validate } from "@zakahacecosas/string-utils";
 
 /**
 no bearer exists in production; every user has his own per-IP rate limit anyway
-API key is only used locally as KGuard is expensive and needs higher limits
+API key is only used by us as KGuard is expensive and needs higher limits
 */
 const bearer = import.meta.env["BEARER"];
 
