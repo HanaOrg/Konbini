@@ -131,7 +131,9 @@ async function scanFiles() {
         const pkgHashfile = parse(
             readFileSync("build/" + pkg + "_" + ver + ".hash.yaml", "utf-8"),
         ) as KONBINI_HASHFILE;
-        const lines = result.toString().split("\n");
+        const resString = result.toString();
+        console.debug("[DBG] RES\n", resString);
+        const lines = resString.split("\n");
         const safety = (
             lines.find((line) => line.startsWith("Infected files:")) ?? "Infected files: 1"
         ).endsWith("0")

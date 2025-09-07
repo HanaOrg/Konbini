@@ -12,6 +12,8 @@ jobs:
         steps:
             - name: Checkout repo
               uses: actions/checkout@v4
+              with:
+                  persist-credentials: false
 
             - name: Install Bun
               uses: oven-sh/setup-bun@v2.0.2
@@ -19,9 +21,9 @@ jobs:
                   bun-version: "latest"
 
             - name: Setup Git
-              run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
+              uses: qoomon/actions--setup-git@v1
+              with:
+                  user: bot
 
             - name: Install ClamAV
               run: |
@@ -44,6 +46,8 @@ jobs:
                   bun guard.ts
               env:
                   BEARER: ${{ secrets.BEARER }}
+                  UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_URL }}
+                  UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_TOKEN }}
 
             - name: Push changes
               run: |
