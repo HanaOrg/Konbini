@@ -26,7 +26,7 @@ jobs:
       - name: Install ClamAV
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends clamav clamav-daemon clamav-base clamav-freshclam clamdscan libclamav12
+          sudo apt-get install -y --no-install-recommends clamav clamav-base clamav-freshclam libclamav12
 
       - name: Run guard
         run: |

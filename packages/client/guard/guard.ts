@@ -1,13 +1,5 @@
 import { execSync } from "child_process";
-import {
-    existsSync,
-    mkdirSync,
-    readdirSync,
-    readFileSync,
-    rmSync,
-    statSync,
-    writeFileSync,
-} from "fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { globSync } from "glob";
 import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
@@ -31,9 +23,6 @@ import { getDownloads } from "./fetch";
 import { join } from "path";
 import type { MANIFEST_WITH_ID, KDATA_FILE_PKG, KDATA_ENTRY_PKG } from "shared/types/kdata";
 import { parseKAChangelog } from "shared/changelog";
-
-const SCAN = process.argv.includes("scan");
-const CLEAR = process.argv.includes("clear");
 
 function log(...a: any[]): void {
     console.log(...a);
@@ -135,7 +124,7 @@ async function scanFiles() {
             string,
             keyof KONBINI_HASHFILE,
         ];
-        const result = execSync("clamdscan --log=./CLAMAV.log " + file);
+        const result = execSync("clamscan --datadir=/tmp/clamav --log=./CLAMAV.log " + file);
         const user = pkg.split(".").slice(0, 2).join(".");
         const userAscPath = "build/" + user + ".asc";
         const pkgHashfile = parse(
@@ -183,13 +172,6 @@ function fromSorting<T extends Record<any, any>>(o: T, sorter: any): T {
 async function main() {
     logBlock("コンビニ GUARD BEGINS");
 
-    logBlock(
-        [
-            "WILL     UPDATE KData",
-            SCAN ? "WILL     SCAN WITH ClamAV" : "WILL NOT SCAN WITH ClamAV",
-        ].join("\n"),
-    );
-
     const GUARD_FILE = "./guard.txt";
 
     logBlock("コンビニ GUARD // PREFETCH // BEGINS");
@@ -201,21 +183,14 @@ async function main() {
 
     const date = new Date();
 
-    if (SCAN) {
-        logSection("Initializing ClamAV daemon");
-        execSync("sudo systemctl start clamav-daemon");
+    /* logSection("Initializing ClamAV daemon");
+    execSync("sudo systemctl start clamav-daemon"); */
 
-        logSection("Updating ClamAV database");
-        execSync("sudo freshclam --stdout --verbose --datadir=/tmp/clamav");
+    logSection("Updating ClamAV database");
+    execSync("sudo freshclam --stdout --quiet --datadir=/tmp/clamav");
 
-        logSection("Clearing guard.txt");
-        writeFileSync(GUARD_FILE, `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);
-    }
-
-    if (CLEAR) {
-        logSection("Clearing out BUILD/ directory");
-        rmSync("./build", { recursive: true, force: true });
-    }
+    logSection("Clearing guard.txt");
+    writeFileSync(GUARD_FILE, `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);
 
     if (!existsSync("./build")) mkdirSync("build");
 
@@ -329,19 +304,17 @@ async function main() {
 
     logBlock("コンビニ GUARD // MANIFEST LOOP // SUCCESSFULLY ENDS");
 
-    if (SCAN) {
-        logBlock("コンビニ GUARD // AV SCAN // BEGINS");
+    logBlock("コンビニ GUARD // AV SCAN // BEGINS");
 
-        const result = await scanFiles();
-        result.forEach((i) => {
-            writeFileSync(GUARD_FILE, `${i.pkg}@${i.ver}@${i.plat}=${i.res}\n`, {
-                encoding: "utf-8",
-                flag: "a",
-            });
+    const result = await scanFiles();
+    result.forEach((i) => {
+        writeFileSync(GUARD_FILE, `${i.pkg}@${i.ver}@${i.plat}=${i.res}\n`, {
+            encoding: "utf-8",
+            flag: "a",
         });
+    });
 
-        logBlock("コンビニ GUARD // AV SCAN // SUCCESSFULLY ENDS");
-    }
+    logBlock("コンビニ GUARD // AV SCAN // SUCCESSFULLY ENDS");
 
     logBlock("コンビニ GUARD // KDATA // BEGINS");
 
