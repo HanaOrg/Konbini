@@ -124,7 +124,8 @@ async function scanFiles() {
             string,
             keyof KONBINI_HASHFILE,
         ];
-        const result = execSync(`clamscan --database=/tmp/clamav --stdout --quiet ${file}`);
+        // --database=/tmp/clamav
+        const result = execSync(`clamscan --stdout --quiet ${file}`);
         const user = pkg.split(".").slice(0, 2).join(".");
         const userAscPath = "build/" + user + ".asc";
         const pkgHashfile = parse(
