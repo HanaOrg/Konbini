@@ -33,9 +33,9 @@ jobs:
               run: |
                   mkdir -p /tmp/clamav
                   sudo chown $USER:$USER /tmp/clamav
-                  wget -q https://database.clamav.net/main.cvd -O /tmp/clamav/main.cvd
-                  wget -q https://database.clamav.net/daily.cvd -O /tmp/clamav/daily.cvd
-                  wget -q https://database.clamav.net/bytecode.cvd -O /tmp/clamav/bytecode.cvd
+                  wget -q --tries=3 https://database.clamav.net/main.cvd -O /tmp/clamav/main.cvd || true
+                  wget -q --tries=3 https://database.clamav.net/daily.cvd -O /tmp/clamav/daily.cvd || true
+                  wget -q --tries=3 https://database.clamav.net/bytecode.cvd -O /tmp/clamav/bytecode.cvd || true
 
             - name: Run guard
               run: |
