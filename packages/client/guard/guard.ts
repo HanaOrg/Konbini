@@ -125,20 +125,16 @@ async function scanFiles() {
             keyof KONBINI_HASHFILE,
         ];
         // --database=/tmp/clamav
-        const result = execSync(`sudo clamscan --stdout --quiet ${file}`);
+        const result = execSync(`sudo clamscan --stdout ${file}`);
         const user = pkg.split(".").slice(0, 2).join(".");
         const userAscPath = "build/" + user + ".asc";
         const pkgHashfile = parse(
             readFileSync("build/" + pkg + "_" + ver + ".hash.yaml", "utf-8"),
         ) as KONBINI_HASHFILE;
         const resString = result.toString();
-        console.debug("[DBG] RES\n", resString);
-        const lines = resString.split("\n");
-        const safety = (
-            lines.find((line) => line.startsWith("Infected files:")) ?? "Infected files: 1"
-        ).endsWith("0")
-            ? "SAFE"
-            : "INFECTED";
+        console.debug(`[DBG] RES FOR sudo clamscan --stdout --quiet ${file}\n${resString}`);
+        const line = resString.split("\n").find((line) => line.startsWith("Infected files:"));
+        const safety = line ? (line.endsWith("0") ? "SAFE" : "INFECTED") : "ERROR";
         await fetchIfNotExists(userAscPath, locateUsr(user).signature);
         const signature =
             (await assertIntegrityPGP({

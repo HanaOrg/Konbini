@@ -37,6 +37,8 @@ Flags are pipe-separated keywords, allowing to instantly search for invalid pack
 | Integrity    | Whether the package's Konbini hash is valid.                                                    |      `INTEGRAL` |    `CORRUPTED` |
 | Authenticity | Whether the package's PGP signature is valid when tested against the author's public signature. |     `AUTHENTIC` |  `UNAUTHENTIC` |
 
+<!-- Safety may also be `ERROR` if something went wrong with ClamAV. -->
+
 ## Konbini's schedule
 
 This is scheduled on [our own hardware](https://icecat.biz/rest/product-pdf?productId=16700539&lang=en) to run periodically. Package data is updated every 48 hours at most. Antivirus scans happen on an irregular basis, but at least one per week is supposed to run.
