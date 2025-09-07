@@ -54,6 +54,3 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # guard downloads
 packages/client/guard/build/**
-
-# API-served data
-packages/data/api/**.json
