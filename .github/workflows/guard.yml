@@ -6,7 +6,7 @@ on:
     - cron: "0 0 */3 * *"
 
 jobs:
-  run-bun-script:
+  konbini-guard:
     runs-on: ubuntu-latest
 
     steps:
