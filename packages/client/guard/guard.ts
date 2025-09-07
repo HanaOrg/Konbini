@@ -183,8 +183,8 @@ async function main() {
 
     const date = new Date();
 
-    logSection("Updating ClamAV database");
-    execSync("freshclam --datadir=/tmp/clamav --stdout --quiet");
+    /* logSection("Updating ClamAV database");
+    execSync("freshclam --datadir=/tmp/clamav --stdout --quiet"); */
 
     logSection("Clearing guard.txt");
     writeFileSync(GUARD_FILE, `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);

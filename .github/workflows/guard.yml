@@ -26,13 +26,16 @@ jobs:
             - name: Install ClamAV
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y --no-install-recommends clamav clamav-base clamav-freshclam libclamav12
+                  sudo apt-get install -y --no-install-recommends clamav clamav-base libclamav12
 
-            # maybe this fixes the thing
-            - name: Make temp DIR for ClamAV
+            # MAYBE this fixes the thing
+            - name: Manual freshclam
               run: |
                   mkdir -p /tmp/clamav
                   sudo chown $USER:$USER /tmp/clamav
+                  wget -q https://database.clamav.net/main.cvd -O /tmp/clamav/main.cvd
+                  wget -q https://database.clamav.net/daily.cvd -O /tmp/clamav/daily.cvd
+                  wget -q https://database.clamav.net/bytecode.cvd -O /tmp/clamav/bytecode.cvd
 
             - name: Run guard
               run: |
