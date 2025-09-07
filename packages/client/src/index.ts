@@ -7,7 +7,6 @@ import { listPackages } from "./commands/list";
 import { removePackage } from "./toolkit/remove";
 import { learn } from "./commands/learn";
 import { showPkgInfo, showUserInfo } from "./commands/info";
-import { addToUserPathEnvVariable, registerGuardCronjob } from "./toolkit/path";
 import { updatePackages } from "./commands/update";
 import { generateManifest } from "./commands/manifest-pkg";
 import { about } from "./commands/about";
@@ -18,10 +17,10 @@ import { konbiniHash } from "shared/security";
 import { konpakFromDir } from "./commands/konpak";
 import { parseArgs } from "util";
 import { Unpack } from "../../konpak/src/unpack";
-import { registerKonpakForWindows } from "../../konpak/src/integrate";
 import { parseID } from "shared/api/core";
 import { ensureSecurity } from "./commands/secure";
 import type { KONBINI_ID_PKG } from "shared/types/author";
+import { selfUpdate } from "./commands/self-update";
 
 const p = getPlatform();
 const platformString =
@@ -35,19 +34,6 @@ async function main() {
     const args = process.argv.slice(2);
     const command = args[0];
     const subcommand = args[1];
-
-    // TODO: remove logs on prod
-    console.log(args);
-    console.debug("CHECKING PACKAGES_DIR");
-    if (!existsSync(PACKAGES_DIR)) mkdirSync(PACKAGES_DIR, { recursive: true });
-    console.debug("CHECKING LAUNCHPAD_DIR");
-    if (!existsSync(LAUNCHPAD_DIR)) mkdirSync(LAUNCHPAD_DIR, { recursive: true });
-    console.debug("PATH");
-    addToUserPathEnvVariable(LAUNCHPAD_DIR);
-    console.debug("KONPAK WINDOWS");
-    registerKonpakForWindows();
-    console.debug("GUARD CRONJOB");
-    registerGuardCronjob();
 
     if (!command) {
         console.log(
@@ -82,11 +68,17 @@ async function main() {
         return;
     }
 
+    // checks for DIRs only if a command is run, so help shows a few ms faster
+    if (!existsSync(PACKAGES_DIR)) mkdirSync(PACKAGES_DIR, { recursive: true });
+    if (!existsSync(LAUNCHPAD_DIR)) mkdirSync(LAUNCHPAD_DIR, { recursive: true });
+
     switch (command) {
         case "install":
             if (!subcommand) throw "No package specified.";
-            if (validateAgainst(subcommand, ["konbini", "kbi", "kbu"]))
-                throw "To update Konbini, use 'kbu update'.";
+            if (validateAgainst(subcommand, ["konbini", "kbi"])) {
+                await selfUpdate();
+                break;
+            }
             try {
                 parseID(subcommand);
             } catch {
@@ -101,12 +93,14 @@ async function main() {
                     "Totalling",
                     len.length.toString(),
                     "packages installed.",
-                    len.length >= 169 ? "Isn't that a lot?" : "Nice!",
+                    len.length >= 69 ? "Isn't that a lot?" : "Nice!",
                 );
             break;
         case "update":
-            if (validateAgainst(subcommand, ["konbini", "kbi", "kbu"]))
-                throw "To update Konbini, use 'kbu update'.";
+            if (validateAgainst(subcommand, ["konbini", "kbi"])) {
+                await selfUpdate();
+                break;
+            }
             await updatePackages();
             break;
         case "remove":

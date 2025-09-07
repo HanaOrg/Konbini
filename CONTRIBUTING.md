@@ -8,8 +8,7 @@ Konbini is structured as a monorepo.
 | :-------------------------------- | :------------------ | -------------------- |
 | Command Line Interface            | `client/`           | TypeScript + Bun     |
 | Safety system and API data source | `client/guard/`     | TypeScript + Bun     |
-| Updater for the CLI client        | `update/`           | TypeScript + Bun[^1] |
-| Konpak                            | `konpak/`           | TypeScript + Bun[^2] |
+| Konpak                            | `konpak/`           | TypeScript + Bun[^1] |
 | Code shared between all packages  | `shared/`           | TypeScript           |
 | Tests                             | `tests/`            | TypeScript + Bun     |
 | Data HTTP API                     | `data/`             | TypeScript (CJS)     |
@@ -40,6 +39,4 @@ Once done, make a Pull Request properly describing your contribution and we'll r
 - If a change you made implies changes to documentation (and you haven't done them yourself, which is acceptable), be sure to highlight it in your PR.
 - Adding tests is not mandatory, but HIGHLY encouraged.
 
-[^1]: This has to be rewritten to use shell scripts, as it's sole purpose is to download newer versions of the CLI (which are downloaded via the shell). Being brutally honest it's made in TypeScript out of laziness.
-
-[^2]: Intention is to rewrite this to Golang.
+[^1]: Intention is to rewrite this to Golang.

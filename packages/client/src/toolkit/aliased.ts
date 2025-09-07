@@ -16,7 +16,7 @@ import { constructKps, parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { installPkgMgr } from "./ipm";
-import { exists } from "./path";
+import { exists } from "./exists";
 import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "shared/types/author";
 
 /** true if it IS up to date, false if it NEEDS to update */

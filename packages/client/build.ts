@@ -8,11 +8,6 @@ const platforms: Record<string, Build.Target> = {
     "kbi-linuxArm": "bun-linux-arm64",
     "kbi-mac64": "bun-darwin-x64",
     "kbi-macArm": "bun-darwin-arm64",
-    "kbu.exe": "bun-windows-x64",
-    "kbu-linux64": "bun-linux-x64",
-    "kbu-linuxArm": "bun-linux-arm64",
-    "kbu-mac64": "bun-darwin-x64",
-    "kbu-macArm": "bun-darwin-arm64",
     "kpak-sfx-win64.exe": "bun-windows-x64",
     "kpak-sfx-linux64": "bun-linux-x64",
     "kpak-sfx-linuxArm": "bun-linux-arm64",
@@ -23,21 +18,11 @@ const platforms: Record<string, Build.Target> = {
 for (const [pkg, platform] of Object.entries(platforms)) {
     konsole.adv(`Building ${pkg} for platform ${platform}...`);
     try {
-        const src = pkg.startsWith("kbu")
-            ? "../update/src/index.ts"
-            : pkg.startsWith("kpak")
-              ? "../konpak/index.ts"
-              : "./src/index.ts";
-        const title = pkg.startsWith("kbu")
-            ? "Konbini Updater"
-            : pkg.startsWith("kpak")
-              ? "KPAK SFX"
-              : "Konbini";
-        const description = pkg.startsWith("kbu")
-            ? "Updater client for Konbini."
-            : pkg.startsWith("kpak")
-              ? "Konpak Self Extractable Module (KPAK-SFX). Used to convert Konpaks into self-extractable archives."
-              : "Your convenience store.";
+        const src = pkg.startsWith("kpak") ? "../konpak/index.ts" : "./src/index.ts";
+        const title = pkg.startsWith("kpak") ? "KPAK SFX" : "Konbini";
+        const description = pkg.startsWith("kpak")
+            ? "Konpak Self Extractable Module (KPAK-SFX). Used to convert Konpaks into self-extractable archives."
+            : "Your convenience store.";
 
         const res = await Bun.build({
             entrypoints: [src],

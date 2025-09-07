@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # borrowed from https://fuckingnode.github.io/install.sh
 
 # error handling
@@ -8,8 +7,9 @@ set -u
 
 # constants
 PACKAGES_DIR="/usr/local/kbi/exe"
+LAUNCHPAD_DIR="/usr/local/kbi/launchpad"
 
-# get platform so we know what to install
+# get where we are so it knows what to use
 get_platform_arch() {
     case "$(uname -s)" in
     Darwin)
@@ -49,14 +49,35 @@ get_platform_arch() {
 
 ARCH=$(get_platform_arch)
 
+remove_if_needed() {
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+        kill -9 $1 2>/dev/null
+        rm -f "$PACKAGES_DIR/kbi"
+    fi
+}
+
+setup_cronjob() {
+    # TODO: macOS now prefers launchd over crontab
+    # https://support.apple.com/guide/terminal/script-management-with-launchd-apdc6c1077b-5d5d-4d35-9c19-60f2397b2369/mac
+
+    PREV_CJ=$(crontab -l)
+    JOB="15 * * * * $PACKAGES_DIR/kbi ensure-security"
+
+    if [[ $PREV_CJ = *JOB* ]]; then
+        echo "CRONJOB seems to already exist (this is probably an update). Not modifying."
+        return;
+    fi
+
+    NEW_CJ="$PREV_CJ\n$JOB";
+
+    printf "%s\n%s\n" "$PREV_CJ" "$JOB" | crontab -
+}
+
 # get url
 get_latest_release_url() {
-    local TARGET=$1 # "kbi" or "kbu"
-
     URL=$(curl -s "https://api.github.com/repos/HanaOrg/Konbini/releases/latest" |
         grep -o '"browser_download_url": "[^"]*' |
         grep "$ARCH" |
-        grep "$TARGET" |
         grep -v "\.asc" |
         sed 's/"browser_download_url": "//')
 
@@ -70,43 +91,43 @@ get_latest_release_url() {
 
 # install
 install_app() {
-    local TARGET=$1 # the same
-    echo "Fetching latest release for $TARGET $ARCH from GitHub..."
-    local url=$(get_latest_release_url $TARGET)
+    echo "Fetching latest release for $ARCH from GitHub..."
+    local url=$(get_latest_release_url)
     echo "Fetched successfully."
     echo "Downloading..."
     sudo mkdir -p "$PACKAGES_DIR"
-    sudo curl -L "$url" -o "$PACKAGES_DIR/$TARGET"
-    sudo chmod +x "$PACKAGES_DIR/$TARGET"
-    echo "Downloaded successfully to $PACKAGES_DIR/$TARGET"
+    sudo curl -L "$url" -o "$PACKAGES_DIR/kbi"
+    sudo chmod +x "$PACKAGES_DIR/kbi"
+    echo "Downloaded successfully to $PACKAGES_DIR/kbi"
 }
 
-# add app to path
-add_app_to_path() {
-    echo "Adding executables to PATH..."
+add_to_path() {
+    echo "Adding executable to PATH..."
 
-    if [ -z "$PACKAGES_DIR" ]; then
+    if [ -z "$1" ]; then
         echo "Install directory is undefined or empty."
         exit 1
     fi
 
     # check if it's already in PATH
-    if [[ ":$PATH:" == *":$PACKAGES_DIR:"* ]]; then
-        echo "$PACKAGES_DIR is already in PATH. No changes made."
+    if [[ ":$PATH:" == *":$1:"* ]]; then
+        echo "$1 is already in PATH. No changes made."
         return
     fi
 
     # define target files
     FILES=("$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.profile")
 
+    local MODIFIED=false
+
     # append to each file if it exists and doesn't already contain the entry
     for file in "${FILES[@]}"; do
         if [ -f "$file" ]; then
-            if ! grep -q "export PATH=\"$PACKAGES_DIR:\$PATH\"" "$file"; then
-                echo "export PATH=\"$PACKAGES_DIR:\$PATH\"" >>"$file"
+            if ! grep -q "export PATH=\"$1:\$PATH\"" "$file"; then
+                echo "export PATH=\"$1:\$PATH\"" >>"$file"
                 MODIFIED=true
             else
-                echo "$PACKAGES_DIR is already in $file."
+                echo "$1 is already in $file."
             fi
         fi
     done
@@ -116,20 +137,26 @@ add_app_to_path() {
         source "$HOME/.profile" 2>/dev/null
         source "$HOME/.bashrc" 2>/dev/null
         source "$HOME/.bash_profile" 2>/dev/null
-        echo "Successfully added $PACKAGES_DIR to PATH."
+        echo "[ i ] Successfully added $1 to PATH."
     else
-        echo "No config files were modified."
+        echo "[ i ] No PATH was modified."
     fi
 }
 
 # installer itself
 installer() {
-    echo "[ > ] Hi! We'll install Konbini ($ARCH edition) for you. Just a sec!"
-    echo "[ W ] Please note we'll use sudo for this process."
+    echo "[ > ] Hi! We'll install Konbini ($ARCH edition) for you. Just a sec!\n"
+    echo "[ ! ] Please note we'll use sudo a lot (many files to be created)."
+    echo "[ i ] They're all found at $PACKAGES_DIR.\n"
+    echo "[ ! ] This script relies on you running from Bash 4 or later."
+    echo "[ ! ] Also, this script will create a safety-related cronjob. Please do not remove it under any circumstance.\n"
+    remove_if_needed
     install_app
-    add_app_to_path
+    add_to_path $PACKAGES_DIR
+    add_to_path $LAUNCHPAD_DIR
+    setup_cronjob
     echo "[ > ] Installed successfully! Restart your terminal, then run 'kbi' to get started."
-    echo "Thank you for installing!"
+    echo "Thank you and welcome to Konbini!"
 }
 
 # less go

@@ -2,8 +2,6 @@ import { execSync, spawnSync } from "node:child_process";
 import { mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, normalize } from "node:path";
-import { getPlatform } from "shared/api/platform";
-import { INSTALLATION_DIR } from "shared/client";
 import type { KONBINI_MANIFEST } from "shared/types/manifest";
 
 // may it be stated:
@@ -40,53 +38,6 @@ try {
 
     if (out.status !== 0) return false;
     return true;
-}
-
-/** Registers .kpak files so they're opened with Konbini when used.
- *
- * It doesn't look "good", I mean: since Windows 10, if an app touches the default apps from the registry, a confirmation prompt appears first time, calling the app `"C:\Users\...\kbi" unpack "%1"` which is weird, but it gets the job done, so yeah.
- */
-export function registerKonpakForWindows() {
-    if (getPlatform() !== "win64") return;
-    const exePath = join(INSTALLATION_DIR, "kbi");
-    const script = `
-# register the extension
-New-Item -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Force | Out-Null
-Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Name "(default)" -Value "konpak"
-Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Name "Content Type" -Value "application/x-kpak"
-Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Name "PerceivedType" -Value "compressed"
-
-# register the filetype
-New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak" -Force | Out-Null
-Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak" -Name "(default)" -Value "Konpak archive"
-
-# default icon
-New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\DefaultIcon" -Force | Out-Null
-Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\DefaultIcon" -Name "(default)" -Value "${exePath},0"
-
-# be able to install it from right click menu
-New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open" -Force | Out-Null
-Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open" -Name "(default)" -Value "Install Konpak"
-New-Item -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open\\command" -Force | Out-Null
-Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open\\command" -Name "(default)" -Value '"${exePath}" unpack "%1"'
-`;
-
-    const path = join(tmpdir(), `temp_script_${Date.now()}.ps1`);
-    writeFileSync(
-        path,
-        `
-try {
-    Get-ItemPropertyValue -Path "Registry::HKEY_CLASSES_ROOT\\.kpak" -Name "(default)" -ErrorAction Stop
-    Write-Output 0
-} catch {
-    Write-Output 1
-}
-`,
-    );
-
-    const out = execSync(`powershell -File "${path}"`, { encoding: "utf-8" });
-
-    if (out.toString().trim().includes("1")) runElevatedScript(script);
 }
 
 interface Params {

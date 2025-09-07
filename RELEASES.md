@@ -2,13 +2,11 @@
 
 Konbini releases follow a simple, predictable format. Each component appears five times, in the form of `[module name]-[platform]`.
 
-There are three modules (two required); KBI, KBU, and KPAK SFX. KBI is Konbini itself, KBU is the updater, and KPAK SFX is an optional module for creating self extracting Konpaks.
+There are two modules (one required); KBI and KPAK SFX. KBI is Konbini itself and KPAK SFX is an optional module for creating self extracting Konpaks.
 
 ```txt
 kbi-win64.exe
 kbi-linux-x64
-...
-kbu-win64.exe
 ...
 kpak-sfx-win64.exe
 ...
@@ -21,6 +19,6 @@ The hashfile isn't fully Konbini compliant though, as the keys are different (si
 ```yaml
 kbi_win64: HASH
 # ...
-kbu_win64: HASH
+kpak_sfx_win64: HASH
 # ...
 ```

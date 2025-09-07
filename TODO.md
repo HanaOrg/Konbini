@@ -8,8 +8,10 @@
 
 ## SHORT TERM / High priority
 
-- [ ] Speed up startup by moving overhead to setup.
-    - I mean, setup cronjobs and PATH from installer scripts, then rely on them existing. If they don't, and error will throw anyway.
+- [x] Speed up startup by moving overhead to setup.
+    - I mean, setup cronjobs and PATH from installer scripts, then rely on them existing. If they don't, an error will probably throw anyway.
+- [ ] Get GitHub KGuard action to update Vercel stuff too.
+    - [ ] Perhaps move KGuard & KData to a separate repo? Because of the amount of auto-commits + JSON data it'll eventually hold.
 - [ ] Cache everything; cache locally too.
     - [ ] In exchange, perhaps lower cache duration? Now it doesn't depend on the GitHub API so...
 - [ ] Support things other than standalone executables.
@@ -26,6 +28,8 @@
     - [ ] If it's a single file contained in a ZIP, behave as a regular install. Else, behave as a KPAK.
         - Allow for deeper config just in case.
 - [ ] Support integration for bare (non-KPAK) installs.
+- [x] Make KBU script-based and not a fucking binary.
+    - [x] By the way, we forgot the Windows installer.
 
 ## MID TERM / Mid priority
 
@@ -37,7 +41,6 @@
         - Probably will use Golang, though the thing in general and specially the UI will be hard to figure out.
     - [ ] Make Konbini able to handle SFX Konpaks as regular ones.
 - [ ] Avoid launchpad duplications.
-- [ ] Make KBU script-based and not a fucking binary.
 
 ## LONG TERM / Low priority
 
