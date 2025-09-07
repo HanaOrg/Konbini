@@ -183,11 +183,8 @@ async function main() {
 
     const date = new Date();
 
-    /* logSection("Initializing ClamAV daemon");
-    execSync("sudo systemctl start clamav-daemon"); */
-
     logSection("Updating ClamAV database");
-    execSync("sudo freshclam --stdout --quiet --datadir=/tmp/clamav");
+    execSync("freshclam --datadir=/tmp/clamav --stdout --quiet --log=./FRESHCLAM.log");
 
     logSection("Clearing guard.txt");
     writeFileSync(GUARD_FILE, `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);

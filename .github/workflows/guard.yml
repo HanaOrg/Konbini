@@ -1,42 +1,49 @@
 name: Konbini Guard
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 0 */3 * *"
+    workflow_dispatch:
+    schedule:
+        - cron: "0 0 */3 * *"
 
 jobs:
-  konbini-guard:
-    runs-on: ubuntu-latest
+    konbini-guard:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
 
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2.0.2
-        with:
-          bun-version: "latest"
+            - name: Install Bun
+              uses: oven-sh/setup-bun@v2.0.2
+              with:
+                  bun-version: "latest"
 
-      - name: Setup Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-      - name: Install ClamAV
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends clamav clamav-base clamav-freshclam libclamav12
+            - name: Setup Git
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Run guard
-        run: |
-          bun install
-          bun run ./packages/client/guard/guard.ts clear scan
+            - name: Install ClamAV
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y --no-install-recommends clamav clamav-base clamav-freshclam libclamav12
 
-      - name: Push changes
-        run: |
-          git add -A
-          git commit -m "Konbini Guard automated run"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # maybe this fixes the thing
+            - name: Make temp DIR for ClamAV
+              run: |
+                  mkdir -p /tmp/clamav
+                  sudo chown $USER:$USER /tmp/clamav
+
+            - name: Run guard
+              run: |
+                  bun install
+                  cd ./packages/client/guard
+                  bun guard.ts
+
+            - name: Push changes
+              run: |
+                  git add -A
+                  (git commit -m "Konbini Guard automated run") || echo "No changes made."
+                  git push
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
