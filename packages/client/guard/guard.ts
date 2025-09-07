@@ -124,7 +124,7 @@ async function scanFiles() {
             string,
             keyof KONBINI_HASHFILE,
         ];
-        const result = execSync("clamscan --datadir=/tmp/clamav --log=./CLAMAV.log " + file);
+        const result = execSync(`clamscan --datadir=/tmp/clamav --log=./CLAMAV.log ${file}`);
         const user = pkg.split(".").slice(0, 2).join(".");
         const userAscPath = "build/" + user + ".asc";
         const pkgHashfile = parse(
@@ -184,7 +184,7 @@ async function main() {
     const date = new Date();
 
     logSection("Updating ClamAV database");
-    execSync("freshclam --datadir=/tmp/clamav --stdout --quiet --log=./FRESHCLAM.log");
+    execSync("freshclam --datadir=/tmp/clamav --stdout --quiet");
 
     logSection("Clearing guard.txt");
     writeFileSync(GUARD_FILE, `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);
