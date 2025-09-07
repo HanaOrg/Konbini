@@ -42,6 +42,8 @@ jobs:
                   bun install
                   cd ./packages/client/guard
                   bun guard.ts
+              env:
+                  BEARER: ${{ secrets.BEARER }}
 
             - name: Push changes
               run: |

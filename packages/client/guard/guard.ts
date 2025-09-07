@@ -173,7 +173,7 @@ function fromSorting<T extends Record<any, any>>(o: T, sorter: any): T {
 async function main() {
     logBlock("コンビニ GUARD BEGINS");
 
-    const GUARD_FILE = "./guard.txt";
+    logBlock(import.meta.env["BEARER"] ? "LOADED BEARER" : "DID NOT LOAD TOKEN!");
 
     logBlock("コンビニ GUARD // PREFETCH // BEGINS");
 
@@ -188,7 +188,7 @@ async function main() {
     execSync("freshclam --datadir=/tmp/clamav --stdout --quiet"); */
 
     logSection("Clearing guard.txt");
-    writeFileSync(GUARD_FILE, `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);
+    writeFileSync("./guard.txt", `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);
 
     if (!existsSync("./build")) mkdirSync("build");
 
@@ -306,7 +306,7 @@ async function main() {
 
     const result = await scanFiles();
     result.forEach((i) => {
-        writeFileSync(GUARD_FILE, `${i.pkg}@${i.ver}@${i.plat}=${i.res}\n`, {
+        writeFileSync("./guard.txt", `${i.pkg}@${i.ver}@${i.plat}=${i.res}\n`, {
             encoding: "utf-8",
             flag: "a",
         });
@@ -405,7 +405,7 @@ async function main() {
     const guardJson = {
         date: date.toISOString(),
         results: Object.fromEntries(
-            readFileSync(GUARD_FILE, { encoding: "utf-8" })
+            readFileSync("./guard.txt", { encoding: "utf-8" })
                 .split("\n")
                 .filter((l) => l.trim() !== "")
                 .slice(1)
