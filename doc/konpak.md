@@ -44,8 +44,12 @@ An SFX Konpak is the above file appended to a binary with the code to extract _a
 
 ## Limitations
 
+Most limitations are temporal. Konpak is a newly made thing, we'll work on it to reduce limitations and make it better.
+
 - Konpaks are not expected to work on macOS.
 - As mentioned, regular and SFX Konpaks use the same file extension on Linux.
 - Konbini cannot recognize SFX Konpaks, so a SFX Konpak cannot be used for a Konbini release.
 - On Windows, when installing Konbini (required for locally running non-SFX Konpaks), the "Choose default app" modal pops up the first time, and looks weird.
+- It's excessively big; for faster development we made it in TypeScript, just as the rest of Konbini, making it add over 100 MB to your bundle.
+    - Konbini will stay TypeScript for a long time; however we do want to rewrite Konpak to Golang in the near future, which should reduce it to 10-15 MB - and make it faster, too.
 - It's an overall incomplete and unstable system (for now, of course).

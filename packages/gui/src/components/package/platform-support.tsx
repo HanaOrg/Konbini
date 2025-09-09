@@ -24,6 +24,11 @@ export default function PlatformSupport({
 
     const platformsToRender = [
         {
+            plat: "Windows",
+            arch: "64",
+            support: win,
+        },
+        {
             plat: "Linux",
             arch: "64",
             support: linux64,
@@ -42,11 +47,6 @@ export default function PlatformSupport({
             plat: "macOS",
             arch: "ARM",
             support: macArm,
-        },
-        {
-            plat: "Windows",
-            arch: "64",
-            support: win,
         },
     ];
 
@@ -77,9 +77,7 @@ export default function PlatformSupport({
                     >
                         <p className="text-3xl text-white font-semibold">{p.plat}</p>
                         <p className="text-xl text-white font-light opacity-[0.7]">{p.arch}</p>
-                        <div
-                            className={`absolute top-${p.plat === "macOS" ? "7" : "8"} right-4 opacity-[0.95]`}
-                        >
+                        <div className={`absolute top-7 right-4 opacity-[0.95]`}>
                             {p.plat === "Linux" && <IconTux />}
                             {p.plat === "macOS" && <IconMac />}
                             {p.plat === "Windows" && <IconWin />}

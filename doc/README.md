@@ -1,5 +1,3 @@
-<!-- markdownlint-disable md007 md028 md001 -->
-
 # Konbini Developer Documentation
 
 Welcome to the Konbini developer docs!

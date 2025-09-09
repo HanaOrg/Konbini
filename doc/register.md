@@ -1,5 +1,3 @@
-<!-- markdownlint-disable md007 md028 md001 -->
-
 # Becoming a developer and publishing packages
 
 ## Registering as a developer

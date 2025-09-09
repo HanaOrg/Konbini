@@ -1,5 +1,3 @@
-<!-- markdownlint-disable md007 -->
-
 # Stuff to do
 
 > [!TIP]

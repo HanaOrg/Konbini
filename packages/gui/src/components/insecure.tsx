@@ -17,7 +17,7 @@ export default function InsecurePackage({
     return (
         <div className="flex flex-col absolute z-99 gap-5 p-10 px-30 top-0 left-0 right-0 bottom-0 bg-red-700/60 backdrop-blur-lg">
             <h2 className="text-4xl font-bold text-white">
-                This package has
+                This package, {app.name}, has
                 <br />
                 been reported as unsafe!
             </h2>

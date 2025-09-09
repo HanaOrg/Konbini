@@ -58,11 +58,6 @@ async function main() {
                 `> sign <mode> [...]      ${konsole.clr("grey", "// works around PGP signatures, run it for more info")}`,
                 `> manifest               ${konsole.clr("grey", "// guides you and creates a manifest for a Konbini package")}`,
                 `> konpak <dir>           ${konsole.clr("grey", "// turns the specified directory into a Konpak")}`,
-                // TODO: remove
-                "",
-                ">>> YOU'RE AN ALPHA TESTER - test everything here please :)",
-                ">>> EXPECT A TON OF ISSUES, report anything you can IN DETAIL",
-                ">>> thank you so much",
             ].join("\n"),
         );
         return;

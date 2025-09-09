@@ -60,6 +60,7 @@ export default function PackagePage() {
         getApp();
     }, []);
 
+    if (error) return <h1>Error: {error}</h1>;
     if ((!app || !author) && loading)
         return (
             <>
@@ -72,7 +73,6 @@ export default function PackagePage() {
     if (!app) return <h1>Error loading {route}. Failed to load app.</h1>;
     if (!author)
         return <h1>Error loading {route}. The app itself loaded, but its author's data didn't.</h1>;
-    if (error) return <h1>Error: {error}</h1>;
     if (!isValidManifest(app))
         return (
             <>
