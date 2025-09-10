@@ -80,23 +80,6 @@
         "@zakahacecosas/string-utils": "catalog:",
       },
     },
-    "packages/update": {
-      "name": "konbini-installer",
-      "version": "0.0.1",
-      "dependencies": {
-        "@zakahacecosas/number-utils": "catalog:",
-        "@zakahacecosas/string-utils": "catalog:",
-        "glob": "^11.0.3",
-        "shared": "workspace:*",
-        "yaml": "catalog:",
-      },
-      "devDependencies": {
-        "@types/bun": "catalog:",
-      },
-      "peerDependencies": {
-        "typescript": "catalog:",
-      },
-    },
   },
   "trustedDependencies": [
     "@tailwindcss/oxide",
@@ -766,8 +749,6 @@
     "konbini-data": ["konbini-data@workspace:packages/data"],
 
     "konbini-gui": ["konbini-gui@workspace:packages/gui"],
-
-    "konbini-installer": ["konbini-installer@workspace:packages/update"],
 
     "konpak": ["konpak@workspace:packages/konpak"],
 
