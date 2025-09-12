@@ -5,14 +5,14 @@ export default function Privacy() {
     return (
         <>
             <Nav />
-            <div className="app-main-cont">
+            <div className="app-main-cont markdown">
                 <h1>Konbini's Privacy Policy</h1>
                 <h4 className="text-xl font-medium text-[#ddd] mb-2">
                     We don't spy on you, promise.
                 </h4>
                 <p className="mb-6">
                     Seriously, we handle minimal data. We have this privacy policy because it's
-                    legally required. <b>Last update: never.</b>
+                    legally required. <i>This is legal text.</i> <b>Last update: never.</b>
                 </p>
                 <hr />
                 <h2 className="mt-6 text-white text-3xl font-semibold mb-2">

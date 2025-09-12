@@ -11,19 +11,9 @@ export default function Terms() {
                     A small set of rules we enforce for Konbini to stay cool and clean.
                 </h4>
                 <p className="mb-6">
-                    This is legal text. <b>Last update: never.</b>
+                    <i>This is legal text.</i> <b>Last update: never.</b>
                 </p>
-                <hr />{" "}
-                <div className="bg-[#FFCF574D] flex flex-col gap-2 p-4 rounded-xl border-2 border-[#FFFFFF33]">
-                    <h3 className="text-xl font-semibold text-[#FFCC96]">
-                        Do not (yet) take this into consideration.
-                    </h3>
-                    <hr />
-                    <p className="text-lg font-medium text-[#FFCC96]">
-                        Konbini is still a work in progress project, this document is a draft and
-                        may be changed at any time to fix issues with it or even entirely modify it.
-                    </p>
-                </div>
+                <hr />
                 <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
                     Terms and Definitions
                 </h2>
@@ -40,17 +30,17 @@ export default function Terms() {
                     <br />
                     <ul>
                         <li>
-                            <b>"You"</b> will refer to you as an individual and a user of Konbini.
+                            <b>"You"</b> refers to you as an individual and a user of Konbini.
                         </li>
                         <li>
-                            <b>"Package"</b> will refer to an application, package, tool, or
-                            similar, that you may (attempt to) contribute to Konbini, making it
-                            available for everyone to download.
+                            <b>"Package"</b> refers to an application, library, tool, or other
+                            software component contributed to Konbini, including its manifest and
+                            associated metadata.
                         </li>
                         <li>
-                            <b>"Konbini Guard"</b> will refer to the set of tools and automations we
-                            scan and audit all uploaded packages with, to guarantee antivirus safety
-                            and package integrity.
+                            <b>"Konbini Guard"</b> refers to the automated systems, processes, and
+                            audits used by Hana to check all uploaded Packages for malware, viruses,
+                            or other unsafe behavior.
                         </li>
                     </ul>
                 </p>
@@ -62,19 +52,25 @@ export default function Terms() {
                     <br />
                     <br />
                     If your law and our law happen to disagree, Spanish law will always prevail.
+                    <br />
+                    If your law grants a right that is not granted under Spanish law, it <i>
+                        will
+                    </i>{" "}
+                    however be respected by these Terms, giving you the ability to enforce it
+                    against us at any time.
                 </p>
                 <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
                     About Published Packages
                 </h2>
                 <p>
                     Whenever you begin the process to serve a "package" through Konbini (by
-                    contributing its manifest to our code repository), you are giving us certain
+                    contributing its manifest to our code repository), you are granting us certain
                     rights:
                 </p>
                 <ul className="my-3">
                     <li>
-                        The right to reject a submission for any reason. You will always be
-                        explained the reason in detail.
+                        The right to accept or reject a submission for any reason.{" "}
+                        <i>You will always be explained the reason in detail.</i>
                     </li>
                     <li>
                         The right to edit, alter, add, or remove information from its public
@@ -99,10 +95,25 @@ export default function Terms() {
                         </ul>
                     </li>
                     <li>
-                        The right to use your package's name, icon if provided, and public page, in
-                        any of our advertising.
+                        The right to use your package's name, icon if provided, and any contents
+                        shown in its public page for marketing, promotions, or other communications.{" "}
+                        <i>
+                            You will always be attributed as the package owner and maker and this
+                            clause only grants us usage permission, not ownership and not the
+                            ability to alter or modify your package's given image in any way.
+                        </i>
                     </li>
                 </ul>
+                <p>
+                    <b>
+                        You retain all copyright and intellectual property rights over your Package,
+                        except for the limited rights granted above.
+                    </b>{" "}
+                    Any copyright or intellectual property violation your Package may be involved in
+                    in any way will always be your responsibility, even if the violation comes to
+                    light as a result of our use of the Package's public information for the
+                    purposes described above.
+                </p>
                 <p>
                     If you happen to disagree with any decision we may take <i>against</i> you, you
                     always have the right to appeal it by directly talking to anyone publicly
@@ -118,27 +129,34 @@ export default function Terms() {
                     small set of rules that all packages have to comply with in order to be allowed
                     in Konbini.
                     <ul className="my-3">
+                        <li>Your package must not violate any applicable law.</li>
                         <li>
-                            Your package must not engage with any activity that is against the law.
+                            Your package must not include malware, viruses, or any other malicious
+                            or potentially unwanted software.
                         </li>
                         <li>
-                            Your package must not violate the copyrights of any individual or
-                            organization.
+                            Your package must not violate the intellectual property rights of any
+                            individual or organization.
                         </li>
                         <li>
-                            Your package must not contain any sexual or explicit content in any
-                            form.
+                            Your package must not contain sexual or explicit content in any form.
                         </li>
                         <li>
-                            Your package may contain social interactions, references to drugs and
-                            other substances, or to non-explicit violent content, as well as
-                            allowing real currency interaction; but in that case, this must be
-                            properly specified in your package's manifest.
+                            May include social interactions, non-explicit violence, references to
+                            drugs or other substances, or real-currency interactions; but these must
+                            be properly specified in your package's manifest.
                         </li>
                         <li>
-                            Your package may collect user data including telemetry, but this must be
-                            explicitly notified to the user and he/she must have the right to opt
-                            out of it at any time.
+                            Your package may collect user data (including telemetry); but only if
+                            the user is explicitly notified and if said user is given a clear option
+                            to opt-out of any data collection (excluding any that can be proven to
+                            be intrinsic to the package's functionality) at any time.
+                            <ul>
+                                <li>
+                                    Package data collection must also comply with applicable privacy
+                                    laws, including GDPR for European Union publishers.
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </p>
@@ -152,17 +170,17 @@ export default function Terms() {
                     Limitation of liability
                 </h2>
                 <p>
-                    Hana does not exclude liability where prohibited. In countries where these forms
-                    of limitation is prohibited, we shall only be responsible to you and your loss.
+                    To the maximum extent permitted by law, Hana is not liable for any indirect,
+                    incidental, consequential, or special damages, including loss of profits,
+                    business interruption, or data loss, except where proven to be caused by gross
+                    negligence, bad faith, or willful misconduct by Hana.
+                    <br />
+                    Hana is not responsible for the actions, omissions, or content of users or
+                    contributors.
                     <br />
                     <br />
-                    In countries where limitation of liability is allowed, Hana is not liable for
-                    any direct, indirect, incidental, consequential, or special damages, including
-                    but not limited to loss of profits, business interruption, or loss of data, that
-                    cannot be proven to be direct fault of us in the form of negligence, bad faith
-                    or willful misconduct.
-                    <br />
-                    Hana is not liable for the behavior of any of our users or publishers.
+                    Nothing in these Terms limits any liability that cannot be legally excluded by
+                    applicable law.
                 </p>
                 <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
                     Resolution of Legal Disputes
@@ -170,7 +188,12 @@ export default function Terms() {
                 <p>
                     As of now, Hana lacks a legal office. We're still in the process of registering
                     one. Because of this, disputes between you and Hana can only be resolved
-                    informally, you may contact us for this purpose at any time.
+                    informally; you may contact us for this purpose at any time.{" "}
+                    <i>
+                        This clause does not remove your right to attempt a formal resolution
+                        through a lawyer, as granted to you by applicable law. You are however
+                        warned no legal office exists on our side to respond to said resolution.
+                    </i>
                 </p>
                 <h2 className="mt-6 text-white text-3xl font-semibold mb-2">Contact</h2>
                 <p>
