@@ -6,9 +6,9 @@
 
 ## SHORT TERM / High priority
 
-- [ ] Get GitHub KGuard action to update Vercel stuff too.
-    - [ ] Perhaps move KGuard & KData to a separate repo? Because of the amount of auto-commits + JSON data it'll eventually hold.
-- [ ] Allow users to disable/"prohibit" certain package managers.
+Items with a **!** must be done before release.
+
+- [ ] **!** Allow users to disable/"prohibit" certain package managers.
 - [ ] Cache everything; cache locally too.
     - [ ] In exchange, perhaps lower cache duration? Now it doesn't depend on the GitHub API so...
 - [ ] Support things other than standalone executables.
@@ -25,8 +25,6 @@
     - [ ] If it's a single file contained in a ZIP, behave as a regular install. Else, behave as a KPAK.
         - Allow for deeper config just in case.
 - [ ] Support integration for bare (non-KPAK) installs.
-- [x] Make KBU script-based and not a fucking binary.
-    - [x] By the way, we forgot the Windows installer.
 
 ## MID TERM / Mid priority
 
