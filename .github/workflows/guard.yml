@@ -40,6 +40,7 @@ jobs:
                   bun install
                   cd ./packages/client/guard
                   bun guard.ts
+                  bun install -g vercel
               env:
                   BEARER: ${{ secrets.BEARER }}
                   UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_URL }}
