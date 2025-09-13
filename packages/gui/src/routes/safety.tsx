@@ -16,21 +16,18 @@ export default function Safety() {
                     This only applies to <i>Konbini apps</i>. Aliased packages come from third-party
                     managers we don't control. They're usually safe enough - and anyway Konbini
                     allows you to disable downloads from any aliased registry you don't trust.
-                    <br />
-                    Our current no-closed-source rule doesn't cover aliased packages; trusted
-                    closed-source apps like WhatsApp may appear via WinGet or Snap.
                 </p>
                 <hr />
                 <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
-                    Konbini apps require to be open-source
+                    Konbini runs on a public registry
                 </h2>
                 <p>
-                    As of now, only packages that are open source on GitHub (supporting other Git
-                    platforms is open to consideration) can be published.
+                    Whenever someone adds a package, their username and the exact manifest of their
+                    package is public for anyone to view, and so is the source from where the
+                    package is downloaded.
                     <br />
-                    While it's true that we'd like to support closed-source packages and are working
-                    on it &ndash; as most used apps sadly happen to be that way &ndash; we will not
-                    do it until we have reliable enough methods to assert they're safe.
+                    You can access this info by clicking on "Package manifest" from the "Package
+                    details" section of each package.
                 </p>
                 <h2 className="mt-6 text-white text-3xl font-semibold mb-2">
                     Konbini apps require to be hashed and digitally signed
@@ -62,7 +59,7 @@ export default function Safety() {
                         Konbini and test them against antivirus software
                     </b>
                     . We use ClamAV, and a script that's open-source on Konbini's main repository.
-                    All Konbini packages, even open source or verified ones, must undergo this scan.
+                    All Konbini packages, even if open source or verified, undergo this scan.
                 </p>
             </div>
             <Footer />

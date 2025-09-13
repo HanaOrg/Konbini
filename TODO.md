@@ -6,10 +6,9 @@
 
 ## SHORT TERM / High priority
 
-- [x] Speed up startup by moving overhead to setup.
-    - I mean, setup cronjobs and PATH from installer scripts, then rely on them existing. If they don't, an error will probably throw anyway.
 - [ ] Get GitHub KGuard action to update Vercel stuff too.
     - [ ] Perhaps move KGuard & KData to a separate repo? Because of the amount of auto-commits + JSON data it'll eventually hold.
+- [ ] Allow users to disable/"prohibit" certain package managers.
 - [ ] Cache everything; cache locally too.
     - [ ] In exchange, perhaps lower cache duration? Now it doesn't depend on the GitHub API so...
 - [ ] Support things other than standalone executables.
