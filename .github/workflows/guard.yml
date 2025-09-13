@@ -54,3 +54,12 @@ jobs:
                   git push
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Deploy changes
+              env:
+                  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+                  VERCEL_ID_ORG: ${{ secrets.VERCEL_ID_ORG }}
+                  VERCEL_ID_PROJECT: ${{ secrets.VERCEL_ID_PROJECT }}
+              run: |
+                  echo "{\"projectId\":\"$VERCEL_ID_PROJECT\",\"orgId\":\"$VERCEL_ID_ORG\",\"projectName\":\"konbini-data\"}" > ./packages/data/.vercel/project.json
+                  vercel --prod --token $VERCEL_TOKEN --confirm
