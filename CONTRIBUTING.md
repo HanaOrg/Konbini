@@ -7,7 +7,7 @@ Konbini is structured as a monorepo.
 | Project                           | Path (`packages/*`) | Stack                |
 | :-------------------------------- | :------------------ | -------------------- |
 | Command Line Interface            | `client/`           | TypeScript + Bun     |
-| Safety system and API data source | `client/guard/`     | TypeScript + Bun     |
+| Safety system and API data source | `guard/`            | TypeScript + Bun     |
 | Konpak                            | `konpak/`           | TypeScript + Bun[^1] |
 | Code shared between all packages  | `shared/`           | TypeScript           |
 | Tests                             | `tests/`            | TypeScript + Bun     |

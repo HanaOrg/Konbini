@@ -1,2 +1,2 @@
-packages/client/guard/build/**
+packages/guard/build/**
 packages/data/api/*.json

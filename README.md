@@ -27,7 +27,7 @@ This also benefits developers, as they can now get a frontend link to share with
 
 Konbini requires all executables to be digitally signed using PGP, and to be hashed using the SHA3-512 hashing algorithm, ensuring secure distribution. These can be generated using Konbini itself, via `kbi sign` and `kbi hash` respectively.
 
-Furthermore, we periodically scan every package with antivirus software in a transparent manner. [Learn more.](./packages/client/guard/README.md)
+Furthermore, we periodically scan every package with antivirus software in a transparent manner. [Learn more.](./packages/guard/README.md)
 
 ### Availability
 

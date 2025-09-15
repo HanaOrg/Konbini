@@ -38,7 +38,7 @@ jobs:
             - name: Run guard
               run: |
                   bun install
-                  cd ./packages/client/guard
+                  cd ./packages/guard
                   bun guard.ts
                   bun install -g vercel
               env:
