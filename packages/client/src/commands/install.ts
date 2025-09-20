@@ -13,10 +13,52 @@ import { getPkgRemotes, getUsrSignature } from "shared/api/getters";
 import { parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import { FILENAMES } from "shared/constants";
-import { assertIntegritySHA, konbiniHash, assertIntegrityPGP } from "shared/security";
+import { assertIntegritySHA, assertIntegrityPGP } from "shared/security";
 import { Unpack } from "../../../konpak/src/unpack";
 import { logAction, scanPackage } from "shared/api/kdata";
 import type { KONBINI_ID_PKG } from "shared/types/author";
+
+async function assertSafety(
+    pkgDir: string,
+    outputPath: string,
+    expectedFileHash: string,
+    expectedKGuardHash: string,
+    usrSignaturePath: string,
+    pkgSignaturePath: string,
+) {
+    if (
+        !assertIntegritySHA(outputPath, expectedFileHash) ||
+        !assertIntegritySHA(outputPath, expectedKGuardHash)
+    ) {
+        konsole.err(
+            "SHA hashes DO NOT MATCH!! The download corrupted. Try re-downloading, as sometimes corruption happens randomly. If it happens again, please report this to Hana, or the package author.",
+        );
+        destroyPkg(pkgDir);
+        process.exit(1);
+    }
+    konsole.dbg("SHA hash matches, download is valid. Nice.");
+    // TODO(@ZakaHaceCosas): store signature on KGuard too
+    // to comply with our schema pretty much, it's not that much of an improvement
+    const pgpMatch = await assertIntegrityPGP({
+        executableFilePath: outputPath,
+        executableAscFilePath: pkgSignaturePath,
+        authorAscFilePath: usrSignaturePath,
+    });
+    if (pgpMatch !== "valid") {
+        konsole.err(
+            "PGP signature IS NOT VALID!! The download is invalid. Please report this to Hana, as this download might be malicious. It could also be a mistake by the author, though.",
+        );
+        konsole.dbg(
+            pgpMatch === "error"
+                ? "Note: It's an unknown error that triggered this."
+                : "Note: It's an invalid signature (does NOT match at all) that triggered this.",
+        );
+        destroyPkg(pkgDir);
+        process.exit(1);
+    }
+    konsole.dbg("PGP signature matches, download is authentic. Nice.");
+    konsole.dbg("Security tests passed - great! We'll make this install usable right now.");
+}
 
 async function installSingleExecutable(params: {
     filePath: string;
@@ -250,35 +292,14 @@ export async function installPackage(
         },
     });
 
-    if (!assertIntegritySHA(outputPath, safetyInfo.shaHash)) {
-        konsole.err(
-            "SHA hashes DO NOT MATCH!! The download corrupted. Try re-downloading, as sometimes corruption happens randomly. If it happens again, please report this to Hana, or the package author.",
-        );
-        konsole.war(`Expected hash: ${konbiniHash(outputPath)}`);
-        konsole.war(`Received hash: ${safetyInfo.shaHash}`);
-        destroyPkg(pkgDir);
-        process.exit(1);
-    }
-    konsole.dbg("SHA hash matches, download is valid. Nice.");
-    const pgpMatch = await assertIntegrityPGP({
-        executableFilePath: outputPath,
-        executableAscFilePath: ascPath,
-        authorAscFilePath: authorAscPath,
-    });
-    if (pgpMatch !== "valid") {
-        konsole.err(
-            "PGP signature IS NOT VALID!! The download is invalid. Please report this to Hana, as this download might be malicious. It could also be a mistake by the author, though.",
-        );
-        konsole.dbg(
-            pgpMatch === "error"
-                ? "Note: It's an unknown error that triggered this."
-                : "Note: It's an invalid signature (does NOT match at all) that triggered this.",
-        );
-        destroyPkg(pkgDir);
-        process.exit(1);
-    }
-    konsole.dbg("PGP signature matches, download is authentic. Nice.");
-    konsole.dbg("Security tests passed - great! We'll make this install usable right now.");
+    await assertSafety(
+        pkgDir,
+        outputPath,
+        safetyInfo.shaHash,
+        kGuardResponse.results.hash,
+        authorAscPath,
+        ascPath,
+    );
 
     const lockfile: KONBINI_LOCKFILE = {
         ...stuff,
