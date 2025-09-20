@@ -1,6 +1,6 @@
-コンビニ | KGuard Sat Sep 13 2025 14:29:24 GMT+0000 (Coordinated Universal Time) | Keeping Konbini safe
-org.fuckingnode.fuckingnode@v4.3.0@linuxArm=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@v4.3.0@win64=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@v4.3.0@linux64=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@v4.3.0@macArm=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@v4.3.0@mac64=SAFE|AUTHENTIC|INTEGRAL
+コンビニ | KGuard Sat Sep 20 2025 11:31:11 GMT+0000 (Coordinated Universal Time) | Keeping Konbini safe
+org.fuckingnode.fuckingnode@v4.3.0@linuxArm@WSY3aRqTdOyXoooHKGpIHnBoKWmS9nOgIpUWZCwjiiLVrBLfz9jtolToIAGr2JoBZI7XekH3kgTE0yNCmYMuLw=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@v4.3.0@win64@k17ei0xLJdtWlwODzErJAITHdxcFwGeyWY-Dym4cr-5cKSyMLPVT4OlnhfyLWQ-skdkuHWvBFJ6cb_bQ3z6vMg=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@v4.3.0@linux64@lB_T-T0uN5ss8oxSmEJMZz2cAjeqnODYqCGvAJbo4EhjrjTayucMBu9VYlvkh2e8zuP2fHEtjE-dzR_opq5kVQ=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@v4.3.0@macArm@ZUMJlxPp7HSnx3O-zOIkX-AaWtIElBSWD-87skJDWnAmk37qfzyj48LxzjV5tHvitrt1gXCnmhd-Z5kzh1JL1A=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@v4.3.0@mac64@m8u-a3695FpKoojkES5jHvRATn1UD19Drwlpf8AbpJP604jYj5k5uD4esRh1TP8HgY-JxUTqpZIx86922PrWnw=SAFE|AUTHENTIC|INTEGRAL
