@@ -48,7 +48,7 @@ module.exports = async function handler(reqParam: any, resParam: any) {
                 );
         }
 
-        if (!KDATA.results[id])
+        if (!KDATA.results[`${pkgName}@${pkgPlatform}`])
             return res
                 .status(404)
                 .json({ error: `Not found: Package '${id}' was not found within the registry.` });
