@@ -2,7 +2,6 @@ import { cwd } from "node:process";
 import { konsole } from "shared/client";
 import { validate, validateAgainst } from "@zakahacecosas/string-utils";
 import { isBetween } from "@zakahacecosas/number-utils";
-import { stringify } from "yaml";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { prompt, promptBinary, promptScope } from "../toolkit/input";
@@ -124,7 +123,7 @@ export async function generateManifest() {
         },
     };
 
-    writeFileSync(join(cwd(), "konbini-manifest.yaml"), stringify(manifest));
+    writeFileSync(join(cwd(), "konbini-manifest.yaml"), Bun.YAML.stringify(manifest));
 
     konsole.suc(
         "Wrote this manifest to 'konbini-manifest.yaml' in the current directory. You can now use it to publish your package!",

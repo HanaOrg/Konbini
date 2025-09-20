@@ -1,7 +1,6 @@
 import AdmZip from "adm-zip";
 import { existsSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "fs";
 import { IntegrateApp, type WindowsParams } from "./integrate";
-import { parse, stringify } from "yaml";
 import { PKG_PATH } from "shared/client";
 import type { KONBINI_MANIFEST } from "shared/types/manifest";
 import { join } from "path";
@@ -33,7 +32,7 @@ export function Unpack(filepath: string | Buffer): void {
     if (!_appVr) throw new Error("Konpak lacks version signaler file.");
     const version = _appVr.name.replace("appVR", "");
 
-    const manifest: KONBINI_MANIFEST = parse(_manifest.getData().toString("utf-8"));
+    const manifest: KONBINI_MANIFEST = Bun.YAML.parse(_manifest.getData().toString("utf-8")) as any;
 
     const out = PKG_PATH({ pkg: appId, author: manifest.author });
 
@@ -98,6 +97,6 @@ export function Unpack(filepath: string | Buffer): void {
 
     writeFileSync(
         join(out, "konbini.lockfile.yaml"),
-        `# NOTE: This was installed from a Konpak. We cannot trace if it comes from Konbini or from a bare file, so this scope has a small chance of pointing to nowhere.\n${stringify(lock)}`,
+        `# NOTE: This was installed from a Konpak. We cannot trace if it comes from Konbini or from a bare file, so this scope has a small chance of pointing to nowhere.\n${Bun.YAML.stringify(lock)}`,
     );
 }

@@ -1,7 +1,6 @@
 import { execSync } from "child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { globSync } from "glob";
-import { parse, stringify } from "yaml";
 import { normalize } from "@zakahacecosas/string-utils";
 import {
     CATEGORIES,
@@ -21,7 +20,12 @@ import { locateUsr } from "shared/api/core";
 import type { KONBINI_HASHFILE } from "shared/types/files";
 import { getDownloads } from "./fetch";
 import { join } from "path";
-import type { MANIFEST_WITH_ID, KDATA_FILE_PKG, KDATA_ENTRY_PKG } from "shared/types/kdata";
+import type {
+    MANIFEST_WITH_ID,
+    KDATA_FILE_PKG,
+    KDATA_ENTRY_PKG,
+    DownloadData,
+} from "shared/types/kdata";
 import { parseKAChangelog } from "shared/changelog";
 
 function log(...a: any[]): void {
@@ -94,7 +98,7 @@ async function fetchAllManifests(
     const manifestsWithId = regularManifests.map(
         (s) => s + promises[regularManifests.indexOf(s)]![1],
     );
-    return manifestsWithId.map((s) => parse(s));
+    return manifestsWithId.map((s) => Bun.YAML.parse(s) as MANIFEST_WITH_ID);
 }
 
 async function fetchIfNotExists(filename: string, assetUrl: string) {
@@ -127,7 +131,7 @@ async function scanFiles() {
         const result = execSync(`sudo clamscan --stdout ${file}`);
         const user = pkg.split(".").slice(0, 2).join(".");
         const userAscPath = "build/" + user + ".asc";
-        const pkgHashfile = parse(
+        const pkgHashfile = Bun.YAML.parse(
             readFileSync("build/" + pkg + "_" + ver + ".hash.yaml", "utf-8"),
         ) as KONBINI_HASHFILE;
         const resString = result.toString();
@@ -198,7 +202,7 @@ async function main() {
             log("[WRK] Fetching", manifest.name);
 
             if (!existsSync(`./build/${manifest.id}.yaml`))
-                writeFileSync(`./build/${manifest.id}.yaml`, stringify(manifest));
+                writeFileSync(`./build/${manifest.id}.yaml`, Bun.YAML.stringify(manifest));
             if (!existsSync(`./build/${manifest.id}.changes.md`)) {
                 try {
                     if (!manifest.repository) throw "404";
@@ -229,7 +233,7 @@ async function main() {
                     log("[|||] Seeking download history for", manifest.name);
                     writeFileSync(
                         `./build/${manifest.id}.downloads.yaml`,
-                        stringify(await getDownloads(manifest.id)),
+                        Bun.YAML.stringify(await getDownloads(manifest.id)),
                     );
                 } catch (error) {
                     log(`[ ! ] Error seeking downloads for ${manifest.id}: ${error}`);
@@ -348,7 +352,7 @@ async function main() {
         log("Storing data for", pkg, "from", file.name);
         if (file.name.endsWith(".downloads.yaml")) {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
-            kdata[pkg]!["downloads"] = parse(contents);
+            kdata[pkg]!["downloads"] = Bun.YAML.parse(contents) as DownloadData;
         } else if (file.name.endsWith(".changes.md") && contents.trim() !== "# No") {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg]!["last_release_at"] = readFileSync(
@@ -361,7 +365,7 @@ async function main() {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg] = {
                 ...kdata[pkg],
-                ...parse(contents),
+                ...(Bun.YAML.parse(contents) as KDATA_ENTRY_PKG),
             };
         }
     }

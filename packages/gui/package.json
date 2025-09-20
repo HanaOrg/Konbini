@@ -18,8 +18,7 @@
         "micromark": "^4.0.2",
         "preact": "^10.27.1",
         "preact-iso": "^2.10.0",
-        "tailwindcss": "^4.1.12",
-        "yaml": "^2.8.1"
+        "tailwindcss": "^4.1.12"
     },
     "devDependencies": {
         "@preact/preset-vite": "^2.10.2",

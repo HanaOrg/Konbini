@@ -8,7 +8,6 @@
         "@zakahacecosas/string-utils": "npm:@jsr/zakahacecosas__string-utils",
         "glob": "^11.0.2",
         "openpgp": "^6.1.1",
-        "yaml": "^2.8.0",
       },
       "devDependencies": {
         "@types/bun": "latest",

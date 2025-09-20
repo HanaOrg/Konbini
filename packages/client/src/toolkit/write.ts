@@ -1,6 +1,5 @@
 import { join } from "path";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { stringify } from "yaml";
 import { USR_PATH, PKG_PATH, LAUNCHPAD_FILE_PATH, konsole } from "shared/client";
 import { FILENAMES } from "shared/constants";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
@@ -17,13 +16,9 @@ export function writeLockfile(lockfile: KONBINI_LOCKFILE, pkg: string, author: K
     if (!existsSync(usrDir)) mkdirSync(usrDir);
     if (!existsSync(pkgDir)) mkdirSync(pkgDir);
 
-    writeFileSync(
-        join(pkgDir, FILENAMES.lockfile),
-        stringify(lockfile, {
-            indent: 4,
-        }),
-        { flag: "w" },
-    );
+    writeFileSync(join(pkgDir, FILENAMES.lockfile), Bun.YAML.stringify(lockfile, null, 4), {
+        flag: "w",
+    });
 }
 
 export function writeLaunchpadShortcut(

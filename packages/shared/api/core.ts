@@ -1,5 +1,4 @@
 import { validateAgainst } from "@zakahacecosas/string-utils";
-import { parse } from "yaml";
 import { fetchAPI } from "./network.ts";
 import { normalizer } from "../constants.ts";
 import { isValidManifest } from "../types/manifest.ts";
@@ -130,6 +129,6 @@ export async function getUsrManifest(authorId: string): Promise<KONBINI_AUTHOR> 
     }
 
     const authorData = await response.text();
-    const authorInfo = parse(authorData);
+    const authorInfo = Bun.YAML.parse(authorData);
     return authorInfo as KONBINI_AUTHOR;
 }

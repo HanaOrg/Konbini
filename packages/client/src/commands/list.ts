@@ -1,7 +1,6 @@
 import { readdirSync, readFileSync, rmSync } from "fs";
 import { join } from "path";
 import { PACKAGES_DIR } from "shared/client";
-import { parse } from "yaml";
 import { konsole } from "shared/client";
 import { packageExists } from "../toolkit/aliased";
 import { FILENAMES } from "shared/constants";
@@ -27,10 +26,12 @@ function findLockFiles(dir: string, filename: string = FILENAMES.lockfile): stri
 
 export function getLocalPackages(): EXTENDED_LOCKFILE[] {
     return findLockFiles(PACKAGES_DIR).map((result) => {
+        const lockfile = Bun.YAML.parse(readFileSync(result, { encoding: "utf-8" }));
+        if (typeof lockfile !== "object") throw `Invalid lockfile.`;
         return {
-            ...parse(readFileSync(result, { encoding: "utf-8" })),
+            ...lockfile,
             path: result,
-        };
+        } as EXTENDED_LOCKFILE;
     });
 }
 

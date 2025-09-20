@@ -2,7 +2,6 @@ import { PKG_PATH, USR_PATH } from "shared/client";
 import { existsSync, readFileSync, mkdirSync, statSync, chmodSync } from "fs";
 import { konsole } from "shared/client";
 import { join } from "path";
-import { parse } from "yaml";
 import { destroyPkg } from "../toolkit/remove";
 import { installAliasedPackage, packageExists } from "../toolkit/aliased";
 import { writeLaunchpadShortcut, writeLockfile } from "../toolkit/write";
@@ -90,16 +89,19 @@ async function downloadSafetyRelatedFiles(params: {
         process.exit(1);
     }
 
-    const hashfile = parse(readFileSync(shaPath, { encoding: "utf-8" })) as KONBINI_HASHFILE;
+    const hashfile = Bun.YAML.parse(
+        readFileSync(shaPath, { encoding: "utf-8" }),
+    ) as KONBINI_HASHFILE;
 
-    const shaHash = hashfile[getPlatform()];
+    const platform = getPlatform();
+    const shaHash = hashfile[platform];
 
     if (!shaHash) {
         konsole.err(
             "Something (we don't know what) went wrong finding the SHA3-512 hash for this download.",
         );
         konsole.dbg(
-            `Perhaps you should check the ${shaPath} file to see if it's wrong. It should contain several hashes, seek your platforms one (PLATFORM: ${getPlatform()}).`,
+            `Perhaps you should check the ${shaPath} file to see if it's wrong. It should contain several hashes, seek your platforms one (PLATFORM: ${platform}).`,
         );
         process.exit(1);
     }
@@ -148,7 +150,8 @@ export async function installPackage(
     const usrDir = USR_PATH({ author: manifest.author });
     const pkgDir = PKG_PATH({ pkg: pkgId, author: manifest.author });
 
-    const platform = manifest.platforms[getPlatform()];
+    const platformName = getPlatform();
+    const platform = manifest.platforms[platformName];
     if (!platform) {
         konsole.err(`${manifest.name} is not supported on your platform. Sorry.`);
         process.exit(1);
@@ -192,7 +195,7 @@ export async function installPackage(
     const prevLockfilePath = join(pkgDir, FILENAMES.lockfile);
 
     if (existsSync(prevLockfilePath)) {
-        const prevLockfile = parse(
+        const prevLockfile = Bun.YAML.parse(
             readFileSync(prevLockfilePath, { encoding: "utf-8" }),
         ) as KONBINI_LOCKFILE;
 

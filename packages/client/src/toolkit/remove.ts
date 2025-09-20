@@ -2,7 +2,6 @@ import { rmSync, readFileSync } from "fs";
 import { join } from "path";
 import { LAUNCHPAD_FILE_PATH, PKG_PATH } from "shared/client";
 import { konsole } from "shared/client";
-import { parse as parseYaml } from "yaml";
 import { execSync } from "child_process";
 import { ALIASED_CMDs } from "./alias-cmds";
 import { getPkgManifest, parseID } from "shared/api/core";
@@ -30,9 +29,9 @@ export async function removePackage(pkg: string) {
     const m = await getPkgManifest(pkg);
     konsole.suc("At your orders. Consider them out.");
     const removePath = PKG_PATH({ pkg, author: m.author });
-    const lockfile: KONBINI_LOCKFILE = parseYaml(
+    const lockfile: KONBINI_LOCKFILE = Bun.YAML.parse(
         readFileSync(join(removePath, FILENAMES.lockfile), { encoding: "utf-8" }),
-    );
+    ) as any;
     const kps = parseKps(lockfile.scope);
     if (kps.src !== "kbi") {
         konsole.dbg(`Invoking aliased (${kps.cmd}) uninstallation command.`);

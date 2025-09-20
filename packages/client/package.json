@@ -15,7 +15,6 @@
         "@zakahacecosas/string-utils": "catalog:",
         "glob": "^11.0.3",
         "openpgp": "^6.2.1",
-        "yaml": "catalog:",
         "shared": "workspace:*"
     }
 }
