@@ -50,7 +50,7 @@ function logBlock(title: string) {
 function buildFilenames(scope: KONBINI_PKG_SCOPE, id: KONBINI_ID_PKG, version: string, os: string) {
     const n = (s: string) => normalize(s, { preserveCase: true });
     const { value } = parseKps(scope);
-    const base = `./build/${id}_v${n(version)}`;
+    const base = `./build/${id}_${n(version)}`;
     const core = `${base}_${os}_${value}`;
     return {
         base,
@@ -426,7 +426,7 @@ async function main() {
                             safe: res[0] === "SAFE",
                             authentic: res[1] === "AUTHENTIC",
                             integral: res[2] === "INTEGRAL",
-                            hash,
+                            hash: hash[0],
                             ver,
                         },
                     ];

@@ -43,7 +43,7 @@ module.exports = async function handler(reqParam: any, resParam: any) {
                 .status(200)
                 .json(
                     Object.fromEntries(
-                        Object.entries(KDATA).filter(([k]) => k.startsWith(pkgName)),
+                        Object.entries(KDATA.results).filter(([k]) => k.startsWith(pkgName)),
                     ),
                 );
         }
