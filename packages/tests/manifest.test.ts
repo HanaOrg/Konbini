@@ -169,8 +169,9 @@ describe("handles repository scopes", () => {
         expect(res.source).toEqual("gh");
         expect(res.main).toEqual("https://api.github.com/repos/HanaOrg/Konbini");
         expect(res.public).toEqual("https://github.com/HanaOrg/Konbini");
-        expect(res.releases).toEqual(
-            "https://api.github.com/repos/HanaOrg/Konbini/releases/latest",
+        expect(res.all_releases).toEqual("https://api.github.com/repos/HanaOrg/Konbini/releases");
+        expect(res.release("1.0.0")).toEqual(
+            "https://api.github.com/repos/HanaOrg/Konbini/releases/tags/1.0.0",
         );
         expect(res.file("main", "foobar")).toEqual(
             "https://raw.githubusercontent.com/HanaOrg/Konbini/main/foobar",
@@ -182,8 +183,11 @@ describe("handles repository scopes", () => {
         expect(res.source).toEqual("cb");
         expect(res.main).toEqual("https://codeberg.org/api/v1/repos/HanaOrg/Konbini");
         expect(res.public).toEqual("https://codeberg.org/HanaOrg/Konbini");
-        expect(res.releases).toEqual(
-            "https://codeberg.org/api/v1/repos/HanaOrg/Konbini/releases/latest",
+        expect(res.all_releases).toEqual(
+            "https://codeberg.org/api/v1/repos/HanaOrg/Konbini/releases",
+        );
+        expect(res.release("1.0.0")).toEqual(
+            "https://codeberg.org/api/v1/repos/HanaOrg/Konbini/releases/tags/1.0.0",
         );
         expect(res.file("master", "foobar")).toEqual(
             "https://codeberg.org/HanaOrg/Konbini/raw/master/foobar",
@@ -195,8 +199,11 @@ describe("handles repository scopes", () => {
         expect(res.source).toEqual("gl");
         expect(res.main).toEqual("https://gitlab.com/api/v4/projects/HanaOrg%2FKonbini");
         expect(res.public).toEqual("https://gitlab.com/HanaOrg/Konbini");
-        expect(res.releases).toEqual(
+        expect(res.all_releases).toEqual(
             "https://gitlab.com/api/v4/projects/HanaOrg%2FKonbini/releases",
+        );
+        expect(res.release("1.0.0")).toEqual(
+            "https://gitlab.com/api/v4/projects/HanaOrg%2FKonbini/releases/1.0.0",
         );
         expect(res.file("master", "foobar")).toEqual(
             "https://gitlab.com/HanaOrg/Konbini/-/raw/master/foobar",

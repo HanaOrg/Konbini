@@ -4,9 +4,7 @@ import { /* getAuthor, getPkg, */ scanPackage } from "shared/api/kdata";
 
 describe("KDATA (Konbini DATA API) works", () => {
     test("retrieves proper safety data", async () => {
-        const bool = await scanPackage("org.hana.zaiko", false);
-        expect(bool).toBe(true);
-        const full = await scanPackage("org.hana.zaiko", true);
+        const full = await scanPackage("org.hana.zaiko");
         expect(new Date(full.date)).toBeValidDate();
         // our own package is obviously secure (hehe)
         // so we can just assume it'll be true

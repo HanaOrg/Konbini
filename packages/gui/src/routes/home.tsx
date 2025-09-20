@@ -25,7 +25,7 @@ export default function Home() {
         <>
             <Nav />
             <div className="app-main-cont">
-                <div className="bg-[#FF6F00] w-300 h-150 blur-[300px] opacity-[0.5] absolute top-[-250px] left-[-250px] z-[-1]" />
+                <div className="bg-[var(--k)] w-300 h-150 blur-[260px] opacity-[0.5] absolute top-[-250px] left-[-250px] z-[-1]" />
                 <h1 style={{ color: "#fff", opacity: 0.9, fontSize: "6em" }}>
                     Your convenience store
                 </h1>

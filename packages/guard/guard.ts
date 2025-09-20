@@ -15,7 +15,7 @@ import { parseKps } from "shared/api/manifest";
 import { fetchAPI } from "shared/api/network";
 import { downloadHandler } from "shared/api/download";
 import type { KONBINI_AUTHOR, KONBINI_ID_PKG, KONBINI_ID_USR } from "shared/types/author";
-import { assertIntegrityPGP, assertIntegritySHA } from "shared/security";
+import { assertIntegrityPGP, assertIntegritySHA, konbiniHash } from "shared/security";
 import { locateUsr } from "shared/api/core";
 import type { KONBINI_HASHFILE } from "shared/types/files";
 import { getDownloads } from "./fetch";
@@ -120,7 +120,7 @@ async function scanFiles() {
             existsSync(s),
     );
     log(matches);
-    const results: { pkg: string; ver: string; plat: string; res: string }[] = [];
+    const results: { pkg: string; ver: string; plat: string; res: string; hash: string }[] = [];
     for (const file of matches) {
         log("[???]", file);
         const [pkg, ver, plat] = file.replace("build/", "").split("_") as [
@@ -155,6 +155,7 @@ async function scanFiles() {
             plat,
             ver,
             res,
+            hash: konbiniHash(file),
         });
     }
     return results;
@@ -264,7 +265,7 @@ async function main() {
                 log("[>>>] ASSET", plat, "ON SCOPE", scope);
 
                 try {
-                    remotes = await getPkgRemotes(scope, manifest);
+                    remotes = await getPkgRemotes(scope, manifest, 0);
                     files = buildFilenames(scope, manifest.id, remotes.pkgVersion, plat[0]);
 
                     log("[>>>] REMOTE", remotes);
@@ -307,7 +308,7 @@ async function main() {
 
     const result = await scanFiles();
     result.forEach((i) => {
-        writeFileSync("./guard.txt", `${i.pkg}@${i.ver}@${i.plat}=${i.res}\n`, {
+        writeFileSync("./guard.txt", `${i.pkg}@${i.ver}@${i.plat}@${i.hash}=${i.res}\n`, {
             encoding: "utf-8",
             flag: "a",
         });
@@ -411,14 +412,24 @@ async function main() {
                 .filter((l) => l.trim() !== "")
                 .slice(1)
                 .map((l) => {
-                    const [pkg, , plat] = l.split("@");
-                    const res = plat!.split("=")[1]!.split("|");
+                    const [pkg, ver, _plat, hash] = l.split("@");
+                    if (!hash) return [];
+
+                    const plat = hash.split("=");
+
+                    if (!plat[1]) return [];
+
+                    const res = plat[1].split("|");
+
+                    if (!plat) return [];
+
                     return [
-                        pkg,
+                        `${pkg}@${ver}@${plat[0]}`,
                         {
                             safe: res[0] === "SAFE",
                             authentic: res[1] === "AUTHENTIC",
                             integral: res[2] === "INTEGRAL",
+                            hash,
                         },
                     ];
                 }),

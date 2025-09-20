@@ -34,19 +34,11 @@ export async function assertIntegrityPGP(params: {
         verificationKeys: publicKey,
     });
 
-    const verificationResult = verification.signatures[0];
-
-    if (!verificationResult) {
-        return "error";
-    }
+    if (!verification.signatures[0]) return "error";
 
     // result
-    const res = await verificationResult.verified;
-    if (res === true) {
-        return "valid";
-    } else {
-        return "non-valid";
-    }
+    if ((await verification.signatures[0].verified) === true) return "valid";
+    return "non-valid";
 }
 
 /** Simply validates a signature is valid (based on format). Doesn't assert the safety of any package, but avoids the unnecessary redownload of signatures each time a package is installed or updated. */

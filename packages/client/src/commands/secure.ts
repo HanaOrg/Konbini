@@ -10,9 +10,9 @@ export async function ensureSecurity() {
     const pkgs = listPackages("SILENT").map((p) => p.pkg_id);
 
     for (const pkg of pkgs) {
-        const isSecure = await scanPackage(pkg as KONBINI_ID_PKG, false);
+        const isSecure = await scanPackage(pkg as KONBINI_ID_PKG);
 
-        if (isSecure) {
+        if (isSecure.isSafe) {
             konsole.dbg("PACKAGE", pkg, "IS SECURE, NO ACTION TAKEN");
             continue;
         }

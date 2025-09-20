@@ -15,10 +15,14 @@ import { locateUsr } from "./core.ts";
 import { parseKps } from "./manifest.ts";
 import { replace } from "@zakahacecosas/string-utils";
 
-/** Given a package manifest and the desired KPS, returns the absolute URL to its downloadable file. */
+/** Given a package manifest and the desired KPS, returns the absolute URL to its downloadable file.
+ *
+ * Use tag 0 **only for KGuard scans**, never for the end user.
+ */
 export async function getPkgRemotes(
     kps: KONBINI_PKG_SCOPE,
     manifest: KONBINI_MANIFEST,
+    tag: string | 0,
 ): Promise<{
     shaAsset: string;
     ascAsset: string;
@@ -36,20 +40,13 @@ export async function getPkgRemotes(
 
     /** rs as in repository scope */
     const rs = manifest.repository;
-    const url = parseRepositoryScope(rs).releases;
+    const url =
+        tag === 0 ? parseRepositoryScope(rs).all_releases : parseRepositoryScope(rs).release(tag);
 
     const releases = await (await fetchAPI(url)).json();
-
-    const release: RELEASE_GH_CB | RELEASE_GH_CB | RELEASE_GL = rs.startsWith("gl")
-        ? (releases[0] as RELEASE_GL)
-        : rs.startsWith("cb")
-          ? (releases as RELEASE_GH_CB)
-          : (releases as RELEASE_GH_CB);
-
+    const release: RELEASE_GH_CB | RELEASE_GH_CB | RELEASE_GL = tag === 0 ? releases[0] : releases;
     // github 1st release is always the latest
-    if (!release) {
-        throw `Repository for the ${kps} scope does NOT have any releases.`;
-    }
+    if (!release) throw `Repository for the ${kps} scope does NOT have any releases.`;
 
     const assets = (
         url.startsWith("gl") ? (release as RELEASE_GL).assets.links : release.assets
@@ -100,18 +97,14 @@ export async function getPkgRemotes(
 export async function getUsrSignature(authorId: string, folderPath: string): Promise<string> {
     const filePath = join(folderPath, `${authorId}.asc`);
     const signatureAlreadyPresent = existsSync(filePath) && (await validatePGPSignature(filePath));
-    if (signatureAlreadyPresent) {
-        return filePath;
-    }
+    if (signatureAlreadyPresent) return filePath;
 
     const response = await fetchAPI(locateUsr(authorId).signature);
 
-    if (response.status === 404) {
+    if (response.status === 404)
         throw `Author ${authorId} does NOT have a valid signature (or at least, we didn't find one). Report this issue, please.`;
-    }
-    if (!response.ok) {
+    if (!response.ok)
         throw `Could not access KonbiniAPI remote for ${authorId}'s PGP signature (HTTP:${response.status}).`;
-    }
 
     await downloadHandler({
         remoteUrl: locateUsr(authorId).signature,

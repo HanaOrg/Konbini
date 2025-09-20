@@ -7,10 +7,8 @@ import { ALIASED_CMDs } from "./alias-cmds";
 import { getPkgManifest, parseID } from "shared/api/core";
 import { parseKps } from "shared/api/manifest";
 import { FILENAMES } from "shared/constants";
-import type { KONBINI_LOCKFILE } from "shared/types/files";
+import { isKbiLockfile, type KONBINI_LOCKFILE } from "shared/types/files";
 import { logAction } from "shared/api/kdata";
-import { getPkgRemotes } from "shared/api/getters";
-import { getPlatform } from "shared/api/platform";
 import { getLocalPackages } from "../commands/list";
 
 export async function removePackage(pkg: string) {
@@ -46,7 +44,7 @@ export async function removePackage(pkg: string) {
 
     await logAction({
         app: pkg,
-        version: (await getPkgRemotes(m.platforms[getPlatform()]!, m)).pkgVersion,
+        version: isKbiLockfile(lockfile) ? lockfile.version : "(alias)",
         action: "remove",
     });
 

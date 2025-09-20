@@ -436,8 +436,10 @@ export function parseRepositoryScope(scope: REPOSITORY_SCOPE): {
     source: "gh" | "gl" | "cb";
     /** Main REST API URL. Returns repo details. */
     main: string;
-    /** Releases REST API URL. Returns details about the LATEST release. */
-    releases: string;
+    /** Returns details about ALL releases. */
+    all_releases: string;
+    /** Returns detail about A SPECIFIC release. **Use this for downloading packages.** */
+    release: (tag: string) => string;
     /** Public, frontend URL. */
     public: string;
     /** Public URL that points to a raw file. Getter function that takes the file name and branch. Use a slashed string (a/b) for nested files. */
@@ -453,7 +455,9 @@ export function parseRepositoryScope(scope: REPOSITORY_SCOPE): {
         return {
             source: "gh",
             main: `https://api.github.com/repos/${slashSplit[0]}/${slashSplit[1]}`,
-            releases: `https://api.github.com/repos/${slashSplit[0]}/${slashSplit[1]}/releases/latest`,
+            all_releases: `https://api.github.com/repos/${slashSplit[0]}/${slashSplit[1]}/releases`,
+            release: (tag: string) =>
+                `https://api.github.com/repos/${slashSplit[0]}/${slashSplit[1]}/releases/tags/${tag}`,
             public: `https://github.com/${slashSplit[0]}/${slashSplit[1]}`,
             file: (branch: string, name: string) =>
                 `https://raw.githubusercontent.com/${slashSplit[0]}/${slashSplit[1]}/${branch}/${name}`,
@@ -462,7 +466,9 @@ export function parseRepositoryScope(scope: REPOSITORY_SCOPE): {
         return {
             source: "gl",
             main: `https://gitlab.com/api/v4/projects/${encodeURIComponent(pref)}`,
-            releases: `https://gitlab.com/api/v4/projects/${encodeURIComponent(pref)}/releases`,
+            all_releases: `https://gitlab.com/api/v4/projects/${encodeURIComponent(pref)}/releases`,
+            release: (tag: string) =>
+                `https://gitlab.com/api/v4/projects/${encodeURIComponent(pref)}/releases/${tag}`,
             public: `https://gitlab.com/${slashSplit[0]}/${slashSplit[1]}`,
             file: (branch: string, name: string) =>
                 `https://gitlab.com/${slashSplit[0]}/${slashSplit[1]}/-/raw/${branch}/${name}`,
@@ -470,7 +476,9 @@ export function parseRepositoryScope(scope: REPOSITORY_SCOPE): {
     return {
         source: "cb",
         main: `https://codeberg.org/api/v1/repos/${slashSplit[0]}/${slashSplit[1]}`,
-        releases: `https://codeberg.org/api/v1/repos/${slashSplit[0]}/${slashSplit[1]}/releases/latest`,
+        all_releases: `https://codeberg.org/api/v1/repos/${slashSplit[0]}/${slashSplit[1]}/releases`,
+        release: (tag: string) =>
+            `https://codeberg.org/api/v1/repos/${slashSplit[0]}/${slashSplit[1]}/releases/tags/${tag}`,
         public: `https://codeberg.org/${slashSplit[0]}/${slashSplit[1]}`,
         file: (branch: string, name: string) =>
             `https://codeberg.org/${slashSplit[0]}/${slashSplit[1]}/raw/${branch}/${name}`,

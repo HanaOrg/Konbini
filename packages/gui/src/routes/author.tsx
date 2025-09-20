@@ -43,14 +43,13 @@ export default function AuthorPage() {
 
     return (
         <>
-            <div className="bg-[#8800FF] w-128 h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-50px] z-[-1]" />
-            <div className="bg-[#FF07EA] w-128 h-128 blur-[300px] opacity-[0.65] absolute bottom-[50px] right-[-300px] z-[-1]" />
-            <div className="bg-[#C23282] w-128 h-128 blur-[300px] opacity-[0.50] absolute top-[-150px] right-[-150px] z-[-1]" />
+            <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.6] absolute top-[-150px] right-[-150px] z-[-1]" />
+            <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.4] absolute bottom-[50px] right-[-300px] z-[-1]" />
             <Nav />
             <div className="app-main-cont">
                 <h1 className="grad">{author.name}</h1>
                 {author.biography && (
-                    <p className="text-xl italic opacity-[0.9] text-[#FFF]">{author.biography}</p>
+                    <p className="text-xl italic text-[#EEE] max-w-[60%]">{author.biography}</p>
                 )}
                 <PublisherDetails
                     authorId={route as KONBINI_ID_USR}

@@ -16,7 +16,7 @@ import ScreenshotSlideshow from "../components/package/screenshots";
 import SystemRequirementsTable from "../components/package/sys-req";
 import MaintainersList from "../components/package/maintainers";
 import PackageDetails from "../components/package/details";
-import { getAuthor, getPkg, scanPackage } from "shared/api/kdata";
+import { getAuthor, getPkg, scanPackage, type KONBINI_LOCAL_SCAN } from "shared/api/kdata";
 import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 import DownloadChart from "../components/package/downloads";
 import InsecurePackage from "../components/insecure";
@@ -27,14 +27,7 @@ export default function PackagePage() {
     const [author, setAuthor] = useState<KONBINI_AUTHOR>();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [secure, setSecure] = useState<{
-        date: string;
-        results: {
-            safe: boolean;
-            authentic: boolean;
-            integral: boolean;
-        };
-    } | null>(null);
+    const [secure, setSecure] = useState<KONBINI_LOCAL_SCAN | null>(null);
 
     const route = window.location.pathname.split("/package/").filter(Boolean)[0] as KONBINI_ID_PKG;
 
@@ -42,7 +35,7 @@ export default function PackagePage() {
         async function getApp() {
             try {
                 const manifest = await getPkg(route);
-                const isSecure = await scanPackage(route, true);
+                const isSecure = await scanPackage(route);
                 const pkgAuthor = await getAuthor(manifest.author);
                 setSecure(isSecure);
                 setAuthor(pkgAuthor);
@@ -120,29 +113,23 @@ export default function PackagePage() {
             {secure !== null && !Object.values(secure.results).every((v) => v == true) && (
                 <InsecurePackage res={secure} app={app} />
             )}
-            <div
-                className="bg-[#8800FF] w-128 h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-150px] z-[-1]"
-                style={{ backgroundColor: "var(--k)" }}
-            />
-            <div className="bg-[#FF07EA] w-128 h-128 blur-[300px] opacity-[0.65] absolute bottom-[50px] right-[-300px] z-[-1]" />
-            <div
-                className="w-128 h-128 blur-[300px] opacity-[0.60] absolute top-[-150px] right-[-150px] z-[-1]"
-                style={{ backgroundColor: "var(--k-lighter)" }}
-            />
+            <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.6] absolute top-[-150px] right-[-150px] z-[-1]" />
+            <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.7] absolute top-[650px] left-[-150px] z-[-1]" />
+            <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.4] absolute bottom-[50px] right-[-300px] z-[-1]" />
             <Nav />
             <InstallDialog appName={app.name} appId={route} />
             <div className="app-main-cont">
-                <div className="flex flex-row gap-4">
+                <div className="flex flex-row">
                     {app.icon && (
                         <img
-                            className="w-24 h-24 rounded-2xl"
+                            className="w-24 h-24 rounded-2xl mr-4"
                             src={app.icon}
                             alt={`${app.name}'s icon.`}
                         />
                     )}
-                    <div className="flex flex-col w-fit gap-0">
+                    <div className="flex flex-col w-fit min-w-[50%] gap-0">
                         <h1 className="grad">{app.name}</h1>
-                        <h2 className="text-xl text-white opacity-[0.8] mb-2 italic">
+                        <h2 className="text-xl text-white opacity-[0.8] mb-2 italic w-[60%]">
                             {app.slogan}
                         </h2>
                         <h2 className="text-lg text-white opacity-[0.5] mb-2">

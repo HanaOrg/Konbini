@@ -142,9 +142,9 @@ export async function installPackage(
     }
 
     const manifest = await getPkgManifest(pkgId);
-    const isSecure = await scanPackage(pkgId as KONBINI_ID_PKG, false);
+    const kGuardResponse = await scanPackage(pkgId as KONBINI_ID_PKG);
 
-    if (!isSecure)
+    if (!kGuardResponse.isSafe)
         throw `This package has been recently reported as insecure. While we investigate the issue, ${pkgId} cannot be installed. Sorry.`;
 
     const usrDir = USR_PATH({ author: manifest.author });
@@ -190,7 +190,7 @@ export async function installPackage(
     }
 
     konsole.dbg(`Reading remotes for ${manifest.name}`);
-    const remotes = await getPkgRemotes(platform, manifest);
+    const remotes = await getPkgRemotes(platform, manifest, kGuardResponse.safeTag);
 
     const prevLockfilePath = join(pkgDir, FILENAMES.lockfile);
 

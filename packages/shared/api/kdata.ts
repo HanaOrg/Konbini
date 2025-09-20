@@ -4,40 +4,19 @@ import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "../types/author";
 import { fetchAPI } from "./network";
 import type { KDATA_ENTRY_PKG, KDATA_FILE_PKG, KDATA_ENTRY_USR } from "../types/kdata";
 
-export async function scanPackage(
-    pkg: KONBINI_ID_PKG,
-    returnAll: true,
-): Promise<{
+export type KONBINI_LOCAL_SCAN = {
+    isSafe: boolean;
     date: string;
     results: { safe: boolean; authentic: boolean; integral: boolean };
-}>;
-export async function scanPackage(pkg: KONBINI_ID_PKG, returnAll: false): Promise<boolean>;
-export async function scanPackage(
-    pkg: KONBINI_ID_PKG,
-    returnAll: boolean,
-): Promise<
-    | boolean
-    | {
-          date: string;
-          results: { safe: boolean; authentic: boolean; integral: boolean };
-      }
-> {
+    safeHash: string;
+    safeTag: string;
+};
+
+export async function scanPackage(pkg: KONBINI_ID_PKG): Promise<KONBINI_LOCAL_SCAN> {
     const res = await fetchAPI(`https://konbini-data.vercel.app/api/guard?id=${pkg}`);
     if (res.status === 404)
-        return returnAll
-            ? {
-                  date: new Date().toISOString(),
-                  results: { safe: true, authentic: true, integral: true },
-              }
-            : true;
-    const data: {
-        date: string;
-        results: { safe: boolean; authentic: boolean; integral: boolean };
-    } = await res.json();
-
-    if (returnAll) return data;
-    if (Object.values(data.results).every((v) => v === true)) return true;
-    else return false;
+        throw `Package doesn't seem to exist (404 for endpoint api/guard?id=${pkg})`;
+    return await res.json();
 }
 
 export async function getPkg(pkg: KONBINI_ID_PKG): Promise<KDATA_ENTRY_PKG> {
