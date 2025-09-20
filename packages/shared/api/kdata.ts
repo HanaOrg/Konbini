@@ -3,20 +3,34 @@ import { normalize } from "@zakahacecosas/string-utils";
 import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "../types/author";
 import { fetchAPI } from "./network";
 import type { KDATA_ENTRY_PKG, KDATA_FILE_PKG, KDATA_ENTRY_USR } from "../types/kdata";
+import type { SUPPORTED_PLATFORMS } from "../types/manifest";
 
 export type KONBINI_LOCAL_SCAN = {
     isSafe: boolean;
     date: string;
-    results: { safe: boolean; authentic: boolean; integral: boolean };
-    safeHash: string;
-    safeTag: string;
+    results: { safe: boolean; authentic: boolean; integral: boolean; hash: string; ver: string };
 };
 
-export async function scanPackage(pkg: KONBINI_ID_PKG): Promise<KONBINI_LOCAL_SCAN> {
+export async function scanPackage(
+    pkg: `${KONBINI_ID_PKG}@${SUPPORTED_PLATFORMS}`,
+): Promise<KONBINI_LOCAL_SCAN>;
+export async function scanPackage(
+    pkg: `${KONBINI_ID_PKG}@0`,
+): Promise<Omit<KONBINI_LOCAL_SCAN, "isSafe">[]>;
+export async function scanPackage(
+    pkg: `${KONBINI_ID_PKG}@${SUPPORTED_PLATFORMS | "0"}`,
+): Promise<KONBINI_LOCAL_SCAN | Omit<KONBINI_LOCAL_SCAN, "isSafe">[]> {
     const res = await fetchAPI(`https://konbini-data.vercel.app/api/guard?id=${pkg}`);
     if (res.status === 404)
         throw `Package doesn't seem to exist (404 for endpoint api/guard?id=${pkg})`;
-    return await res.json();
+    const json = await res.json();
+
+    if (pkg.split("@")[1]! === "0") return json;
+
+    return {
+        ...json,
+        isSafe: Object.values(json.results).every((val) => val === true),
+    };
 }
 
 export async function getPkg(pkg: KONBINI_ID_PKG): Promise<KDATA_ENTRY_PKG> {

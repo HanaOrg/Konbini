@@ -4,7 +4,7 @@ import { /* getAuthor, getPkg, */ scanPackage } from "shared/api/kdata";
 
 describe("KDATA (Konbini DATA API) works", () => {
     test("retrieves proper safety data", async () => {
-        const full = await scanPackage("org.hana.zaiko");
+        const full = await scanPackage("org.hana.zaiko@1.0.0@linuxArm");
         expect(new Date(full.date)).toBeValidDate();
         // our own package is obviously secure (hehe)
         // so we can just assume it'll be true
@@ -12,6 +12,8 @@ describe("KDATA (Konbini DATA API) works", () => {
             safe: true,
             authentic: true,
             integral: true,
+            hash: "TODO",
+            ver: "1.0.0",
         });
     });
 

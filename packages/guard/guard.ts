@@ -412,24 +412,22 @@ async function main() {
                 .filter((l) => l.trim() !== "")
                 .slice(1)
                 .map((l) => {
-                    const [pkg, ver, _plat, hash] = l.split("@");
-                    if (!hash) return [];
-
-                    const plat = hash.split("=");
-
-                    if (!plat[1]) return [];
-
-                    const res = plat[1].split("|");
-
+                    const [pkg, ver, plat, _hash] = l.split("@");
+                    if (!_hash) return [];
                     if (!plat) return [];
 
+                    const hash = _hash.split("=");
+                    if (!hash[1]) return [];
+                    const res = hash[1].split("|");
+
                     return [
-                        `${pkg}@${ver}@${plat[0]}`,
+                        `${pkg}@${plat}`,
                         {
                             safe: res[0] === "SAFE",
                             authentic: res[1] === "AUTHENTIC",
                             integral: res[2] === "INTEGRAL",
                             hash,
+                            ver,
                         },
                     ];
                 }),

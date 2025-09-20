@@ -30,12 +30,13 @@ export default function PackagePage() {
     const [secure, setSecure] = useState<KONBINI_LOCAL_SCAN | null>(null);
 
     const route = window.location.pathname.split("/package/").filter(Boolean)[0] as KONBINI_ID_PKG;
+    const plat = getDesktopPlatform();
 
     useEffect(() => {
         async function getApp() {
             try {
                 const manifest = await getPkg(route);
-                const isSecure = await scanPackage(route);
+                const isSecure = await scanPackage(`${route}@${plat.asSupported}`);
                 const pkgAuthor = await getAuthor(manifest.author);
                 setSecure(isSecure);
                 setAuthor(pkgAuthor);
@@ -81,8 +82,6 @@ export default function PackagePage() {
     useEffect(() => {
         accentPage(app.accent);
     }, []);
-
-    const plat = getDesktopPlatform();
 
     const isSupported = app.platforms
         ? (plat.plat == "Windows" && app.platforms.win64) ||

@@ -20,6 +20,10 @@ export function validate(str: any): str is string {
     return true;
 }
 
+export function validateAgainst<T extends string>(str: unknown, against: readonly T[]): str is T {
+    return typeof str === "string" && validate(str as T) && against.includes(str as T);
+}
+
 // origin validation
 
 export function isValidOrigin(req: any, res: any): boolean {

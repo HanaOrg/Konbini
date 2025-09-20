@@ -1,4 +1,4 @@
-const { validate, isValidOrigin } = require("../utils.js");
+const { validate, validateAgainst, isValidOrigin } = require("../utils.js");
 const KDATA = require("./guard_res.json");
 
 /** @type {import('@vercel/node').VercelRequest} */
@@ -26,6 +26,28 @@ module.exports = async function handler(reqParam: any, resParam: any) {
 
         if (!validate(id))
             return res.status(400).json({ error: "Bad request: No package ID specified." });
+        const [pkgName, pkgVer, pkgPlatform] = id.split("@");
+        if (!validate(pkgName))
+            return res
+                .status(400)
+                .json({ error: "Bad request: No proper package ID specified?. Got " + pkgName });
+        if (!validate(pkgVer))
+            return res.status(400).json({ error: "Bad request: No package version specified." });
+        if (!validateAgainst(pkgPlatform, ["linux64", "linuxArm", "mac64", "macArm", "win64", "0"]))
+            return res.status(400).json({
+                error: "Bad request: No proper package platform specified. Specify a SUPPORTED_PLATFORM, or a '0' for a global check.",
+            });
+
+        if (pkgPlatform === "0") {
+            return res
+                .status(200)
+                .json(
+                    Object.fromEntries(
+                        Object.entries(KDATA).filter(([k]) => k.startsWith(pkgName)),
+                    ),
+                );
+        }
+
         if (!KDATA.results[id])
             return res
                 .status(404)
