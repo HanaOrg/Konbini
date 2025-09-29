@@ -35,9 +35,7 @@ Flags are pipe-separated keywords, allowing to instantly search for invalid pack
 | ------------ | ----------------------------------------------------------------------------------------- | --------------: | -------------: |
 | Safety       | Whether the package was flagged secure by ClamAV or not.                                  |          `SAFE` |     `INFECTED` |
 | Integrity    | Whether the package's Konbini hash is valid.                                              |      `INTEGRAL` |    `CORRUPTED` |
-| Authenticity | Whether the package's PGP signature matches tested against the author's public signature. |     `AUTHENTIC` |  `UNAUTHENTIC` |
-
-<!-- Safety may also be `ERROR` if something went wrong with ClamAV. -->
+| Authenticity | Whether the package's signature matches the author's public one. |     `AUTHENTIC` |  `UNAUTHENTIC` |
 
 ## Konbini's schedule
 

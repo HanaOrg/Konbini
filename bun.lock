@@ -416,7 +416,7 @@
 
     "@zakahacecosas/number-utils": ["@jsr/zakahacecosas__number-utils@2.1.0", "https://npm.jsr.io/~/11/@jsr/zakahacecosas__number-utils/2.1.0.tgz", {}, "sha512-3ha02uErxFra50eYmJPEjfh89FoNiac47nDqtFidV+Y5ckcwn879+yvjtBd+KWt7XWllI3TthdccTOgA1bpI+w=="],
 
-    "@zakahacecosas/string-utils": ["@jsr/zakahacecosas__string-utils@3.4.0", "https://npm.jsr.io/~/11/@jsr/zakahacecosas__string-utils/3.4.0.tgz", {}, "sha512-w/pjSMvCqNkHNiShc1vU006JgI2F3eE96D1Vr4FDCR/eLHiscox4I7qbchSap4vFcrADNCxM6Jd/+XDemBdcUw=="],
+    "@zakahacecosas/string-utils": ["@jsr/zakahacecosas__string-utils@3.5.0", "https://npm.jsr.io/~/11/@jsr/zakahacecosas__string-utils/3.5.0.tgz", {}, "sha512-Eb+xPi4dCd7cWUUmo4my8dpvdqNnI00gje6dVlk5n2yrYF7MMaq6qx6AJMpUZavf2OxWTMkUKsLRzet2tUJdKQ=="],
 
     "abbrev": ["abbrev@3.0.1", "", {}, "sha512-AO2ac6pjRB3SJmGJo+v5/aK6Omggp6fsLrs6wN9bd35ulu4cCwaAU9+7ZhXjeqHVkaHThLuzH0nZr0YpCDhygg=="],
 
