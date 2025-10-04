@@ -24,6 +24,8 @@ export type KDATA_ENTRY_PKG = KONBINI_MANIFEST & {
     downloads: DownloadData;
     /** Date of the last release. */
     last_release_at: string;
+    /** Tag name of the latest release. */
+    latest_release: string;
     /** Markdown string of the last changelog entry. */
     changelog: string;
     /** Filesizes of all uploaded binaries, in bytes. Platforms without a binary are entirely absent.*/

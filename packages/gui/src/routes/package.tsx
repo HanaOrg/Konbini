@@ -36,7 +36,9 @@ export default function PackagePage() {
         async function getApp() {
             try {
                 const manifest = await getPkg(route);
-                const isSecure = await scanPackage(`${route}@${plat.asSupported}`);
+                const isSecure = await scanPackage(
+                    `${route}@${manifest.latest_release}@${plat.asSupported}`,
+                );
                 const pkgAuthor = await getAuthor(manifest.author);
                 setSecure(isSecure);
                 setAuthor(pkgAuthor);

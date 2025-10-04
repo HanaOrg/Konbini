@@ -273,7 +273,10 @@ async function main() {
                     fetches.push([files.core, remotes.coreAsset]);
                     fetches.push([files.core + ".asc", remotes.ascAsset]);
                     fetches.push([files.base + ".hash.yaml", remotes.shaAsset]);
+                    // published-at
                     writeFileSync("./build/" + manifest.id + ".pa.txt", remotes.pkgReleaseDate);
+                    // latest-tag
+                    writeFileSync("./build/" + manifest.id + ".lt.txt", remotes.pkgVersion);
                 } catch (error) {
                     err("[XXX] Error downloading assets", error);
                 }
@@ -362,6 +365,10 @@ async function main() {
             );
             const log = parseKAChangelog(contents);
             if (log) kdata[pkg]!["changelog"] = log;
+            kdata[pkg]!["latest_release"] = readFileSync(
+                join("./build/", pkg) + ".lr.txt",
+                "utf-8",
+            );
         } else if (file.name === `${pkg}.yaml`) {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg] = {

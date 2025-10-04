@@ -21,10 +21,12 @@ export async function scanPackage(
     pkg: `${KONBINI_ID_PKG}@${SUPPORTED_PLATFORMS | "0"}`,
 ): Promise<KONBINI_LOCAL_SCAN | Omit<KONBINI_LOCAL_SCAN, "isSafe">[]> {
     const res = await fetchAPI(`https://konbini-data.vercel.app/api/guard?id=${pkg}`);
+    console.log(`https://konbini-data.vercel.app/api/guard?id=${pkg}`);
     if (res.status === 404)
         throw `Package doesn't seem to exist (404 for endpoint api/guard?id=${pkg})`;
     const json = await res.json();
 
+    if (!json.results) throw `No results?`;
     if (pkg.split("@")[1]! === "0") return json;
 
     return {
