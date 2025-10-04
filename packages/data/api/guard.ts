@@ -55,7 +55,7 @@ module.exports = async function handler(reqParam: any, resParam: any) {
 
         res.status(200).json({
             date: KDATA.date,
-            results: KDATA.results[id],
+            results: KDATA.results[`${pkgName}@${pkgPlatform}`],
         });
         return;
     } catch (error) {
