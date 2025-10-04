@@ -36,7 +36,6 @@ export default function PackagePage() {
         async function getApp() {
             try {
                 const manifest = await getPkg(route);
-                console.log(manifest);
                 const isSecure = await scanPackage(
                     `${route}@${manifest.latest_release}@${plat.asSupported}`,
                 );
@@ -112,9 +111,10 @@ export default function PackagePage() {
 
     return (
         <>
-            {secure !== null && !Object.values(secure.results).every((v) => v == true) && (
-                <InsecurePackage res={secure} app={app} />
-            )}
+            {secure &&
+                ![secure.results.authentic, secure.results.integral, secure.results.safe].every(
+                    (v) => v == true,
+                ) && <InsecurePackage res={secure} app={app} />}
             <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.6] absolute top-[-150px] right-[-150px] z-[-1]" />
             <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.7] absolute top-[650px] left-[-150px] z-[-1]" />
             <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.4] absolute bottom-[50px] right-[-300px] z-[-1]" />
