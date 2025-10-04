@@ -358,18 +358,16 @@ async function main() {
         if (file.name.endsWith(".downloads.yaml")) {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg]!["downloads"] = Bun.YAML.parse(contents) as DownloadData;
+        } else if (file.name.endsWith(".pa.txt")) {
+            if (!kdata[pkg]) kdata[pkg] = {} as any;
+            kdata[pkg]!["last_release_at"] = contents;
         } else if (file.name.endsWith(".changes.md") && contents.trim() !== "# No") {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
-            kdata[pkg]!["last_release_at"] = readFileSync(
-                join("./build/", pkg) + ".pa.txt",
-                "utf-8",
-            );
             const log = parseKAChangelog(contents);
             if (log) kdata[pkg]!["changelog"] = log;
-            kdata[pkg]!["latest_release"] = readFileSync(
-                join("./build/", pkg) + ".lr.txt",
-                "utf-8",
-            );
+        } else if (file.name.endsWith(".lt.txt")) {
+            if (!kdata[pkg]) kdata[pkg] = {} as any;
+            kdata[pkg]!["latest_release"] = contents;
         } else if (file.name === `${pkg}.yaml`) {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg] = {
