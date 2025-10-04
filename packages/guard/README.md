@@ -31,10 +31,10 @@ PACKAGE-ID@VERSION@PLATFORM=FLAGS
 
 Flags are pipe-separated keywords, allowing to instantly search for invalid packages even if the list grows large.
 
-| Item         | Description                                                                               | Keyword if good | Keyword if bad |
-| ------------ | ----------------------------------------------------------------------------------------- | --------------: | -------------: |
-| Safety       | Whether the package was flagged secure by ClamAV or not.                                  |          `SAFE` |     `INFECTED` |
-| Integrity    | Whether the package's Konbini hash is valid.                                              |      `INTEGRAL` |    `CORRUPTED` |
+| Item         | Description                                                      | Keyword if good | Keyword if bad |
+| ------------ | ---------------------------------------------------------------- | --------------: | -------------: |
+| Safety       | Whether the package was flagged secure by ClamAV or not.         |          `SAFE` |     `INFECTED` |
+| Integrity    | Whether the package's Konbini hash is valid.                     |      `INTEGRAL` |    `CORRUPTED` |
 | Authenticity | Whether the package's signature matches the author's public one. |     `AUTHENTIC` |  `UNAUTHENTIC` |
 
 ## Konbini's schedule

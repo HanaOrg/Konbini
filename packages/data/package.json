@@ -3,12 +3,12 @@
     "version": "1.0.0",
     "type": "commonjs",
     "dependencies": {
-        "@upstash/redis": "^1.35.3",
-        "@vercel/node": "^5.3.12",
+        "@upstash/redis": "^1.35.4",
+        "@vercel/node": "^5.3.24",
         "geoip-lite": "^1.4.10"
     },
     "devDependencies": {
         "@types/geoip-lite": "^1.4.4",
-        "@types/node": "^24.3.0"
+        "@types/node": "^24.6.2"
     }
 }

@@ -35,7 +35,6 @@ Items with a **!** must be done before release.
     - [ ] Rewrite to native and reduce bundle size.
         - Probably will use Golang, though the thing in general and specially the UI will be hard to figure out.
     - [ ] Make Konbini able to handle SFX Konpaks as regular ones.
-- [ ] Avoid launchpad duplications.
 
 ## LONG TERM / Low priority
 
@@ -46,8 +45,10 @@ Items with a **!** must be done before release.
     - just as regular users, one user PR and then one PR per program should be enough
     - no HTTP prefix to be included, `https` will always be used
     - if the URL differs entirely from the organization / author URL, the PR should explain why do they differ, or it won't be accepted
-- [ ] Add support for defined launchpad shortcuts, so e.g., a tool called `tool` could define `tl` as a valid CLI shortcut from their manifest file, and for feature "A", for example, `tla` which maps to `tool a`. Limit shortcuts to 20 perhaps.
+- [ ] Add support for defined launchpad shortcuts, so e.g., a tool called `tool` could define `tl` as a valid CLI shortcut from their manifest file, and for feature "A", for example, `tla` which maps to `tool a`.
+    - Set a per-package limit.
     - If conflict, give the user the option to keep old one or new one.
+    - [ ] Maybe allow users to create their own shortcuts to things they use the most with their apps?
 - [ ] Add more links to manifests (report issue, get help, help translate, donate(VERIFIED ONLY)).
 - [ ] Add more options for system requirements (graphics maybe).
 - [ ] Show more download count details (country, version, and date, all we collect).
