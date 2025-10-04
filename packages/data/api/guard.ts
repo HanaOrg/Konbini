@@ -33,8 +33,6 @@ module.exports = async function handler(reqParam: any, resParam: any) {
                 .json({ error: "Bad request: No proper package ID specified?. Got " + pkgName });
         if (!validate(pkgVer))
             return res.status(400).json({ error: "Bad request: No package version specified." });
-        if (isNaN(pkgVer))
-            return res.status(400).json({ error: "Bad request: Invalid package version." });
         if (!validateAgainst(pkgPlatform, ["linux64", "linuxArm", "mac64", "macArm", "win64", "0"]))
             return res.status(400).json({
                 error: "Bad request: No proper package platform specified. Specify a SUPPORTED_PLATFORM, or a '0' for a global check.",
