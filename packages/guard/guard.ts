@@ -117,6 +117,7 @@ async function scanFiles() {
             !s.endsWith(".yaml") &&
             !s.endsWith(".asc") &&
             !s.endsWith(".pa.txt") &&
+            !s.endsWith(".lt.txt") &&
             existsSync(s),
     );
     log(matches);
