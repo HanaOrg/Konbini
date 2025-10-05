@@ -18,6 +18,7 @@ import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { installPkgMgr } from "./ipm";
 import { exists } from "./exists";
 import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "shared/types/author";
+import { isTpm, trustPackageManager } from "./tpm";
 
 /** true if it IS up to date, false if it NEEDS to update */
 function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
@@ -49,6 +50,23 @@ export function installAliasedPackage(params: {
     konsole.adv(
         `${manifest.name} is using ${kps.name}, a non-Konbini remote. We'll ${method} the package for you using '${kps.cmd}'.`,
     );
+    if (!isTpm(kps.src)) {
+        konsole.war(
+            `Hold up: ${kps.name} is untrusted. This is because you're either\n- using it via Konbini for the 1st time\n- you've chose not to trust it last time it showed up\n- (rare) the file where we keep track of trusted managers is gone/unreadable\n`,
+        );
+        const out = konsole.ask(`Do you wish to trust ${kps.name}?`);
+        if (!out) {
+            konsole.suc(
+                "Alright then, installation won't proceed.\nNext time you try to install from this source, you'll see the same prompt.\nTo view trusted package managers or to trust/untrust anything anytime, run 'kbi tpm'.",
+            );
+            process.exit(0);
+        } else {
+            trustPackageManager(kps.src);
+            konsole.suc(
+                `Gotcha, ${kps.name} is now trusted; any package from there will just install\nTo view trusted package managers or to untrust ${kps.name} anytime, run 'kbi tpm'.`,
+            );
+        }
+    }
 
     try {
         exists(kps.cmd);

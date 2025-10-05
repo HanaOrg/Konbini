@@ -8,7 +8,6 @@
 
 Items with a **!** must be done before release.
 
-- [ ] **!** Allow users to disable/"prohibit" certain package managers.
 - [ ] Cache everything; cache locally too.
     - [ ] In exchange, perhaps lower cache duration? Now it doesn't depend on the GitHub API so...
 - [ ] Support things other than standalone executables.

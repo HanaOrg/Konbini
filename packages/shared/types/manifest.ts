@@ -40,6 +40,10 @@ export const KPS_SOURCES = [
 /** A KPS source. */
 export type KPS_SOURCE = (typeof KPS_SOURCES)[number];
 
+export function isKpsSource(str: string | undefined): str is KPS_SOURCE {
+    return validateAgainst(str, KPS_SOURCES);
+}
+
 export type SPECIFIABLE_KPS_SOURCE = "cho" | "scp" | "fpak" | "brew" | "brew-k";
 
 /** A Konbini Package Scope (KPS). It follows either one of these formats:

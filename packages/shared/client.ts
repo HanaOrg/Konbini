@@ -25,6 +25,11 @@ export const INSTALLATION_DIR = join(ROOT, "exe");
  */
 export const SIGNATURE_DIR = join(ROOT, "pgp");
 
+/** Root folder where all Konbini configurations live.
+ * @constant **\/usr/local/kbi/cfg** OR **C:\\Users\\USER\\kbi\\cfg**
+ */
+export const CFG_DIR = join(ROOT, "cfg");
+
 /** This "constant" is actually a function. Pass the name of the package and its author and it'll generate the installation path.
  * @example
  * ```ts

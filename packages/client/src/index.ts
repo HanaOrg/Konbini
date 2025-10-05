@@ -1,5 +1,11 @@
 import { version } from "../package.json";
-import { PACKAGES_DIR, LAUNCHPAD_DIR, INSTALLATION_DIR, SIGNATURE_DIR } from "shared/client";
+import {
+    PACKAGES_DIR,
+    LAUNCHPAD_DIR,
+    INSTALLATION_DIR,
+    SIGNATURE_DIR,
+    CFG_DIR,
+} from "shared/client";
 import { konsole } from "shared/client";
 import { installPackage } from "./commands/install";
 import { existsSync, mkdirSync, realpathSync } from "fs";
@@ -21,6 +27,8 @@ import { parseID } from "shared/api/core";
 import { ensureSecurity } from "./commands/secure";
 import type { KONBINI_ID_PKG } from "shared/types/author";
 import { selfUpdate } from "./commands/self-update";
+import { getTpmList, trustPackageManager, untrustPackageManager } from "./toolkit/tpm";
+import { isKpsSource } from "shared/types/manifest";
 
 const p = getPlatform();
 const platformString =
@@ -47,6 +55,7 @@ async function main() {
                 `> unpack <path>          ${konsole.clr("grey", "// manually installs a Konpak")}`,
                 `> info <pkg | user>      ${konsole.clr("grey", "// shows info for a specific package or publisher")}`,
                 `> list [-v]              ${konsole.clr("grey", "// lists all installed packages")}`,
+                `> tpm [option] [mgr]     ${konsole.clr("grey", "// shows trusted managers and lets you modify trusts")}`,
                 `> learn <item>           ${konsole.clr("grey", "// shows helpful info about something specific")}`,
                 `> where                  ${konsole.clr("grey", "// shows where all program files are stored")}`,
                 `> about                  ${konsole.clr("grey", "// shows some info about Konbini")}`,
@@ -66,6 +75,7 @@ async function main() {
     // checks for DIRs only if a command is run, so help shows a few ms faster
     if (!existsSync(PACKAGES_DIR)) mkdirSync(PACKAGES_DIR, { recursive: true });
     if (!existsSync(LAUNCHPAD_DIR)) mkdirSync(LAUNCHPAD_DIR, { recursive: true });
+    if (!existsSync(CFG_DIR)) mkdirSync(CFG_DIR, { recursive: true });
 
     switch (command) {
         case "install":
@@ -160,6 +170,37 @@ async function main() {
                 konsole.err(Error.isError(error) ? error.message + "." : error);
             }
             break;
+        case "tpm":
+            if (!subcommand) {
+                konsole.adv(
+                    `Package manager trust list\n${Object.entries(getTpmList())
+                        .map(
+                            ([mgr, trusted]) =>
+                                `${mgr}: ${
+                                    mgr === "kbi"
+                                        ? konsole.clr("purple", "ALWAYS TRUSTED")
+                                        : trusted
+                                          ? konsole.clr("lightgreen", "TRUSTED")
+                                          : konsole.clr("red", "UNTRUSTED")
+                                }`,
+                        )
+                        .join("\n")}\nTrust or untrust via 'tpm [trust OR untrust] [mgr]'.`,
+                );
+                break;
+            }
+            if (!validateAgainst(subcommand, ["trust", "untrust"]))
+                throw `Subcommand must be 'trust' or 'untrust'.`;
+            if (subcommand === "trust") {
+                if (!isKpsSource(args[2])) throw `Invalid package manager.`;
+                trustPackageManager(args[2]);
+                konsole.suc("Trusted.");
+                break;
+            } else {
+                if (!isKpsSource(args[2])) throw `Invalid package manager.`;
+                untrustPackageManager(args[2]);
+                konsole.suc("Untrusted.");
+                break;
+            }
         case "unpack":
             if (!subcommand) throw "No filepath specified!";
             Unpack(subcommand);

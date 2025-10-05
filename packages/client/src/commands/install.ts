@@ -248,6 +248,8 @@ export async function installPackage(
         if (isKbiLockfile(prevLockfile) && prevLockfile.version === remotes.pkgVersion) {
             if (method === "update") {
                 konsole.suc(`${pkgId} is already up to date.`);
+                // TODO: check this?
+                return;
             }
             if (method === "install") {
                 const conf = konsole.ask(`${pkgId} is already installed. Reinstall?`);
