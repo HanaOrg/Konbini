@@ -185,19 +185,23 @@ export async function installPackage(
 
     const platformName = getPlatform();
     const manifest = await getPkgManifest(pkgId);
-    const kGuardResponse = await scanPackage(`${pkgId}@${platformName}`);
+    const platform = manifest.platforms[platformName];
+    if (!platform) {
+        konsole.err(`${manifest.name} is not supported on your platform. Sorry.`);
+        process.exit(1);
+    }
+    // if not Kbi, ver and hash and all of that won't even be used
+    // but we need it to prevent typeerror & to avoid scanning the package
+    // (non-Kbi = not hosted by us = not scanned = scanPackage throws = thing breaks = user sad)
+    const kGuardResponse = isKbiScope(platform)
+        ? await scanPackage(`${pkgId}@${platformName}`)
+        : { isSafe: true, results: { ver: "no-op", hash: "no-op" } };
 
     if (!kGuardResponse.isSafe)
         throw `This package has been recently reported as insecure. While we investigate the issue, ${pkgId} cannot be installed. Sorry.`;
 
     const usrDir = USR_PATH({ author: manifest.author });
     const pkgDir = PKG_PATH({ pkg: pkgId, author: manifest.author });
-
-    const platform = manifest.platforms[platformName];
-    if (!platform) {
-        konsole.err(`${manifest.name} is not supported on your platform. Sorry.`);
-        process.exit(1);
-    }
 
     if (packageExists(platform, manifest.author)) {
         if (method === "install") {

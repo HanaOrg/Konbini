@@ -222,6 +222,9 @@ export default function PackagePage() {
                                 : app.type === "cli"
                                   ? "Command Line app."
                                   : "Graphical app."}
+                            <br />
+                            {app.latest_release &&
+                                `Known version ${app.latest_release} (released ${app.last_release_at})`}
                         </div>
                     </div>
                 </div>

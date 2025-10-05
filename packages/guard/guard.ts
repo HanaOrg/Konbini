@@ -359,6 +359,7 @@ async function main() {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg]!["downloads"] = Bun.YAML.parse(contents) as DownloadData;
         } else if (file.name.endsWith(".pa.txt")) {
+            // TODO: apparently not working, date doesn't show up anymore in objects
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg]!["last_release_at"] = contents;
         } else if (file.name.endsWith(".changes.md") && contents.trim() !== "# No") {
