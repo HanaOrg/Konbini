@@ -8,14 +8,14 @@ function parseHex(hex: string): { r: number; g: number; b: number } {
     };
 }
 
-export function lightenHex(hex: string, amount: number) {
+export function lightenHex(hex: string, amount: number): `#${string}` {
     let { r, g, b } = parseHex(hex);
 
     r = Math.max(Math.min(255, r + amount), 0);
     g = Math.max(Math.min(255, g + amount), 0);
     b = Math.max(Math.min(255, b + amount), 0);
 
-    return "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
+    return `#${[r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("")}`;
 }
 
 export function getContrastingTextColor(hex: string) {
@@ -28,7 +28,7 @@ export function getContrastingTextColor(hex: string) {
 }
 
 export function accentPage(color: string | undefined) {
-    const accent = color ? lightenHex(color, 40) : "#c23282";
+    const accent = color ? lightenHex(color, 40) : "#FFFFFF"; // "#c23282";
     document.documentElement.style.setProperty("--k", accent);
     document.documentElement.style.setProperty("--k-dimmed", lightenHex(accent, -40) + "40");
     document.documentElement.style.setProperty("--k-lighter", lightenHex(accent, 80));

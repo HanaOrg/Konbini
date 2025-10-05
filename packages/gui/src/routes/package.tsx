@@ -38,7 +38,21 @@ export default function PackagePage() {
                 const manifest = await getPkg(route);
                 const isSecure = await scanPackage(
                     `${route}@${manifest.latest_release}@${plat.asSupported}`,
-                );
+                ).catch((e) => {
+                    if (String(e).includes("404"))
+                        return {
+                            isSafe: true,
+                            date: "",
+                            results: {
+                                safe: true,
+                                authentic: true,
+                                integral: true,
+                                hash: "",
+                                ver: "",
+                            },
+                        };
+                    else throw e;
+                });
                 const pkgAuthor = await getAuthor(manifest.author);
                 setSecure(isSecure);
                 setAuthor(pkgAuthor);
@@ -224,7 +238,8 @@ export default function PackagePage() {
                                   : "Graphical app."}
                             <br />
                             {app.latest_release &&
-                                `Known version ${app.latest_release} (released ${app.last_release_at})`}
+                                app.last_release_at &&
+                                `Known version ${app.latest_release} (released ${app.last_release_at}).`}
                         </div>
                     </div>
                 </div>
@@ -242,7 +257,11 @@ export default function PackagePage() {
                             Changelog for the latest update
                         </h2>
                         <p className="mb-4 text-white font-semibold">
-                            Published {new Date(app.last_release_at).toUTCString()}
+                            {app.last_release_at ? (
+                                `Published ${new Date(app.last_release_at).toUTCString()}`
+                            ) : (
+                                <i>Exact release date unknown.</i>
+                            )}
                         </p>
                         <div
                             className="markdown"
@@ -252,13 +271,16 @@ export default function PackagePage() {
                                 ),
                             }}
                         />
+                        <hr className="mt-6" />
                     </>
                 )}
                 {app.images && app.images.length > 0 && <ScreenshotSlideshow ss={app.images} />}
+                <hr className="mt-6" />
                 <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">Platform support</h2>
                 <PlatformSupport platforms={app.platforms} />
                 <PackageDetails app={app} manifestUrl={locatePkg(route).manifestPub} />
                 {app.requirements && <SystemRequirementsTable requirements={app.requirements} />}
+                <hr className="mt-6" />
                 <PublisherDetails authorId={app.author} usr={author} apps={null} />
                 {app.maintainers && (
                     <MaintainersList maintainers={app.maintainers} author={author.name} />
