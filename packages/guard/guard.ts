@@ -33,6 +33,15 @@ function log(...a: any[]): void {
 function err(...a: any[]): void {
     console.error(...a);
 }
+function yamlParse(a: any): unknown {
+    try {
+        return Bun.YAML.parse(a);
+    } catch (error) {
+        err("[ERR]", error);
+        err(">>>ERRORING YAML>>>\n", a);
+        throw error;
+    }
+}
 
 type Element =
     | { type: "dir"; url: string; download_url: null }
@@ -97,7 +106,7 @@ async function fetchAllManifests(
     const manifestsWithId = regularManifests.map(
         (s) => s + promises[regularManifests.indexOf(s)]![1],
     );
-    return manifestsWithId.map((s) => Bun.YAML.parse(s) as MANIFEST_WITH_ID);
+    return manifestsWithId.map((s) => yamlParse(s) as MANIFEST_WITH_ID);
 }
 
 async function fetchIfNotExists(filename: string, assetUrl: string) {
@@ -131,7 +140,7 @@ async function scanFiles() {
         const result = execSync(`sudo clamscan --stdout ${file}`);
         const user = pkg.split(".").slice(0, 2).join(".");
         const userAscPath = "build/" + user + ".asc";
-        const pkgHashfile = Bun.YAML.parse(
+        const pkgHashfile = yamlParse(
             readFileSync("build/" + pkg + "_" + ver + ".hash.yaml", "utf-8"),
         ) as KONBINI_HASHFILE;
         const resString = result.toString();
@@ -351,7 +360,7 @@ async function main() {
         log("Storing data for", pkg, "from", file.name);
         if (file.name.endsWith(".downloads.yaml")) {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
-            kdata[pkg]!["downloads"] = Bun.YAML.parse(contents) as DownloadData;
+            kdata[pkg]!["downloads"] = yamlParse(contents) as DownloadData;
         } else if (file.name.endsWith(".pa.txt")) {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg]!["last_release_at"] = contents;
@@ -366,7 +375,7 @@ async function main() {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg] = {
                 ...kdata[pkg],
-                ...(Bun.YAML.parse(contents) as KDATA_ENTRY_PKG),
+                ...(yamlParse(contents) as KDATA_ENTRY_PKG),
             };
         }
     }

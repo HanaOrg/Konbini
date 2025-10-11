@@ -28,7 +28,7 @@ export function getContrastingTextColor(hex: string) {
 }
 
 export function accentPage(color: string | undefined) {
-    const accent = color ? lightenHex(color, 40) : "#FFFFFF"; // "#c23282";
+    const accent = color ? lightenHex(color, 40) : lightenHex("#c23282", 170);
     document.documentElement.style.setProperty("--k", accent);
     document.documentElement.style.setProperty("--k-dimmed", lightenHex(accent, -40) + "40");
     document.documentElement.style.setProperty("--k-lighter", lightenHex(accent, 80));
