@@ -35,7 +35,7 @@
         "launch:api": "cd packages/data && vercel --prod"
     },
     "dependencies": {
-        "vercel": "^48.2.0"
+        "vercel": "^48.2.9"
     },
     "devDependencies": {
         "eslint": "^9.37.0",

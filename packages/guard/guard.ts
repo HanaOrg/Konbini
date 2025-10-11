@@ -1,6 +1,5 @@
 import { execSync } from "child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
-import { globSync } from "glob";
 import { normalize } from "@zakahacecosas/string-utils";
 import {
     CATEGORIES,
@@ -111,18 +110,18 @@ async function fetchIfNotExists(filename: string, assetUrl: string) {
 }
 
 async function scanFiles() {
-    const matches = globSync("./build/*").filter(
-        (s) =>
-            !s.endsWith(".md") &&
-            !s.endsWith(".yaml") &&
-            !s.endsWith(".asc") &&
-            !s.endsWith(".pa.txt") &&
-            !s.endsWith(".lt.txt") &&
-            existsSync(s),
-    );
-    log(matches);
+    const matches = new Bun.Glob("./build/*").scanSync();
     const results: { pkg: string; ver: string; plat: string; res: string; hash: string }[] = [];
     for (const file of matches) {
+        if (
+            file.endsWith(".md") ||
+            file.endsWith(".yaml") ||
+            file.endsWith(".asc") ||
+            file.endsWith(".pa.txt") ||
+            file.endsWith(".lt.txt") ||
+            !existsSync(file)
+        )
+            continue;
         log("[???]", file);
         const [pkg, ver, plat] = file.replace("build/", "").split("_") as [
             string,
