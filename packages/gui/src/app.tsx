@@ -11,6 +11,7 @@ import AuthorPage from "./routes/author";
 import Privacy from "./routes/privacy";
 import Search from "./routes/search";
 import Terms from "./routes/tos";
+import About from "./routes/about";
 
 export function App() {
     return (
@@ -26,6 +27,8 @@ export function App() {
                     <Route path="/privacy" component={Privacy} />
                     <Route path="/tos" component={Terms} />
                     <Route path="/terms" component={Terms} />
+                    <Route path="/about" component={About} />
+                    <Route path="/about-us" component={About} />
                     <Route default component={NotFound} />
                 </Router>
             </ErrorBoundary>

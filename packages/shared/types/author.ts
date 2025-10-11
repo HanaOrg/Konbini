@@ -33,6 +33,8 @@ interface COMMON_PROFILE {
         gitlab?: string;
         /** Their GitLab username. */
         codeberg?: string;
+        /** Their YouTube username. */
+        youtube?: string;
     };
 }
 

@@ -472,12 +472,16 @@ describe("author and package IDs work", () => {
             delimiter: "fo",
             user: "foobar",
             package: null,
+            user_id: "org.foobar",
+            package_id: null,
         });
         expect(parseID("org.foobar.package")).toEqual({
             pref: "org",
             delimiter: "pa",
             user: "foobar",
             package: "package",
+            user_id: "org.foobar",
+            package_id: "org.foobar.package",
         });
         expect(() => parseID("hi")).toThrow();
     });

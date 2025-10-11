@@ -6,6 +6,7 @@ import type { KONBINI_MANIFEST } from "shared/types/manifest";
 import { join } from "path";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
+import { FILENAMES } from "shared/constants";
 
 export function Unpack(filepath: Buffer): void;
 export function Unpack(filepath: string): void;
@@ -96,7 +97,7 @@ export function Unpack(filepath: string | Buffer): void {
     };
 
     writeFileSync(
-        join(out, "konbini.lockfile.yaml"),
+        join(out, FILENAMES.lockfile),
         `# NOTE: This was installed from a Konpak. We cannot trace if it comes from Konbini or from a bare file, so this scope has a small chance of pointing to nowhere.\n${Bun.YAML.stringify(lock)}`,
     );
 }

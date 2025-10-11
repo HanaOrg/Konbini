@@ -2,7 +2,7 @@ import { validateAgainst } from "@zakahacecosas/string-utils";
 import { fetchAPI } from "./network.ts";
 import { normalizer } from "../constants.ts";
 import { isValidManifest } from "../types/manifest.ts";
-import type { KONBINI_AUTHOR } from "../types/author.ts";
+import type { KONBINI_AUTHOR, KONBINI_ID_PKG, KONBINI_ID_USR } from "../types/author.ts";
 import type { KDATA_ENTRY_PKG } from "../types/kdata.ts";
 
 /** Parses an ID and returns it. Throws if it's invalid. */
@@ -15,6 +15,10 @@ export function parseID(str: string): {
     user: string;
     /** If this is a pkg ID, the package. Null otherwise. */
     package: string | null;
+    /** Author name. */
+    user_id: KONBINI_ID_USR;
+    /** If this is a pkg ID, the package. Null otherwise. */
+    package_id: KONBINI_ID_PKG | null;
 } {
     // split scope
     const scopes = normalizer(str).split(".");
@@ -32,6 +36,8 @@ export function parseID(str: string): {
         delimiter,
         user: scopes[1],
         package: scopes[2] ?? null,
+        user_id: `${scopes[0]}.${scopes[1]}`,
+        package_id: scopes[2] ? `${scopes[0]}.${scopes[1]}.${scopes[2]}` : null,
     };
 }
 

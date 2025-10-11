@@ -312,7 +312,6 @@ export async function installPackage(
         scope: platform,
         pkg_id: pkgId,
         installation_hash: safetyInfo.shaHash,
-        author: manifest.author,
     };
     writeLockfile(lockfile, pkgId, manifest.author);
     konsole.dbg("Lockfile written.");

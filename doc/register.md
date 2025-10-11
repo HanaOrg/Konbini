@@ -251,7 +251,12 @@ win64: SOME-HASH-abcdefghijk...
 Each platform you make a release for (you do not need to specify hashes for platforms you do not build for) should get its binary hashed, to assert its integrity upon download.
 
 > [!TIP]
-> For generating hashes, **use Konbini's builtin hasher (via `kbi hash`)**, and for generating signatures, **use Konbini's builtin signer (via `kbi sign`)**.
+> Konbini has the utilities required built in.
+>
+> For generating hashes, **use Konbini's hasher (via `kbi hash`)**, and for generating signatures, **use Konbini's signer (via `kbi sign`)**.
+
+> [!WARNING]
+> Keep in mind Konbini's signer will store public and private keys as well as the passphrase in raw files together with your Konbini installation.
 
 ---
 

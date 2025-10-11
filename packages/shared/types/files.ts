@@ -1,4 +1,4 @@
-import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "./author.ts";
+import type { KONBINI_ID_PKG } from "./author.ts";
 import type { KONBINI_PKG_SCOPE } from "./manifest.ts";
 
 interface KONBINI_ALI_LOCKFILE {
@@ -8,8 +8,6 @@ interface KONBINI_ALI_LOCKFILE {
     timestamp: string;
     /** Package scope. */
     scope: Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>;
-    /** Package author. */
-    author: KONBINI_ID_USR;
 }
 
 interface KONBINI_KBI_LOCKFILE extends Omit<KONBINI_ALI_LOCKFILE, "scope"> {

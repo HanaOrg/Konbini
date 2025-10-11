@@ -153,7 +153,6 @@ export function installAliasedPackage(params: {
         pkg_id: pkgId,
         scope: scope as Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>,
         timestamp: new Date().toString(),
-        author: manifest.author,
     };
     writeLockfile(lockfile, pkgId, manifest.author);
     writeLaunchpadShortcut(pkgId, manifest.author, "", scope);

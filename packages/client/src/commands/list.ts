@@ -7,6 +7,7 @@ import { FILENAMES } from "shared/constants";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { parseKps } from "shared/api/manifest";
 import { isKbiScope } from "../../../shared/types/manifest";
+import { parseID } from "shared/api/core";
 
 function findLockFiles(dir: string, filename: string = FILENAMES.lockfile): string[] {
     const results: string[] = [];
@@ -43,7 +44,7 @@ export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTE
 
     for (const lockfile of lockfiles) {
         try {
-            const exists = packageExists(lockfile.scope, lockfile.author);
+            const exists = packageExists(lockfile.scope, parseID(lockfile.pkg_id).user_id);
             // @ts-expect-error "KPAK" is a valid scope but it's not properly typed...
             if (!exists && lockfile.scope !== "KPAK") {
                 konsole.dbg(
