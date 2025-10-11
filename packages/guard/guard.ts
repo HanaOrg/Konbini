@@ -325,12 +325,7 @@ async function main() {
     const kdata: KDATA_FILE_PKG = {};
 
     for (const file of readdirSync("./build", { withFileTypes: true })) {
-        if (
-            !file.isFile() ||
-            file.name.endsWith(".asc") ||
-            file.name.endsWith(".hash.yaml") ||
-            file.name.endsWith(".pa.txt")
-        )
+        if (!file.isFile() || file.name.endsWith(".asc") || file.name.endsWith(".hash.yaml"))
             continue;
         const pkg = file.name.split(".").slice(0, 3).join(".") as KONBINI_ID_PKG;
         const path = join(file.parentPath, file.name);
@@ -359,7 +354,6 @@ async function main() {
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg]!["downloads"] = Bun.YAML.parse(contents) as DownloadData;
         } else if (file.name.endsWith(".pa.txt")) {
-            // TODO: apparently not working, date doesn't show up anymore in objects
             if (!kdata[pkg]) kdata[pkg] = {} as any;
             kdata[pkg]!["last_release_at"] = contents;
         } else if (file.name.endsWith(".changes.md") && contents.trim() !== "# No") {
