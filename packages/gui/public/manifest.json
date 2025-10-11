@@ -13,5 +13,25 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#c23282"
+    "theme_color": "#c23282",
+    "screenshots": [
+        {
+            "src": "pwa-ss1.png",
+            "sizes": "1280x1024",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "pwa-ss2.png",
+            "sizes": "1280x1024",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "pwa-ss3.png",
+            "sizes": "1280x1024",
+            "type": "image/png",
+            "form_factor": "wide"
+        }
+    ]
 }
