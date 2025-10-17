@@ -55,11 +55,11 @@ export default function Safety() {
                 <p>
                     "Don't trust, verify" &mdash;{" "}
                     <b>
-                        we've setup a server to periodically fetch all binaries served through
-                        Konbini and test them against antivirus software
+                        we've setup an action runner to periodically test binaries served through
+                        Konbini against antivirus software
                     </b>
-                    . We use ClamAV, and a script that's open-source on Konbini's main repository.
-                    All Konbini packages, even if open source or verified, undergo this scan.
+                    . We run ClamAV through an open-source script on Konbini's main repository.
+                    All Konbini packages, even if open source or verified, must and will undergo this scan.
                 </p>
             </div>
             <Footer />

@@ -20,7 +20,7 @@ Items with a **!** must be done before release.
     - [ ] HASH override (`hashfile`(default), `sumsfile`(common SHA256SUMS file), `gh256`(use github's SHA256 HASH), `inline`(inline in the release's description, like [this example](https://github.com/danirod/cartero/releases/tag/v0.2.4), will require a specific \`\`\`lang\`\`\` to be specified for it to work))
     - [ ] Signature override (specify specific filenames for each signature)
 - [ ] Support ZIP and TAR archives as downloadable.
-    - [ ] Must've been validated by KGuard (TODO: add a field in results for that).
+    - [ ] Must've been validated by KGuard.
     - [ ] If it's a single file contained in a ZIP, behave as a regular install. Else, behave as a KPAK.
         - Allow for deeper config just in case.
 - [ ] Support integration for bare (non-KPAK) installs.

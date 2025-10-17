@@ -38,7 +38,10 @@ async function assertSafety(
     }
     konsole.dbg("SHA hash matches, download is valid. Nice.");
     // TODO(@ZakaHaceCosas): store signature on KGuard too
-    // to comply with our schema pretty much, it's not that much of an improvement
+    // not a priority or something we need to do before release
+    // it doesn't really affect security after all, improvement is really tiny
+    // but it kinda exists, and our schema says this should check for a stored signature
+    // so yeah
     const pgpMatch = await assertIntegrityPGP({
         executableFilePath: outputPath,
         executableAscFilePath: pkgSignaturePath,
