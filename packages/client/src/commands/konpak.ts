@@ -12,6 +12,8 @@ import { toUpperCaseFirst, validate, validateAgainst } from "@zakahacecosas/stri
 import { konsole } from "shared/client";
 import { cwd } from "node:process";
 import { getKonpakSfx } from "../../../konpak/src/sfx";
+import { getPlatform } from "shared/api/platform";
+import { execSync } from "node:child_process";
 
 export async function konpakFromDir(
     dir: string,
@@ -61,6 +63,8 @@ export async function konpakFromDir(
     });
 
     const path = join(cwd(), `${appId}.kpak`);
+
+    if (getPlatform() === "linux64" || getPlatform() === "linuxArm") execSync(`chmod +x ${path}`);
 
     konsole.suc(`Konpak'd ${appId} successfully! Find it at ${path}.`);
     const sfx = useSfx

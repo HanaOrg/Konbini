@@ -89,14 +89,22 @@ async function applySignature() {
         ));
 
     const signaturePath = join(SIGNATURE_DIR, author.toLowerCase());
+    const passphrasePath = join(signaturePath, "passphrase");
+    const privateKeyPath = join(
+        signaturePath,
+        `${author.split(".")[1]!.toLowerCase()}_PRIVATEKEY.asc`,
+    );
+
+    if (!existsSync(signaturePath)) throw `No signature found. Is ${author} a valid author ID?`;
+    if (!existsSync(passphrasePath))
+        throw `No signature passphrase found. This signature is either empty/invalid, or somehow lost its passphrase. Cannot sign.`;
+    if (!existsSync(privateKeyPath))
+        throw `No signature private key found. This signature is either empty/invalid, or somehow lost its keyfile. Cannot sign.`;
 
     konsole.dbg("SIGNING", realpathSync(file), "WITH", author, "'s STORED PGP SIGNATURE");
 
-    const passphrase = readFileSync(join(signaturePath, "passphrase"), { encoding: "utf-8" });
-    const privateKey = readFileSync(
-        join(signaturePath, `${author.split(".")[1]!.toLowerCase()}_PRIVATEKEY.asc`),
-        { encoding: "utf-8" },
-    );
+    const passphrase = readFileSync(passphrasePath, { encoding: "utf-8" });
+    const privateKey = readFileSync(privateKeyPath, { encoding: "utf-8" });
     const binary = readFileSync(file);
 
     const signature = await useSignature({

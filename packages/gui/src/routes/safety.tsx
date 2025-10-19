@@ -58,8 +58,9 @@ export default function Safety() {
                         we've setup an action runner to periodically test binaries served through
                         Konbini against antivirus software
                     </b>
-                    . We run ClamAV through an open-source script on Konbini's main repository.
-                    All Konbini packages, even if open source or verified, must and will undergo this scan.
+                    . We run ClamAV through an open-source script on Konbini's main repository. All
+                    Konbini packages, even if open source or verified, must and will undergo this
+                    scan.
                 </p>
             </div>
             <Footer />

@@ -143,6 +143,15 @@ add_to_path() {
     fi
 }
 
+make_sudo_able() {
+    echo "[ i ] Making this install sudo-able"
+    sudo tee /usr/local/bin/kbi > /dev/null <<'EOF'
+#!/bin/bash
+/usr/local/kbi/exe "$@"
+EOF
+    sudo chmod +x /usr/local/bin/kbi
+}
+
 # installer itself
 installer() {
     echo "[ > ] Hi! We'll install Konbini ($ARCH edition) for you. Just a sec!\n"
@@ -155,6 +164,7 @@ installer() {
     add_to_path $PACKAGES_DIR
     add_to_path $LAUNCHPAD_DIR
     setup_cronjob
+    make_sudo_able
     echo "[ > ] Installed successfully! Restart your terminal, then run 'kbi' to get started."
     echo "Thank you and welcome to Konbini!"
 }

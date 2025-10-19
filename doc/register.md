@@ -89,6 +89,8 @@ socials: # Your organization's socials, if any. Optional - inner props are all o
 
 If you correctly did everything, your PR to the authors registry should be merged. After that, you are ready to publish a package.
 
+Be sure your package complies with the [admission criteria](admission.md).
+
 Just as when you made your profile, you will need to make a Pull Request including a manifest file (and nothing else this time). This file must be called `PACKAGE.yaml`, where PACKAGE will be the unique identifier of your package. So, if you created `cool-package.yaml`, `kbi install cool-package` would point to your package.
 
 ### Package manifest specification
