@@ -28,21 +28,20 @@ for (const [pkg, platform] of Object.entries(platforms)) {
             entrypoints: [src],
             minify: true,
             throw: false,
-            sourcemap: "none",
+            sourcemap: "inline",
+            footer: "// why are you reading a binary?",
             compile: {
                 target: platform,
                 outfile: `./dist/${pkg}`,
-                windows: platform.includes("windows")
-                    ? {
-                          hideConsole: false,
-                          icon: "./konbini.ico",
-                          title,
-                          publisher: "Hana",
-                          version,
-                          description,
-                          copyright: "© 2025 The Hana Org",
-                      }
-                    : undefined,
+                windows: {
+                    hideConsole: false,
+                    icon: "./konbini.ico",
+                    title,
+                    publisher: "Hana",
+                    version,
+                    description,
+                    copyright: "© 2025 The Hana Org",
+                },
             },
         });
 
