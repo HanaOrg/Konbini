@@ -162,8 +162,9 @@ export async function installAliasedPackage(params: {
     if (method === "install") {
         const res = await logAction({
             app: pkgId,
-            // TODO: support this somehow
-            version: "(unsupported)",
+            // TODO: make this show actual version
+            // and add a separate source field
+            version: kps.name,
             action: "download",
         });
         if (res.status == 429)
