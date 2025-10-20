@@ -169,7 +169,7 @@ export async function installPackage(
             "Be advised that grabbed packages aren't properly configured and may not correctly install.",
         );
         konsole.war("Proceeding...");
-        const ret = installAliasedPackage({
+        const ret = await installAliasedPackage({
             pkgId,
             manifest: {
                 name: kps.value,
@@ -224,7 +224,7 @@ export async function installPackage(
 
     const kps = parseKps(platform);
     if (!isKbiScope(platform)) {
-        const ret = installAliasedPackage({
+        const ret = await installAliasedPackage({
             kps,
             pkgId,
             manifest,

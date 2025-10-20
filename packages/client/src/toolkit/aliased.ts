@@ -19,6 +19,7 @@ import { installPkgMgr } from "./ipm";
 import { exists } from "./exists";
 import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "shared/types/author";
 import { isTpm, trustPackageManager } from "./tpm";
+import { logAction } from "shared/api/kdata";
 
 /** true if it IS up to date, false if it NEEDS to update */
 function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
@@ -36,12 +37,12 @@ function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
     return !out.some((line) => line.includes(scope.value));
 }
 
-export function installAliasedPackage(params: {
+export async function installAliasedPackage(params: {
     pkgId: KONBINI_ID_PKG;
     kps: KONBINI_PARSED_SCOPE;
     manifest: KONBINI_MANIFEST;
     method: "install" | "update" | "reinstall";
-}): "upToDate" | "no-op" | "needsPkgMgr" | "installedOrUpdated" {
+}): Promise<"upToDate" | "no-op" | "needsPkgMgr" | "installedOrUpdated"> {
     const { kps, manifest, pkgId, method } = params;
 
     // no-op
@@ -155,7 +156,23 @@ export function installAliasedPackage(params: {
         timestamp: new Date().toString(),
     };
     writeLockfile(lockfile, pkgId, manifest.author);
+    konsole.dbg("Lockfile written.");
     writeLaunchpadShortcut(pkgId, manifest.author, "", scope);
+
+    if (method === "install") {
+        const res = await logAction({
+            app: pkgId,
+            // TODO: support this somehow
+            version: "(unsupported)",
+            action: "download",
+        });
+        if (res.status == 429)
+            konsole.dbg(
+                "Uhh... You're using Konbini a bit too much. Your actions won't count towards download counts for a while (HTTP 429).",
+            );
+        else konsole.dbg("Telemetry data written.");
+    }
+
     return "installedOrUpdated";
 }
 
