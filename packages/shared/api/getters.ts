@@ -14,6 +14,7 @@ import { downloadHandler } from "./download.ts";
 import { locateUsr } from "./core.ts";
 import { parseKps } from "./manifest.ts";
 import { replace } from "@zakahacecosas/string-utils";
+import { validateAgainst } from "../../data/utils.ts";
 
 /** Given a package manifest and the desired KPS, returns the absolute URL to its downloadable file.
  *
@@ -64,7 +65,9 @@ export async function getPkgRemotes(
         throw `Undefined asset for the ${kps} scope.`;
     }
 
-    const sha = assets.find((a) => a.name === FILENAMES.hashfile);
+    const sha = assets.find((a) =>
+        validateAgainst(a.name, [FILENAMES.hashfile, "konbini.hash.yaml"]),
+    );
     if (!sha) {
         throw "The author of this package did NOT include a hashfile on the latest version of the package. Without a hashfile we cannot validate download integrity, so we did not install the package, for your safety. Please inform the Konbini team, or, preferably, the package author.";
     }
