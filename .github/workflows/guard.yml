@@ -65,4 +65,4 @@ jobs:
                   mkdir -p ./packages/data/.vercel
                   echo "{\"projectId\":\"$VERCEL_ID_PROJECT\",\"orgId\":\"$VERCEL_ID_ORG\",\"projectName\":\"konbini-data\"}" > ./packages/data/.vercel/project.json
                   cd ./packages/data
-                  vercel --prod --token $VERCEL_TOKEN --confirm
+                  vercel --prod --token $VERCEL_TOKEN --yes
