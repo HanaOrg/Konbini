@@ -72,7 +72,7 @@ export type PARSED_KPS =
           /** Value. Package ID for the non-Konbini host. */
           value: string;
           /** Command to be executed. */
-          cmd: string;
+          cmd: SUPPORTED_PKG_MGR_CMD;
           /** Name of the package manager this package is aliased to. */
           name: string;
       }
@@ -94,7 +94,7 @@ export type PARSED_SPECIFIC_KPS = {
     /** Value. Package ID for the non-Konbini host. */
     value: string;
     /** Command to be executed. */
-    cmd: string;
+    cmd: SUPPORTED_PKG_MGR_CMD;
     /** Name of the package manager this package is aliased to. */
     name: string;
     /** @source. */
@@ -491,3 +491,17 @@ export function parseRepositoryScope(scope: REPOSITORY_SCOPE): {
 
 /** Supported platforms. */
 export type SUPPORTED_PLATFORMS = "linux64" | "linuxArm" | "mac64" | "macArm" | "win64";
+
+export type SUPPORTED_PKG_MGR_CMD = (typeof managers)[number];
+
+const managers = [
+    "apt",
+    "nix-env",
+    "brew --cask",
+    "brew",
+    "winget",
+    "flatpak",
+    "snap",
+    "choco",
+    "scoop",
+] as const;

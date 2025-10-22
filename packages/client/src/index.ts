@@ -86,7 +86,9 @@ async function main() {
             await installPackage(subcommand);
             break;
         case "list":
-            const len = listPackages(subcommand === "-v" ? "VERBOSE" : "STANDARD");
+            const len = listPackages(
+                validateAgainst(subcommand, ["-v", "--verbose"]) ? "VERBOSE" : "STANDARD",
+            );
             if (len.length > 0)
                 konsole.adv(
                     "Totalling",

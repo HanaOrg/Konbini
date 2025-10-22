@@ -8,6 +8,7 @@ import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { parseKps } from "shared/api/manifest";
 import { isKbiScope } from "../../../shared/types/manifest";
 import { parseID } from "shared/api/core";
+import type { KONBINI_ID_PKG } from "shared/types/author";
 
 function findLockFiles(dir: string, filename: string = FILENAMES.lockfile): string[] {
     const results: string[] = [];
@@ -44,7 +45,10 @@ export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTE
 
     for (const lockfile of lockfiles) {
         try {
-            const exists = packageExists(lockfile.scope, parseID(lockfile.pkg_id).user_id);
+            const user_id = lockfile.pkg_id.startsWith("kbi.grabbed")
+                ? (lockfile.pkg_id.split(".").slice(2).join(".") as KONBINI_ID_PKG)
+                : parseID(lockfile.pkg_id).user_id;
+            const exists = packageExists(lockfile.scope, user_id);
             // @ts-expect-error "KPAK" is a valid scope but it's not properly typed...
             if (!exists && lockfile.scope !== "KPAK") {
                 konsole.dbg(
@@ -56,7 +60,8 @@ export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTE
             } else {
                 pkgsToList.push(lockfile);
             }
-        } catch {
+        } catch (error) {
+            konsole.dbg("Failed to list an item because of error:", error);
             continue;
         }
     }
@@ -70,8 +75,11 @@ export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTE
 
     for (const pkg of pkgsToList) {
         const stuff = [
-            pkg.pkg_id,
-            konsole.clr("grey", "from"),
+            pkg.pkg_id.replace("kbi.grabbed.", ""),
+            konsole.clr(
+                "grey",
+                pkg.pkg_id.startsWith("kbi.grabbed.") ? "grabbed from" : "installed from",
+            ),
             konsole.clr(
                 "cyan",
                 (pkg.scope as any) === "KPAK" ? "a local Konpak" : parseKps(pkg.scope).name,
@@ -88,6 +96,11 @@ export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTE
             );
         }
         konsole.suc(...stuff);
+        if (pkg.pkg_id.startsWith("kbi.grabbed.")) {
+            konsole.war(
+                `The above [${pkg.pkg_id}] is a grabbed package.\nShown package ID is the one from the store it comes from, not a Konbini one.`,
+            );
+        }
         if (verbosity === "VERBOSE") {
             konsole.adv("PATH", konsole.clr("brown", pkg.path));
             konsole.adv(

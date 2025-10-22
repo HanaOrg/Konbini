@@ -38,7 +38,7 @@ function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
 }
 
 export async function installAliasedPackage(params: {
-    pkgId: KONBINI_ID_PKG | `kbi.grabbed.${KONBINI_PKG_SCOPE}`;
+    pkgId: KONBINI_ID_PKG | `kbi.grabbed.${string}`;
     kps: KONBINI_PARSED_SCOPE;
     manifest: KONBINI_MANIFEST;
     method: "install" | "update" | "reinstall";

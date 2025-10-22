@@ -39,20 +39,31 @@ export const ALIASED_CMDs: Record<
     },
 
     "brew": {
-        install: (pkg) => `brew install ${pkg}`,
-        reinstall: (pkg) => `brew reinstall ${pkg}`,
-        update: (pkg) => `brew upgrade ${pkg}`,
-        exists: (pkg) => `brew list --formula | grep -w ${pkg}`,
-        uninstall: (pkg) => `brew uninstall ${pkg}`,
-        check: (_) => "brew outdated",
+        install: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew install ${pkg}'`,
+        reinstall: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew reinstall ${pkg}'`,
+        update: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew upgrade ${pkg}'`,
+        exists: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew list --formula | grep -w ${pkg}'`,
+        uninstall: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew uninstall ${pkg}'`,
+        check: (_) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew outdated'`,
     },
 
     "brew-k": {
-        install: (pkg) => `brew install --cask ${pkg}`,
-        reinstall: (pkg) => `brew reinstall --cask ${pkg}`,
-        update: (pkg) => `brew upgrade --cask ${pkg}`,
-        exists: (pkg) => `brew list --cask | grep -w ${pkg}`,
-        uninstall: (pkg) => `brew uninstall --cask ${pkg}`,
+        install: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" brew install && --cask ${pkg}'`,
+        reinstall: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew reinstall --cask ${pkg}'`,
+        update: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew upgrade --cask ${pkg}'`,
+        exists: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew list --cask | grep -w ${pkg}'`,
+        uninstall: (pkg) =>
+            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew uninstall --cask ${pkg}'`,
         check: (_) => "brew outdated",
     },
 

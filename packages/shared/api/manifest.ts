@@ -3,6 +3,7 @@ import {
     type KONBINI_PKG_SCOPE,
     type PARSED_KPS,
     type PARSED_SPECIFIC_KPS,
+    type SUPPORTED_PKG_MGR_CMD,
     isSpecificParsedKps,
     KPS_SOURCES,
 } from "../types/manifest.ts";
@@ -23,7 +24,7 @@ export function parseKps(scope: UnknownString): PARSED_KPS | PARSED_SPECIFIC_KPS
     if (!validateAgainst(src, KPS_SOURCES)) {
         throw `Invalid KPS (prefix does not match specification): ${scope}`;
     }
-    const cmd =
+    const cmd: SUPPORTED_PKG_MGR_CMD =
         src === "apt"
             ? "apt"
             : src === "nix"

@@ -10,7 +10,7 @@ import { isKbiLockfile, type KONBINI_HASHFILE, type KONBINI_LOCKFILE } from "sha
 import { getPkgManifest } from "shared/api/core";
 import { downloadHandler } from "shared/api/download";
 import { getPkgRemotes, getUsrSignature } from "shared/api/getters";
-import { constructKps, parseKps } from "shared/api/manifest";
+import { parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import { FILENAMES } from "shared/constants";
 import { assertIntegritySHA, assertIntegrityPGP } from "shared/security";
@@ -169,7 +169,7 @@ export async function installPackage(
             "Be advised that grabbed packages aren't properly configured and may not correctly install.",
         );
         konsole.war("Proceeding...");
-        const id = `kbi.grabbed.${constructKps(kps)}` as const;
+        const id = `kbi.grabbed.${kps.value}` as const;
         const ret = await installAliasedPackage({
             pkgId: id,
             manifest: {
