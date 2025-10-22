@@ -4,7 +4,7 @@
     "": {
       "name": "konbini",
       "dependencies": {
-        "vercel": "^48.2.9",
+        "vercel": "^48.4.0",
       },
       "devDependencies": {
         "eslint": "^9.37.0",
