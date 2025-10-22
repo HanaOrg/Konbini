@@ -139,8 +139,12 @@ describe("validates and handles IDs", () => {
         expect(() => locatePkg("a")).toThrow("Invalid author/package ID length");
         expect(() => locatePkg("a.b")).toThrow("Invalid author/package ID prefix");
         expect(() => locatePkg(".b")).toThrow("Invalid author/package ID prefix");
-        expect(() => locatePkg("usr.")).toThrow("Invalid author/package ID, no 2nd part (checking usr.).");
-        expect(() => locatePkg("usr.b")).toThrow("Invalid author/package ID, delimiter too short (checking usr.b).");
+        expect(() => locatePkg("usr.")).toThrow(
+            "Invalid author/package ID, no 2nd part (checking usr.).",
+        );
+        expect(() => locatePkg("usr.b")).toThrow(
+            "Invalid author/package ID, delimiter too short (checking usr.b).",
+        );
         expect(() => locatePkg("usr.bbb")).toThrow("No package provided for supposedly package ID");
         expect(locatePkg("org.hana.zaiko")).toEqual({
             manifest: "https://konbini-data.vercel.app/api/pkg?id=org.hana.zaiko",
@@ -152,8 +156,12 @@ describe("validates and handles IDs", () => {
         expect(() => locateUsr("a")).toThrow("Invalid author/package ID length");
         expect(() => locateUsr("a.b")).toThrow("Invalid author/package ID prefix");
         expect(() => locateUsr(".b")).toThrow("Invalid author/package ID prefix");
-        expect(() => locateUsr("usr.")).toThrow("Invalid author/package ID, no 2nd part (checking usr.).");
-        expect(() => locateUsr("usr.b")).toThrow("Invalid author/package ID, delimiter too short (checking usr.b).");
+        expect(() => locateUsr("usr.")).toThrow(
+            "Invalid author/package ID, no 2nd part (checking usr.).",
+        );
+        expect(() => locateUsr("usr.b")).toThrow(
+            "Invalid author/package ID, delimiter too short (checking usr.b).",
+        );
         expect(locateUsr("org.hana")).toEqual({
             manifest: "https://konbini-data.vercel.app/api/author?id=org.hana",
             manifestPub: "https://github.com/HanaOrg/KonbiniAuthors/blob/main/org/ha/hana.yaml",

@@ -1,11 +1,11 @@
 import { validateAgainst } from "@zakahacecosas/string-utils";
-import { spawnSync } from "child_process";
+import { execSync } from "child_process";
 import { readFileSync } from "fs";
 import type { KPS_SOURCE } from "shared/types/manifest";
 import { runElevatedScript } from "../../../konpak/src/integrate";
 
 const e = (arg: string) =>
-    spawnSync(arg, {
+    execSync(arg, {
         stdio: "inherit",
     });
 
@@ -23,6 +23,8 @@ export function installPkgMgr(mgr: KPS_SOURCE): "noop" | "edge" | "success" {
             e(
                 'bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
             );
+            e("echo >> ~/.bashrc");
+            e(`echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc`);
             return "success";
         } else if (mgr === "snap") {
             // hell

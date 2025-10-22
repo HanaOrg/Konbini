@@ -29,8 +29,9 @@ export const ALIASED_CMDs: Record<
     },
 
     "snap": {
-        install: (pkg) => `sudo snap install ${pkg}`,
-        reinstall: (pkg) => `sudo snap remove ${pkg} && sudo snap install ${pkg}`,
+        // TODO: allow disabling classic snaps
+        install: (pkg) => `sudo snap install ${pkg} --classic`,
+        reinstall: (pkg) => `sudo snap remove ${pkg} && sudo snap install ${pkg} --classic`,
         update: (pkg) => `sudo snap refresh ${pkg}`,
         exists: (pkg) => `snap list | grep -w ${pkg}`,
         uninstall: (pkg) => `sudo snap remove ${pkg}`,

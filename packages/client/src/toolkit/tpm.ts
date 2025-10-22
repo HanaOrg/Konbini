@@ -5,12 +5,12 @@ import { CFG_DIR } from "shared/client";
 
 export function getTpmList(): Partial<Record<KPS_SOURCE, boolean>> {
     const defaultTpmList: Record<KPS_SOURCE, boolean> = {
+        "kbi": true,
         "apt": false,
         "brew-k": false,
         "cho": false,
         "brew": false,
         "fpak": false,
-        "kbi": true,
         "nix": false,
         "scp": false,
         "snap": false,

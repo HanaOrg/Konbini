@@ -25,7 +25,6 @@ import { parseArgs } from "util";
 import { Unpack } from "../../konpak/src/unpack";
 import { parseID } from "shared/api/core";
 import { ensureSecurity } from "./commands/secure";
-import type { KONBINI_ID_PKG } from "shared/types/author";
 import { selfUpdate } from "./commands/self-update";
 import { getTpmList, trustPackageManager, untrustPackageManager } from "./toolkit/tpm";
 import { isKpsSource } from "shared/types/manifest";
@@ -173,7 +172,7 @@ async function main() {
                             ([mgr, trusted]) =>
                                 `${mgr}: ${
                                     mgr === "kbi"
-                                        ? konsole.clr("purple", "ALWAYS TRUSTED")
+                                        ? konsole.clr("magenta", "ALWAYS TRUSTED")
                                         : trusted
                                           ? konsole.clr("lightgreen", "TRUSTED")
                                           : konsole.clr("red", "UNTRUSTED")

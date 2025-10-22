@@ -69,24 +69,39 @@ export async function installAliasedPackage(params: {
         }
     }
 
-    try {
-        exists(kps.cmd);
-    } catch {
+    if (!exists(kps.cmd)) {
         konsole.err(
             `This package requires "${kps.name}", a 3rd party package manager that is not installed on your system.`,
         );
+        // this is a temp fix
+        // TODO: fix it instead so WE run the thing without sudo
+        // so that the user always uses sudo
+        // bc otherwise we get EACCESS when trying to do other stuff
+        if (kps.src === "brew" || kps.src === "brew-k") {
+            konsole.dbg(
+                "if brew is installed, you're running with sudo, and this appears, try again without sudo, it might work that way",
+            );
+        }
         if (kps.src === "fpak") return "needsPkgMgr";
         konsole.war(
-            "We may attempt to install it for you. Keep in mind this is not really recommended and somewhat error prone.",
+            "We can attempt to install it for you, to make your life easier.\nKeep in mind this is not 100% stable and somewhat error prone.\nPlus, what we do is bringing here the installer, so you might still need to input some stuff yourself.",
         );
         const install = konsole.ask("Should we try to?");
-        if (install) {
-            try {
-                const out = installPkgMgr(kps.src);
-                if (out === "edge") throw `Edge case: Shouldn't ${kps.name} be preinstalled?`;
-            } catch (error) {
-                throw `Error installing ${kps.name}`;
-            }
+        if (!install) {
+            konsole.war(
+                "OK. Install it yourself, then. Thanks to Konbini that'll likely be the only time you have touch it ;).",
+            );
+            process.exit(1);
+        }
+        try {
+            const out = installPkgMgr(kps.src);
+            if (out === "edge") throw `Edge case: Shouldn't ${kps.name} be preinstalled?`;
+            konsole.suc(
+                "Installed. Now restart your terminal, then re-run 'kbi install' and it should work!",
+            );
+            process.exit(0);
+        } catch (error) {
+            throw `Error installing ${kps.name}`;
         }
     }
 
