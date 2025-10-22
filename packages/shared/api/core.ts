@@ -23,14 +23,14 @@ export function parseID(str: string): {
     // split scope
     const scopes = normalizer(str).split(".");
     if (scopes.length !== 2 && scopes.length !== 3)
-        throw `Invalid author/package ID length (${scopes.length} && ${scopes})`;
+        throw `Invalid author/package ID length (checking ${str})`;
     if (!validateAgainst(scopes[0], ["usr", "org"]))
-        throw `Invalid author/package ID prefix (${scopes})`;
-    if (!scopes[1]) throw `No 2nd part of author/package ID (${scopes}).`;
+        throw `Invalid author/package ID prefix (checking ${str}).`;
+    if (!scopes[1]) throw `No 2nd part of author/package ID (checking ${str}).`;
     // get the two 1st letters to locate its directory
     const delimiter = (scopes[2] ?? scopes[1]).slice(0, 2);
     // (can't be too long, we sliced it lol)
-    if (delimiter.length !== 2) throw "Delimiter too short.";
+    if (delimiter.length !== 2) throw `Delimiter too short (checking ${str}).`;
     return {
         pref: scopes[0],
         delimiter,
