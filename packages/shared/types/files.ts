@@ -3,7 +3,7 @@ import type { KONBINI_PKG_SCOPE } from "./manifest.ts";
 
 interface KONBINI_ALI_LOCKFILE {
     /** Package name. */
-    pkg_id: KONBINI_ID_PKG;
+    pkg_id: KONBINI_ID_PKG | `kbi.grabbed.${KONBINI_PKG_SCOPE}`;
     /** Exact timestamp of the installation. */
     timestamp: string;
     /** Package scope. */

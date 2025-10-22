@@ -27,6 +27,8 @@ import type {
 } from "shared/types/kdata";
 import { parseKAChangelog } from "shared/changelog";
 
+const PKG_FILENAME_SEPARATOR = "__-__";
+
 function log(...a: any[]): void {
     console.log(...a);
 }
@@ -58,8 +60,8 @@ function logBlock(title: string) {
 function buildFilenames(scope: KONBINI_PKG_SCOPE, id: KONBINI_ID_PKG, version: string, os: string) {
     const n = (s: string) => normalize(s, { preserveCase: true });
     const { value } = parseKps(scope);
-    const base = `./build/${id}_${n(version)}`;
-    const core = `${base}_${os}_${value}`;
+    const base = `./build/${id}${PKG_FILENAME_SEPARATOR}${n(version)}`;
+    const core = `${base}${PKG_FILENAME_SEPARATOR}${os}${PKG_FILENAME_SEPARATOR}${value}`;
     return {
         base,
         core,
@@ -132,7 +134,7 @@ async function scanFiles() {
         )
             continue;
         log("[???]", file);
-        const [pkg, ver, plat] = file.replace("build/", "").split("_") as [
+        const [pkg, ver, plat] = file.split("/")[2]?.split(PKG_FILENAME_SEPARATOR) as [
             string,
             string,
             keyof KONBINI_HASHFILE,
@@ -141,7 +143,7 @@ async function scanFiles() {
         const user = pkg.split(".").slice(0, 2).join(".");
         const userAscPath = "build/" + user + ".asc";
         const pkgHashfile = yamlParse(
-            readFileSync("build/" + pkg + "_" + ver + ".hash.yaml", "utf-8"),
+            readFileSync("build/" + pkg + PKG_FILENAME_SEPARATOR + ver + ".hash.yaml", "utf-8"),
         ) as KONBINI_HASHFILE;
         const resString = result.toString();
         console.debug(`[DBG] RES FOR sudo clamscan --stdout --quiet ${file}\n${resString}`);
@@ -194,9 +196,6 @@ async function main() {
     logSection(`Fetched all manifests [${manifests.length} PKGS | ${authors.length} AUTHORS]`);
 
     const date = new Date();
-
-    /* logSection("Updating ClamAV database");
-    execSync("freshclam --datadir=/tmp/clamav --stdout --quiet"); */
 
     logSection("Clearing guard.txt");
     writeFileSync("./guard.txt", `コンビニ | KGuard ${date} | Keeping Konbini safe\n`);
@@ -345,14 +344,15 @@ async function main() {
             file.name.includes("win64");
         if (isBinary) {
             log("Storing", file.name, "release size");
-            if (!kdata[pkg.split("_")[0]! as KONBINI_ID_PKG]) {
-                kdata[pkg.split("_")[0]! as KONBINI_ID_PKG] = {} as any;
+            if (!kdata[pkg.split(PKG_FILENAME_SEPARATOR)[0]! as KONBINI_ID_PKG]) {
+                kdata[pkg.split(PKG_FILENAME_SEPARATOR)[0]! as KONBINI_ID_PKG] = {} as any;
             }
-            if (!kdata[pkg.split("_")[0]! as KONBINI_ID_PKG]!["filesizes"]) {
-                kdata[pkg.split("_")[0]! as KONBINI_ID_PKG]!["filesizes"] = {} as any;
+            if (!kdata[pkg.split(PKG_FILENAME_SEPARATOR)[0]! as KONBINI_ID_PKG]!["filesizes"]) {
+                kdata[pkg.split(PKG_FILENAME_SEPARATOR)[0]! as KONBINI_ID_PKG]!["filesizes"] =
+                    {} as any;
             }
-            kdata[pkg.split("_")[0]! as KONBINI_ID_PKG]!["filesizes"][
-                path.split("_")[2]! as SUPPORTED_PLATFORMS
+            kdata[pkg.split(PKG_FILENAME_SEPARATOR)[0]! as KONBINI_ID_PKG]!["filesizes"][
+                path.split(PKG_FILENAME_SEPARATOR)[2]! as SUPPORTED_PLATFORMS
             ] = statSync(path).size;
             continue;
         }

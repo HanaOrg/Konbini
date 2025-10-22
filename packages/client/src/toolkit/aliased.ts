@@ -38,7 +38,7 @@ function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
 }
 
 export async function installAliasedPackage(params: {
-    pkgId: KONBINI_ID_PKG;
+    pkgId: KONBINI_ID_PKG | `kbi.grabbed.${KONBINI_PKG_SCOPE}`;
     kps: KONBINI_PARSED_SCOPE;
     manifest: KONBINI_MANIFEST;
     method: "install" | "update" | "reinstall";
@@ -157,7 +157,8 @@ export async function installAliasedPackage(params: {
     };
     writeLockfile(lockfile, pkgId, manifest.author);
     konsole.dbg("Lockfile written.");
-    writeLaunchpadShortcut(pkgId, manifest.author, "", scope);
+    if (!pkgId.startsWith("kbi."))
+        writeLaunchpadShortcut(pkgId as KONBINI_ID_PKG, manifest.author, "", scope);
 
     if (method === "install") {
         const res = await logAction({

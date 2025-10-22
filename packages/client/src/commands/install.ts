@@ -10,13 +10,13 @@ import { isKbiLockfile, type KONBINI_HASHFILE, type KONBINI_LOCKFILE } from "sha
 import { getPkgManifest } from "shared/api/core";
 import { downloadHandler } from "shared/api/download";
 import { getPkgRemotes, getUsrSignature } from "shared/api/getters";
-import { parseKps } from "shared/api/manifest";
+import { constructKps, parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import { FILENAMES } from "shared/constants";
 import { assertIntegritySHA, assertIntegrityPGP } from "shared/security";
 import { Unpack } from "../../../konpak/src/unpack";
 import { logAction, scanPackage } from "shared/api/kdata";
-import type { KONBINI_ID_PKG } from "shared/types/author";
+import { isPkgId } from "shared/types/author";
 
 async function assertSafety(
     pkgDir: string,
@@ -155,7 +155,7 @@ async function downloadSafetyRelatedFiles(params: {
 }
 
 export async function installPackage(
-    pkgId: KONBINI_ID_PKG,
+    pkgId: string,
     method: "install" | "update" | "reinstall" = "install",
 ) {
     if (pkgId.includes(":")) {
@@ -169,12 +169,13 @@ export async function installPackage(
             "Be advised that grabbed packages aren't properly configured and may not correctly install.",
         );
         konsole.war("Proceeding...");
+        const id = `kbi.grabbed.${constructKps(kps)}` as const;
         const ret = await installAliasedPackage({
-            pkgId,
+            pkgId: id,
             manifest: {
                 name: kps.value,
                 // idk man this needs a value in order not to fail
-                author: "kbi.grabbed",
+                author: id,
             } as any as KONBINI_MANIFEST,
             kps,
             method,
@@ -185,6 +186,7 @@ export async function installPackage(
         if (ret === "installedOrUpdated") konsole.suc(`Grabbed ${kps.value} successfully!`);
         return;
     }
+    if (!isPkgId(pkgId)) throw `Invalid package ID ${pkgId}.`;
 
     const platformName = getPlatform();
     const manifest = await getPkgManifest(pkgId);

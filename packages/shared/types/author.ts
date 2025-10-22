@@ -79,6 +79,17 @@ export function isAuthorId(id: any): id is KONBINI_ID_USR {
     );
 }
 
+/** Validates the given Konbini package ID. */
+export function isPkgId(id: any): id is KONBINI_ID_PKG {
+    return (
+        validate(id) &&
+        (id.startsWith("org.") || id.startsWith("usr.")) &&
+        validate(id.split(".")[1]) &&
+        validate(id.split(".")[2]) &&
+        id.split(".").length === 3
+    );
+}
+
 /** If true, given author is an `ORGANIZATION`, else it is a `PERSON`. */
 export function isOrganization(author: KONBINI_AUTHOR): author is ORGANIZATION {
     return validateAgainst((author as ORGANIZATION).type, [

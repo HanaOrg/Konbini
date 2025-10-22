@@ -84,12 +84,7 @@ async function main() {
                 await selfUpdate();
                 break;
             }
-            try {
-                parseID(subcommand);
-            } catch {
-                throw `Invalid package ID ${subcommand}`;
-            }
-            await installPackage(subcommand as KONBINI_ID_PKG);
+            await installPackage(subcommand);
             break;
         case "list":
             const len = listPackages(subcommand === "-v" ? "VERBOSE" : "STANDARD");
