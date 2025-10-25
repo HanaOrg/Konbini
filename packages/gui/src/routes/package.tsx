@@ -99,6 +99,22 @@ export default function PackagePage() {
         accentPage(app.accent);
     }, []);
 
+    const [accent, setAccent] = useState(document.documentElement.style.getPropertyValue("--k"));
+
+    useEffect(() => {
+        const update = () => {
+            const val = document.documentElement.style.getPropertyValue("--k").trim();
+            setAccent(val);
+        };
+
+        update();
+
+        const obs = new MutationObserver(update);
+        obs.observe(document.documentElement, { attributes: true, attributeFilter: ["style"] });
+
+        return () => obs.disconnect();
+    }, []);
+
     const isSupported = app.platforms
         ? (plat.plat == "Windows" && app.platforms.win64) ||
           (plat.plat == "macOS" && plat.arch == "64" && app.platforms.mac64) ||
@@ -133,7 +149,15 @@ export default function PackagePage() {
             <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.7] absolute top-[650px] left-[-150px] z-[-1]" />
             <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.4] absolute bottom-[50px] right-[-300px] z-[-1]" />
             <Nav />
-            <InstallDialog appName={app.name} appId={route} />
+            <InstallDialog
+                appName={app.name}
+                appId={route}
+                supported={
+                    typeof isSupported === "string" ||
+                    typeof isPossiblySupported === "string" ||
+                    false
+                }
+            />
             <div className="app-main-cont">
                 <div className="flex flex-row">
                     {app.icon && (
@@ -159,13 +183,8 @@ export default function PackagePage() {
                                 </a>
                             </Badge>
                             {author.verified && (
-                                <Badge
-                                    color="var(--k)"
-                                    text={getContrastingTextColor(
-                                        document.documentElement.style.getPropertyValue("--k"),
-                                    )}
-                                >
-                                    Verified developer
+                                <Badge color="var(--k)" text={getContrastingTextColor(accent)}>
+                                    [√] Verified
                                 </Badge>
                             )}
                         </div>
@@ -202,13 +221,9 @@ export default function PackagePage() {
                     <div className="ml-auto h-fit text-xl flex flex-col items-end gap-2">
                         <button
                             onClick={() => {
-                                const m = document.querySelector("#install_dialog");
+                                const m = document.getElementById("install_dialog");
                                 if (!m) {
                                     console.error("No modal rendered?");
-                                    return;
-                                }
-                                if (!isSupported && !isPossiblySupported) {
-                                    console.warn("Unsupported");
                                     return;
                                 }
                                 (m as HTMLDialogElement).showModal();
@@ -219,11 +234,7 @@ export default function PackagePage() {
                             style={{
                                 color:
                                     isSupported || isPossiblySupported
-                                        ? getContrastingTextColor(
-                                              document.documentElement.style.getPropertyValue(
-                                                  "--k",
-                                              ),
-                                          )
+                                        ? getContrastingTextColor(accent)
                                         : undefined,
                             }}
                         >

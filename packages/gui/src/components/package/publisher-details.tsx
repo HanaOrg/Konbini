@@ -5,6 +5,7 @@ import Detail from "../detail";
 import { locateUsr } from "shared/api/core";
 import type { KDATA_FILE_PKG } from "shared/types/kdata";
 import { getContrastingTextColor } from "../../colors";
+import { useEffect, useState } from "preact/hooks";
 
 export default function PublisherDetails({
     authorId,
@@ -15,6 +16,7 @@ export default function PublisherDetails({
     usr: KONBINI_AUTHOR;
     apps: null | KDATA_FILE_PKG;
 }) {
+    const [accent, setAccent] = useState(document.documentElement.style.getPropertyValue("--k"));
     const manifestUrl = locateUsr(authorId).manifestPub;
 
     const org = isOrganization(usr);
@@ -30,14 +32,26 @@ export default function PublisherDetails({
                   : "an organization"
         : "a regular user";
 
+    useEffect(() => {
+        const update = () => {
+            const val = document.documentElement.style.getPropertyValue("--k").trim();
+            setAccent(val);
+        };
+
+        update();
+
+        const obs = new MutationObserver(update);
+        obs.observe(document.documentElement, { attributes: true, attributeFilter: ["style"] });
+
+        return () => obs.disconnect();
+    }, []);
+
     return (
         <>
             <h2 className="mt-12 text-3xl text-white font-semibold">Publisher details</h2>
             <p>
                 This is {orgStr}.
-                {apps !== null ? (
-                    ""
-                ) : (
+                {apps && (
                     <>
                         {" "}
                         See more details and other apps from them{" "}
@@ -48,12 +62,7 @@ export default function PublisherDetails({
             <div className="flex flex-row gap-1 mt-2 mb-1">
                 <Badge color="#ffffff3a">{usr.name}</Badge>
                 {usr.verified && (
-                    <Badge
-                        color="var(--k)"
-                        text={getContrastingTextColor(
-                            document.documentElement.style.getPropertyValue("--k"),
-                        )}
-                    >
+                    <Badge color="var(--k)" text={getContrastingTextColor(accent)}>
                         This {orgStr === "a regular user" ? "user" : "organization"} is verified
                     </Badge>
                 )}
@@ -79,9 +88,13 @@ export default function PublisherDetails({
                 <>
                     <p>Follow them</p>
                     <div className="flex flex-row gap-1 mt-2 mb-1">
-                        {Object.entries(usr.socials!).map((e) => (
+                        {Object.entries(usr.socials).map((e) => (
                             <a
-                                href={`https://${e[0]}.com/${e[1]}`}
+                                href={
+                                    e[0] === "bluesky"
+                                        ? `https://bsky.app/profile/${e[1]}`
+                                        : `https://${e[0]}.com/${e[1]}`
+                                }
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="py-2 px-4 bg-[#00000030] rounded-xl hover:bg-[#00000060]"

@@ -1,6 +1,14 @@
 import { getDesktopPlatform } from "../../ua";
 
-export default function InstallDialog({ appName, appId }: { appName: string; appId: string }) {
+export default function InstallDialog({
+    appName,
+    appId,
+    supported,
+}: {
+    appName: string;
+    appId: string;
+    supported: boolean;
+}) {
     return (
         <dialog
             id="install_dialog"
@@ -14,10 +22,15 @@ export default function InstallDialog({ appName, appId }: { appName: string; app
                     <h2 style={{ fontWeight: 600, color: "#fff", fontSize: "1.5em" }}>
                         from Konbini
                     </h2>
+                    {!supported && (
+                        <b className="text-yellow-300">
+                            This won't work as the package is unsupported on your platform.
+                        </b>
+                    )}
                 </div>
                 <button
                     onClick={() => {
-                        const m = document.querySelector("#install_dialog");
+                        const m = document.getElementById("install_dialog");
                         if (!m) {
                             console.error("No modal rendered?");
                             return;

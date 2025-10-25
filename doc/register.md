@@ -154,9 +154,9 @@ maintainers:
     - name: string
       # Optional email
       email: string
-# App icon to be displayed in the Konbini UI. Only WEBP and PNG over HTTPS are supported.
+# App icon to be displayed in the Konbini UI. Any image format is accepted (WEBP is recommended).
 icon: https://example.com/icon.webp
-# App screenshots to be displayed in the Konbini UI. Only WEBP and PNG over HTTPS are supported.
+# App screenshots to be displayed in the Konbini UI. Any image format is accepted (WEBP is recommended).
 images:
     - "https://example.com/image1.webp"
 # A category that represents the type of tool or software the app is meant to be.

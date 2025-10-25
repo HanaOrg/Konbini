@@ -73,10 +73,6 @@ export async function installAliasedPackage(params: {
         konsole.err(
             `This package requires "${kps.name}", a 3rd party package manager that is not installed on your system.`,
         );
-        // this is a temp fix
-        // TODO: fix it instead so WE run the thing without sudo
-        // so that the user always uses sudo
-        // bc otherwise we get EACCESS when trying to do other stuff
         if (kps.src === "brew" || kps.src === "brew-k") {
             konsole.dbg(
                 "if brew is installed, you're running with sudo, and this appears, try again without sudo, it might work that way",

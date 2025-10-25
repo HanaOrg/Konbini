@@ -3,7 +3,7 @@
 
 # error handling
 set -e
-set -u
+#set -u
 
 # constants
 PACKAGES_DIR="/usr/local/kbi/exe"
