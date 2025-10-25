@@ -14,7 +14,8 @@ import { removePackage } from "./toolkit/remove";
 import { learn } from "./commands/learn";
 import { showPkgInfo, showUserInfo } from "./commands/info";
 import { updatePackages } from "./commands/update";
-import { generateManifest } from "./commands/manifest-pkg";
+import { generatePkgManifest } from "./commands/manifest-pkg";
+import { generateUsrManifest } from "./commands/manifest-usr";
 import { about } from "./commands/about";
 import { validateAgainst } from "@zakahacecosas/string-utils";
 import { sign } from "./commands/sign";
@@ -64,7 +65,7 @@ async function main() {
                 "",
                 `> hash <file>            ${konsole.clr("grey", "// generates a Konbini compliant hash for the given file")}`,
                 `> sign <mode> [...]      ${konsole.clr("grey", "// works around PGP signatures, run it for more info")}`,
-                `> manifest               ${konsole.clr("grey", "// guides you and creates a manifest for a Konbini package")}`,
+                `> manifest <type>        ${konsole.clr("grey", "// helps you creating a manifest for a package / publisher profile")}`,
                 `> konpak <dir>           ${konsole.clr("grey", "// turns the specified directory into a Konpak")}`,
             ].join("\n"),
         );
@@ -144,7 +145,9 @@ async function main() {
             await sign(subcommand);
             break;
         case "manifest":
-            generateManifest();
+            if (subcommand === "usr") await generateUsrManifest();
+            else if (subcommand === "pkg") await generatePkgManifest();
+            else konsole.err("Invalid manifest type, either 'usr' or 'pkg'.");
             break;
         case "konpak":
             if (!subcommand)

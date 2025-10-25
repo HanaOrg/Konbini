@@ -102,7 +102,7 @@ async function downloadSafetyRelatedFiles(params: {
 }): Promise<{ shaHash: string }> {
     const { ascPath, ascRemote, shaPath, shaRemote } = params;
 
-    konsole.dbg(`Downloading GNU Privacy Guard signature first...`);
+    konsole.dbg("Downloading GNU Privacy Guard signature first...");
     try {
         await downloadHandler({
             remoteUrl: ascRemote,

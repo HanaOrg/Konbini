@@ -7,7 +7,7 @@ import { type KONBINI_PKG_SCOPE, isKps } from "shared/types/manifest";
 async function ask(q: string): Promise<string> {
     const rl = createInterface({ input, output });
 
-    const ans = await rl.question(konsole.clr("cyan", "[ ? ] " + q + " =>\n"));
+    const ans = await rl.question(konsole.clr("cyan", q + " =>\n"));
 
     rl.close();
 
@@ -19,7 +19,7 @@ export async function prompt(
     validator: (input: string) => boolean,
     error: string,
 ): Promise<string> {
-    let input = await ask(message);
+    let input = await ask("[ ? ] " + message);
     while (!validator(input)) {
         konsole.war(error);
         input = await ask(message);
@@ -29,10 +29,10 @@ export async function prompt(
 
 export async function promptScope(platform: string): Promise<KONBINI_PKG_SCOPE | null> {
     const input = await prompt(
-        `Scope for ${platform}. Hit enter without typing anything if your package isn't available on ${platform}.`,
+        `[ ? ] Scope for ${platform}. Hit enter without typing anything if your package isn't available on ${platform}.`,
         (val) => {
             if (!val) return true;
-            return isKps(input);
+            return isKps(val);
         },
         `Whoops, that doesn't look like a valid scope. Scopes follow the SRC:VAL format, read more on our documentation (<https://github.com/HanaOrg/Konbini/blob/main/doc/README.md>)`,
     );
@@ -50,10 +50,9 @@ export async function promptScope(platform: string): Promise<KONBINI_PKG_SCOPE |
 
 export async function promptBinary(message: string, y: string, n: string): Promise<boolean> {
     // no, i didn't forget about konsole.ask
-    // if used, it errors here because it conflicts with the interface
-    // we created in this file to prompt stuff
+    // if used, it errors here because it conflicts with the interface we created in this file to prompt stuff
     const val = await prompt(
-        message,
+        "[y/n] " + message,
         (val) => validate(val) && validateAgainst(val.toLowerCase(), ["y", "n"]),
         "Type 'y' (YES) or 'n' (NO), nothing else.",
     );
