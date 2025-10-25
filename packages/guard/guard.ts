@@ -69,6 +69,7 @@ function buildFilenames(scope: KONBINI_PKG_SCOPE, id: KONBINI_ID_PKG, version: s
 }
 
 async function fetchElement(url: string): Promise<Element[]> {
+    console.log("[<<<] fetching element", url);
     const res = await fetchAPI(url);
     if (!res.ok) throw `GitHub fetch failed: ${res.statusText}`;
     return (await res.json()) as Element[];
