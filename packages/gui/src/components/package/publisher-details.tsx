@@ -110,9 +110,9 @@ export default function PublisherDetails({
                     <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">
                         All apps from {usr.name}
                     </h2>
-                    <div className="flex flex-row gap-2 wrap">
+                    <div className="grid grid-cols-4 gap-2">
                         {Object.entries(apps).map(([id, app]) => (
-                            <Detail justify="start" className="flex-grow-1">
+                            <Detail key={id} justify="start" className="w-full">
                                 {app.icon && (
                                     <img
                                         src={app.icon}
