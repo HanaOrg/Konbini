@@ -19,8 +19,9 @@ export default function AppGrid({
             <div className="app-grid hide_on_no_results">
                 {Object.values(apps).map((app) => (
                     <a
+                        style={{ backgroundColor: app.accent ? app.accent + "10" : "#FFFFFF14" }}
                         href={`/package/${app.id}`}
-                        className="overflow-hidden hover:opacity-[0.9] active:scale-[0.95] active:opacity-[0.8] duration-100 rounded-xl bg-[#FFFFFF14] p-6 border-1 border-[#FFFFFF17] flex flex-col gap-2 relative"
+                        className={`overflow-hidden hover:opacity-[0.9] active:scale-[0.95] active:opacity-[0.8] duration-100 rounded-xl p-6 border-1 border-[#FFFFFF17] flex flex-col gap-2 relative`}
                     >
                         {app.icon && (
                             <img
