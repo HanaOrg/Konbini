@@ -51,6 +51,11 @@ export default function AppGrid({
                             {app.platforms.win64 && <IconWin />}
                             {(app.platforms.linux64 || app.platforms.linuxArm) && <IconTux />}
                             {(app.platforms.mac64 || app.platforms.macArm) && <IconMac />}
+                            <div className="ml-auto">
+                                <p className={"opacity-50"}>
+                                    {app.downloads.active} Konbini installs
+                                </p>
+                            </div>
                         </div>
                     </a>
                 ))}

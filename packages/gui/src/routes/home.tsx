@@ -12,8 +12,8 @@ export default function Home() {
 
     useEffect(() => {
         async function fetchApps() {
-            const popular = await getPkgs("d", 6);
-            const recent = await getPkgs("r", 6);
+            const popular = await getPkgs("d", 9);
+            const recent = await getPkgs("r", 9);
             setMostDownloadedApps(Object.values(popular));
             setMostRecentApps(Object.values(recent));
             setLoading(false);

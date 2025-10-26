@@ -21,6 +21,7 @@ import type { KDATA_ENTRY_PKG } from "shared/types/kdata";
 import DownloadChart from "../components/package/downloads";
 import InsecurePackage from "../components/insecure";
 import { getContrastingTextColor, accentPage } from "../colors";
+import { PiDownloadSimple } from "react-icons/pi";
 
 export default function PackagePage() {
     const [app, setApp] = useState<KDATA_ENTRY_PKG>();
@@ -169,7 +170,7 @@ export default function PackagePage() {
                     )}
                     <div className="flex flex-col w-fit min-w-[50%] gap-0">
                         <h1 className="grad">{app.name}</h1>
-                        <h2 className="text-xl text-white opacity-[0.8] mb-2 italic w-[60%]">
+                        <h2 className="text-xl text-white opacity-[0.8] mb-2 italic w-[70%]">
                             {app.slogan}
                         </h2>
                         <h2 className="text-lg text-white opacity-[0.5] mb-2">
@@ -238,6 +239,7 @@ export default function PackagePage() {
                                         : undefined,
                             }}
                         >
+                            <PiDownloadSimple />
                             Download
                         </button>
                         <div className="text-base text-end" style={{ color: supportColor }}>

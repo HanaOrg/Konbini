@@ -6,6 +6,7 @@ import { locateUsr } from "shared/api/core";
 import type { KDATA_FILE_PKG } from "shared/types/kdata";
 import { getContrastingTextColor } from "../../colors";
 import { useEffect, useState } from "preact/hooks";
+import { PiFileFill } from "react-icons/pi";
 
 export default function PublisherDetails({
     authorId,
@@ -75,7 +76,13 @@ export default function PublisherDetails({
                 )}
                 {usr.website && (
                     <Badge color="var(--k-dimmed)">
-                        <a href={`https://:${usr.website}`}>{usr.website}</a>
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={`https://${usr.website}`}
+                        >
+                            {usr.website}
+                        </a>
                     </Badge>
                 )}
                 {(org ? usr.hiring : usr.for_hire) ? (
@@ -132,18 +139,7 @@ export default function PublisherDetails({
                     </div>
                     <h2 className="mt-12 mb-4 text-3xl text-white font-semibold">Transparency</h2>
                     <Detail>
-                        <svg
-                            width="35"
-                            height="35"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M12 2v6a2 2 0 0 0 2 2h6v10a2 2 0 0 1-2 2h-6.81A6.5 6.5 0 0 0 4 11.498V4a2 2 0 0 1 2-2h6Zm1.5.5V8a.5.5 0 0 0 .5.5h5.5l-6-6ZM6.5 23a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11Zm-1.146-7.646a.5.5 0 0 0-.708-.708l-2.5 2.5a.5.5 0 0 0 0 .708l2.5 2.5a.5.5 0 0 0 .708-.708L3.207 17.5l2.147-2.146Zm2.292-.708a.5.5 0 0 0 0 .708L9.793 17.5l-2.147 2.146a.5.5 0 0 0 .708.708l2.5-2.5a.5.5 0 0 0 0-.708l-2.5-2.5a.5.5 0 0 0-.708 0Z"
-                                fill="#ffffff"
-                            />
-                        </svg>
+                        <PiFileFill size={35} />
                         <div className="flex flex-col">
                             <a href={manifestUrl} target="_blank" rel="noopener noreferrer">
                                 Author manifest
