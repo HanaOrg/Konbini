@@ -33,9 +33,6 @@ By default, Konpaks result in a file that only Konbini can extract. You will be 
 
 The non-SFX Konpak will be created before this prompt is shown, anyway. It uses the `.kpak` file extension.
 
-> [!WARNING]
-> While on Windows SFX Konpaks end with `.kpak.exe`, both SFX and non-SFX Konpaks end with `.kpak` on Linux. We'll figure this out later on.
-
 ## How it works
 
 Konpaks work like DEB files; they're an archive under the hood. ZIP archives, more precisely. A KPAK file is basically a ZIP file with a `KPAK` header prepended to the file.

@@ -1,6 +1,7 @@
 import { readFileSync, rmSync, writeFileSync } from "fs";
 import AdmZip from "adm-zip";
 import { extname } from "path";
+import { KPAK_INT_FILENAMES } from "..";
 
 export function Konpak(p: {
     appId: string;
@@ -31,9 +32,9 @@ export function Konpak(p: {
         Buffer.from(readFileSync(pathToIcon).buffer),
     );
 
-    arch.addFile("appPT" + platform, Buffer.from("never gonna give you up"));
-    arch.addFile("appID" + appId, Buffer.from("never gonna let you down"));
-    arch.addFile("appVR" + version, Buffer.from("never gonna run around and desert you"));
+    arch.addFile(KPAK_INT_FILENAMES.PT, Buffer.from(platform));
+    arch.addFile(KPAK_INT_FILENAMES.ID, Buffer.from(appId));
+    arch.addFile(KPAK_INT_FILENAMES.VR, Buffer.from(version));
 
     arch.writeZip(`./${appId}.kpak.zip`);
 

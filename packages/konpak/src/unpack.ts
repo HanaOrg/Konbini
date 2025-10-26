@@ -7,6 +7,7 @@ import { join } from "path";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { FILENAMES } from "shared/constants";
+import { KPAK_INT_FILENAMES } from "..";
 
 export function Unpack(filepath: Buffer): void;
 export function Unpack(filepath: string): void;
@@ -16,22 +17,21 @@ export function Unpack(filepath: string | Buffer): void {
     const bin = typeof filepath === "string" ? readFileSync(filepath) : filepath;
     const header = bin.subarray(0, 14).toString("ascii");
     if (header !== "KPAK__SIGNALER")
-        throw new Error(`Not a KPAK. Header '${header}' (ASCII) is not a proper signaler.`);
+        throw new Error(`Not a KPAK. Header '${header}' (ASCII)(0:14) is not a proper signaler.`);
     const buff = bin.subarray(14);
-    writeFileSync("./test-buff.zip", buff);
     const zip = new AdmZip(buff);
 
     const _manifest = zip.getEntry("manifest.yaml");
     if (!_manifest) throw new Error("Konpak lacks manifest!");
-    const _appId = zip.getEntries().find((e) => e.name.startsWith("appID"));
+    const _appId = zip.getEntries().find((e) => e.name.startsWith(KPAK_INT_FILENAMES.ID));
     if (!_appId) throw new Error("Konpak lacks app ID signaler file.");
-    const appId = _appId.name.replace("appID", "");
-    const _appPt = zip.getEntries().find((e) => e.name.startsWith("appPT"));
+    const appId = _appId.getData().toString("utf-8");
+    const _appPt = zip.getEntries().find((e) => e.name.startsWith(KPAK_INT_FILENAMES.PT));
     if (!_appPt) throw new Error("Konpak lacks platform signaler file.");
-    const platform = _appPt.name.replace("appPT", "");
-    const _appVr = zip.getEntries().find((e) => e.name.startsWith("appVR"));
+    const platform = _appPt.getData().toString("utf-8");
+    const _appVr = zip.getEntries().find((e) => e.name.startsWith(KPAK_INT_FILENAMES.VR));
     if (!_appVr) throw new Error("Konpak lacks version signaler file.");
-    const version = _appVr.name.replace("appVR", "");
+    const version = _appVr.getData().toString("utf-8");
 
     const manifest: KONBINI_MANIFEST = Bun.YAML.parse(_manifest.getData().toString("utf-8")) as any;
 
@@ -39,9 +39,9 @@ export function Unpack(filepath: string | Buffer): void {
 
     zip.extractAllTo(out, true);
 
-    rmSync(join(out, "appID" + appId));
-    rmSync(join(out, "appVR" + version));
-    rmSync(join(out, "appPT" + platform));
+    rmSync(join(out, KPAK_INT_FILENAMES.ID));
+    rmSync(join(out, KPAK_INT_FILENAMES.VR));
+    rmSync(join(out, KPAK_INT_FILENAMES.PT));
     const directPath = join(out, "d");
     for (const file of readdirSync(directPath)) {
         const src = join(directPath, file);

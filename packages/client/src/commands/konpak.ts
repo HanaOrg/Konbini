@@ -80,7 +80,7 @@ export async function konpakFromDir(
             return;
         }
         writeFileSync(
-            platform === "windows" ? path + ".exe" : path,
+            platform === "windows" ? path + ".exe" : path + ".bin",
             Buffer.concat([sfx, readFileSync(path)]),
         );
         konsole.suc(
