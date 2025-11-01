@@ -1,7 +1,7 @@
 import { readFileSync, rmSync, writeFileSync } from "fs";
 import AdmZip from "adm-zip";
 import { extname } from "path";
-import { KPAK_INT_FILENAMES } from "..";
+import { KPAK_INT_FILENAMES } from "../constants";
 
 export function Konpak(p: {
     appId: string;

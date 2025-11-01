@@ -57,20 +57,24 @@ remove_if_needed() {
 }
 
 setup_cronjob() {
+    echo "[ i ] Setting up CRONJOB"
     # TODO: macOS now prefers launchd over crontab
     # https://support.apple.com/guide/terminal/script-management-with-launchd-apdc6c1077b-5d5d-4d35-9c19-60f2397b2369/mac
 
     PREV_CJ=$(crontab -l)
     JOB="15 * * * * $PACKAGES_DIR/kbi ensure-security"
 
-    if [[ $PREV_CJ = *JOB* ]]; then
-        echo "CRONJOB seems to already exist (this is probably an update). Not modifying."
-        return;
+    if [[ $PREV_CJ == *"$JOB"* ]]; then
+        echo "CRONJOB seems to already exist (probably an update). Not modifying."
+        return
     fi
 
-    NEW_CJ="$PREV_CJ\n$JOB";
-
-    printf "%s\n%s\n" "$PREV_CJ" "$JOB" | crontab -
+    # TODO: fails if the user doesn't have a crontab
+    if [[ -z "$PREV_CJ" ]]; then
+        echo "$JOB" | crontab -
+    else
+        printf "%s\n%s\n" "$PREV_CJ" "$JOB" | crontab -
+    fi
 }
 
 # get url
@@ -79,6 +83,7 @@ get_latest_release_url() {
         grep -o '"browser_download_url": "[^"]*' |
         grep "$ARCH" |
         grep -v "\.asc" |
+        grep -v "\kpak" |
         sed 's/"browser_download_url": "//')
 
     if [ -z "$URL" ]; then
@@ -94,7 +99,7 @@ install_app() {
     echo "Fetching latest release for $ARCH from GitHub..."
     local url=$(get_latest_release_url)
     echo "Fetched successfully."
-    echo "Downloading..."
+    echo "Downloading from $url..."
     sudo mkdir -p "$PACKAGES_DIR"
     sudo curl -L "$url" -o "$PACKAGES_DIR/kbi"
     sudo chmod +x "$PACKAGES_DIR/kbi"
@@ -147,7 +152,7 @@ make_sudo_able() {
     echo "[ i ] Making this install sudo-able"
     sudo tee /usr/local/bin/kbi > /dev/null <<'EOF'
 #!/bin/bash
-/usr/local/kbi/exe "$@"
+/usr/local/kbi/exe/kbi "$@"
 EOF
     sudo chmod +x /usr/local/bin/kbi
 }

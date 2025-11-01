@@ -3,13 +3,15 @@ import { listPackages } from "./list";
 import { removePackage } from "../toolkit/remove";
 import { writeFileSync } from "fs";
 import { scanPackage } from "shared/api/kdata";
+import type { KONBINI_ID_PKG } from "shared/types/author";
 
 export async function ensureSecurity() {
     konsole.dbg("UPDATING SECURITY INFO");
     const pkgs = listPackages("SILENT").map((p) => p.pkg_id);
 
     for (const pkg of pkgs) {
-        const isSecure = await scanPackage(`${pkg}@0`);
+        if (pkg.startsWith("kbi.grabbed")) continue;
+        const isSecure = await scanPackage(`${pkg as KONBINI_ID_PKG}@0`);
 
         if (isSecure.every((e) => Object.values(e.results).every((val) => val === true))) {
             konsole.dbg("PACKAGE", pkg, "IS SECURE, NO ACTION TAKEN");

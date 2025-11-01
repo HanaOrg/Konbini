@@ -7,7 +7,7 @@ import { join } from "path";
 import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { FILENAMES } from "shared/constants";
-import { KPAK_INT_FILENAMES } from "..";
+import { KPAK_INT_FILENAMES } from "../constants";
 
 export function Unpack(filepath: Buffer): void;
 export function Unpack(filepath: string): void;
