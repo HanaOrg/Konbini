@@ -1,4 +1,3 @@
-
 /** ### Konpak internal filenames
  * A Konpak has binary files storing `PT` (platform), `VR` (package version), and `ID` (package ID in Konbini format).
  */

@@ -75,7 +75,7 @@ export async function installAliasedPackage(params: {
         );
         if (kps.src === "brew" || kps.src === "brew-k") {
             konsole.dbg(
-                "if brew is installed, you're running with sudo, and this appears, try again without sudo, it might work that way",
+                "If brew is installed, you're running with sudo, and this appears, try again without sudo, it might work that way.\nIf it works that way, report this as a bug.",
             );
         }
         if (kps.src === "fpak") return "needsPkgMgr";

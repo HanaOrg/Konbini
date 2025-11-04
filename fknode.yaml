@@ -14,3 +14,5 @@ flagless:
     flaglessLint: true
 buildCmd:
     - $bld:cli
+launchCmd:
+    - $;;run:web

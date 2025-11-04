@@ -24,19 +24,23 @@ export default function Home() {
     return (
         <>
             <Nav />
-            <div className="app-main-cont">
-                <div className="bg-[var(--k)] w-300 h-150 blur-[260px] opacity-[0.5] absolute top-[-250px] left-[-250px] z-[-1]" />
-                <h1 style={{ color: "#fff", opacity: 0.9, fontSize: "6em" }}>
-                    Your convenience store
+            <div className="app-main-cont" style={{ backgroundColor: "#121212" }}>
+                <h1 style={{ color: "#fff", fontSize: "3em" }}>
+                    Get some cool{" "}
+                    <div class="rotating-words">
+                        <span class="word">Flatpak</span>
+                        <span class="word">SnapCraft</span>
+                        <span class="word">Homebrew</span>
+                        <span class="word">DPKG</span>
+                        <span class="word">Nix</span>
+                        <span class="word">WinGet</span>
+                        <span class="word">Scoop</span>
+                        <span class="word">Chocolatey</span>
+                        <span class="word">Konbini</span>
+                    </div>{" "}
+                    apps
                 </h1>
-                <hr className="my-6" />
-                <div id="not_found" className="hidden">
-                    <h1>We couldn't find anything...</h1>
-                    <p>
-                        Sorry about that. Perhaps the package wasn't added yet to Konbini, or
-                        perhaps you're just too original.
-                    </p>
-                </div>
+                <hr className="my-4" />
                 {loading ? (
                     <h1>Loading, just one sec!</h1>
                 ) : (
@@ -53,6 +57,21 @@ export default function Home() {
                         />
                     </div>
                 )}
+                <hr className="my-4" />
+                <h2 style={{ fontSize: "3em" }}>
+                    <span>Konbini</span> is the universal package manager
+                </h2>
+                <p>
+                    <span>You're an app user?</span> Everyone is. Download and enjoy apps from
+                    Konbini packages, Konpaks, DPKG, Flatpak, Snap, Homebrew, Nix, and more places
+                    from a single, unified tool that deals with all package managers under the hood
+                    for you and gives you the best experience.
+                    <br />
+                    <br />
+                    <span>You're an app developer?</span> Get the best developer experience with the
+                    easiest publishing in the market thanks to repository releases, and give your
+                    package the nicest web homepage, even if not hosted with us.
+                </p>
             </div>
             <Footer />
         </>

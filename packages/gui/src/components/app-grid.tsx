@@ -14,14 +14,14 @@ export default function AppGrid({
 }) {
     return (
         <div className="flex flex-col">
-            <h2 className="text-3xl font-semibold text-white hide_on_no_results">{title}</h2>
-            <p className="mb-4 hide_on_no_results">{desc}</p>
-            <div className="app-grid hide_on_no_results">
+            <h2 className="text-3xl font-semibold text-white ">{title}</h2>
+            <p className="mb-4 ">{desc}</p>
+            <div className="app-grid">
                 {Object.values(apps).map((app) => (
                     <a
-                        style={{ backgroundColor: app.accent ? app.accent + "10" : "#FFFFFF14" }}
+                        style={{ backgroundColor: app.accent ? app.accent + "2F" : "#FFFFFF14" }}
                         href={`/package/${app.id}`}
-                        className={`overflow-hidden hover:opacity-[0.9] active:scale-[0.95] active:opacity-[0.8] duration-100 rounded-xl p-6 border-1 border-[#FFFFFF17] flex flex-col gap-2 relative`}
+                        className="overflow-hidden hover:opacity-[0.9] active:scale-[0.95] active:opacity-[0.8] duration-100 rounded-xl p-6 border-1 border-[#FFFFFF17] flex flex-col gap-2 relative"
                     >
                         {app.icon && (
                             <img

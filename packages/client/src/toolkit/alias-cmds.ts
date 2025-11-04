@@ -2,6 +2,9 @@ import type { KPS_SOURCE } from "shared/types/manifest";
 
 /** ... */
 const microsoft = "--accept-package-agreements --accept-source-agreements";
+/** ... */
+const brew = (s: string) =>
+    `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew ${s}'`;
 
 export const ALIASED_CMDs: Record<
     Exclude<KPS_SOURCE, "kbi">,
@@ -39,32 +42,21 @@ export const ALIASED_CMDs: Record<
     },
 
     "brew": {
-        install: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew install ${pkg}'`,
-        reinstall: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew reinstall ${pkg}'`,
-        update: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew upgrade ${pkg}'`,
-        exists: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew list --formula | grep -w ${pkg}'`,
-        uninstall: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew uninstall ${pkg}'`,
-        check: (_) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew outdated'`,
+        install: (pkg) => brew(`install ${pkg}`),
+        reinstall: (pkg) => brew(`reinstall ${pkg}`),
+        update: (pkg) => brew(`upgrade ${pkg}`),
+        exists: (pkg) => brew(`list --formula | grep -w ${pkg}`),
+        uninstall: (pkg) => brew(`uninstall ${pkg}`),
+        check: () => brew(`outdated`),
     },
 
     "brew-k": {
-        install: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" brew install && --cask ${pkg}'`,
-        reinstall: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew reinstall --cask ${pkg}'`,
-        update: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew upgrade --cask ${pkg}'`,
-        exists: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew list --cask | grep -w ${pkg}'`,
-        uninstall: (pkg) =>
-            `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew uninstall --cask ${pkg}'`,
-        check: (_) => "brew outdated",
+        install: (pkg) => brew(`install --cask ${pkg}`),
+        reinstall: (pkg) => brew(`reinstall --cask ${pkg}`),
+        update: (pkg) => brew(`upgrade --cask ${pkg}`),
+        exists: (pkg) => brew(`list --cask | grep -w ${pkg}`),
+        uninstall: (pkg) => brew(`uninstall --cask ${pkg}`),
+        check: () => brew(`outdated --cask`),
     },
 
     "wget": {

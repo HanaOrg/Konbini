@@ -460,3 +460,66 @@ dialog[open] {
 dialog {
     min-width: 40vw;
 }
+
+.rotating-words {
+    display: inline-block;
+    overflow: hidden;
+    height: 1.1em;
+    vertical-align: bottom;
+}
+
+.word {
+    display: block;
+    animation: slideUp 15s infinite;
+}
+
+@keyframes slideUp {
+    0%,
+    9% {
+        transform: translateY(0%);
+    }
+    11%,
+    20% {
+        transform: translateY(-100%);
+    }
+    22%,
+    31% {
+        transform: translateY(-200%);
+    }
+    33%,
+    42% {
+        transform: translateY(-300%);
+    }
+    44%,
+    53% {
+        transform: translateY(-400%);
+    }
+    55%,
+    64% {
+        transform: translateY(-500%);
+    }
+    66%,
+    75% {
+        transform: translateY(-600%);
+    }
+    77%,
+    86% {
+        transform: translateY(-700%);
+    }
+    88%,
+    97% {
+        transform: translateY(-800%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+span {
+    color: #c23282;
+}
+
+/* test */
+* {
+    border-radius: 0px !important;
+}
