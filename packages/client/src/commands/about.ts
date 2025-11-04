@@ -1,8 +1,8 @@
 import { konsole } from "shared/client";
 
 export function about() {
-    konsole.adv("COPYRIGHT (C) - The Hana Organization - 2025");
-    console.log("=".repeat(69));
+    const str = "COPYRIGHT (C) - The Hana Organization - 2025";
+    konsole.adv(str + "\n" + "=".repeat(str.length));
     konsole.que("What is Konbini?");
     konsole.suc(
         '"Your convenience store", which is, by the way, what "konbini" stands for in japanese.',
@@ -15,7 +15,7 @@ export function about() {
         '"The Hana Organization". It\'s just me working on it as a solo developer at the moment, tho.',
     );
     konsole.adv(
-        `Founded, developed, and maintained by ${konsole.clr("gray", "https://")}${konsole.clr("lime", "ZakaHaceCosas")}${konsole.clr("gray", ".github.io/")}.`,
+        `Founded, developed, and maintained by ${konsole.clr("gray", "https://")}${konsole.clr("lime", "zakahacecosas")}${konsole.clr("gray", ".github.io/")}.`,
     );
     konsole.adv(
         'A huge "thank you" to my friends @pico190, @MrSerge01 and @dimkauzh for helping me out.',

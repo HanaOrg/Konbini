@@ -3,30 +3,30 @@ import { join } from "path";
 import { homedir } from "os";
 import { getPlatform } from "./api/platform";
 
-const ROOT = getPlatform() === "win64" ? join(homedir(), "kbi") : "/usr/local/kbi";
+const ROOT = join(homedir(), ".kbi");
 
-/** Root folder where all Konbini packages are installed. It's global, thus requires `sudo` to be accessed.
- * @constant **\/usr/local/kbi/pkgs** OR **C:\\Users\\USER\\kbi\\pkgs**
+/** Root folder where all Konbini packages are installed.
+ * @constant **\/home/USER/.kbi/pkgs** OR **C:\\Users\\USER\\kbi\\pkgs**
  */
 export const PACKAGES_DIR = join(ROOT, "pkgs");
 
 /** Root folder where all Konbini packages are launched from.
- * @constant **\/usr/local/kbi/launchpad** OR **C:\\Users\\USER\\kbi\\launchpad**
+ * @constant **\/home/USER/.kbi/launchpad** OR **C:\\Users\\USER\\kbi\\launchpad**
  */
 export const LAUNCHPAD_DIR = join(ROOT, "launchpad");
 
 /** Root folder where all Konbini executables live.
- * @constant **\/usr/local/kbi/exe** OR **C:\\Users\\USER\\kbi\\exe**
+ * @constant **\/home/USER/.kbi/exe** OR **C:\\Users\\USER\\kbi\\exe**
  */
 export const INSTALLATION_DIR = join(ROOT, "exe");
 
 /** Root folder where all Konbini-generated PGP signatures live.
- * @constant **\/usr/local/kbi/pgp** OR **C:\\Users\\USER\\kbi\\pgp**
+ * @constant **\/home/USER/.kbi/pgp** OR **C:\\Users\\USER\\kbi\\pgp**
  */
 export const SIGNATURE_DIR = join(ROOT, "pgp");
 
 /** Root folder where all Konbini configurations live.
- * @constant **\/usr/local/kbi/cfg** OR **C:\\Users\\USER\\kbi\\cfg**
+ * @constant **\/home/USER/.kbi/cfg** OR **C:\\Users\\USER\\kbi\\cfg**
  */
 export const CFG_DIR = join(ROOT, "cfg");
 
@@ -34,7 +34,7 @@ export const CFG_DIR = join(ROOT, "cfg");
  * @example
  * ```ts
  * PKG_PATH({pkg: "foobar", author: "usr.foo"});
- * // returns "/usr/local/kbi/usr.foo/foobar"
+ * // returns "/home/USER/.kbi/usr.foo/foobar"
  * ```
  */
 export function PKG_PATH(p: { pkg: string; author: string }): string {
@@ -45,7 +45,7 @@ export function PKG_PATH(p: { pkg: string; author: string }): string {
  * @example
  * ```ts
  * PKG_PATH({pkg: author: "usr.foo"});
- * // returns "/usr/local/kbi/usr.foo"
+ * // returns "/home/USER/.kbi/usr.foo"
  * ```
  */
 export function USR_PATH(p: { author: string }): string {
@@ -56,7 +56,7 @@ export function USR_PATH(p: { author: string }): string {
  * @example
  * ```ts
  * LAUNCHPAD_DIR({pkg: "foobar", author: "usr.foo"});
- * // returns "/usr/local/kbi/launchpad/usr.foo/foobar.sh"
+ * // returns "/home/USER/.kbi/launchpad/usr.foo/foobar.sh"
  * ```
  */
 export function LAUNCHPAD_FILE_PATH(p: { pkg: string; author: string }): string {

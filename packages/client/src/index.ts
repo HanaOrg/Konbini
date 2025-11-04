@@ -234,12 +234,6 @@ async function main() {
 try {
     await main();
 } catch (e) {
-    if (String(e).includes("EACCES")) {
-        konsole.err(
-            "Please run Konbini using 'sudo'; we need permission to write data to protected directories.\n(Installs are global).",
-        );
-    } else {
-        konsole.err(e as string);
-    }
+    konsole.err(e as string);
     process.exit(1);
 }

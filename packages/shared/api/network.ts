@@ -69,7 +69,7 @@ export async function fetchAPI(_url: string, method: "GET" | "POST" = "GET"): Pr
     });
 
     if (json.message && json.message.includes("rate limit exceeded")) {
-        if (url.startsWith("https://api.github")) console.debug("[ X ] Failed with error", json);
+        console.debug("[ X ] Failed with error", json);
         throw "API rate limit exceeded. Konbini has a slightly strict per-user API limit.\nThis error occurs if you use the CLI too much in a short period of time.\n('Use it' in the sense of downloading packages; internet-less operations like 'list' do not cause this).\nPlease try again later (in an hour at most, possibly less).";
     }
 

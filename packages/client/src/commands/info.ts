@@ -116,8 +116,7 @@ export async function showUserInfo(usr: string) {
           ? konsole.clr("lightgrey", `Works at ${konsole.clr("pink", author.org)}`)
           : "";
 
-    konsole.adv([hire, place].filter(Boolean).join(" · "));
-    console.log("");
+    konsole.adv([hire, place].filter(Boolean).join(" · ") + "\n");
     konsole.adv(
         (author.biography || "This author has no biography.")
             .split("\n")

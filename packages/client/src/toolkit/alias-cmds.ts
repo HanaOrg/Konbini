@@ -1,10 +1,10 @@
 import type { KPS_SOURCE } from "shared/types/manifest";
 
-/** ... */
+/** damn... */
 const microsoft = "--accept-package-agreements --accept-source-agreements";
-/** ... */
+/** damn... */
 const brew = (s: string) =>
-    `runuser -u \$(logname) -- bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew ${s}'`;
+    `bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew ${s}'`;
 
 export const ALIASED_CMDs: Record<
     Exclude<KPS_SOURCE, "kbi">,

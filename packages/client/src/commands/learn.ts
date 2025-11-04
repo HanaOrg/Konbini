@@ -49,8 +49,9 @@ export function learn(subcommand: string | undefined) {
             "Konpaks are based on ZIP archives, providing a degree of compression.",
         ].map((s) => konsole.adv(s));
         konsole.suc("Konpaks are very easy to use for Konbini distribution.");
-        konsole.dbg("Be advised that they don't work with macOS, and aren't well tested on Linux.");
-        console.log("-----");
+        konsole.dbg(
+            "Be advised that they don't work with macOS, and aren't well tested on Linux.\n-----",
+        );
         [
             "When running 'kbi konpak <dir>' on a directory, a Konpak will be made out of it.",
             "- you'll be asked the package ID and the version of it you're konpaking",

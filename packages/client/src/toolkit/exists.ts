@@ -16,7 +16,7 @@ export function exists(what: SUPPORTED_PKG_MGR_CMD): boolean {
             if (what === "brew" || what === "brew --cask") {
                 try {
                     execSync(
-                        `sudo -u \$(logname) bash -c 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew --version'`,
+                        `bash -c 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew --version'`,
                         { stdio: "pipe" },
                     );
                     return true;

@@ -73,11 +73,6 @@ export async function installAliasedPackage(params: {
         konsole.err(
             `This package requires "${kps.name}", a 3rd party package manager that is not installed on your system.`,
         );
-        if (kps.src === "brew" || kps.src === "brew-k") {
-            konsole.dbg(
-                "If brew is installed, you're running with sudo, and this appears, try again without sudo, it might work that way.\nIf it works that way, report this as a bug.",
-            );
-        }
         if (kps.src === "fpak") return "needsPkgMgr";
         konsole.war(
             "We can attempt to install it for you, to make your life easier.\nKeep in mind this is not 100% stable and somewhat error prone.\nPlus, what we do is bringing here the installer, so you might still need to input some stuff yourself.",

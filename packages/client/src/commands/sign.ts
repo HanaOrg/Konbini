@@ -14,9 +14,8 @@ async function newSignature() {
         "This utility can help you automate package publishing, as explained in our documentation.",
     );
     konsole.adv(
-        "Be sure your system is safe and no user but you can access Konbini's root directory.",
+        "Be sure your system is safe and no user but you can access Konbini's root directory.\n",
     );
-    console.log("");
     const signer_name = await prompt(
         "Enter your name, for the signature. This is usually your full name. A username, if recognizable enough, can work too.",
         validate,
@@ -43,7 +42,6 @@ async function newSignature() {
         passphrase_component,
         author,
     });
-    console.log("");
     const signaturesPath = join(SIGNATURE_DIR, author.toLowerCase());
     if (!existsSync(signaturesPath)) mkdirSync(signaturesPath, { recursive: true });
     writeFileSync(join(signaturesPath, "passphrase"), signature.passphrase, {
