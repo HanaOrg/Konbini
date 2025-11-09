@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
-import { normalize } from "@zakahacecosas/string-utils";
+import { normalize } from "strings-utils";
 import {
     CATEGORIES,
     isKbiScope,

@@ -32,10 +32,12 @@ export async function removePackage(pkg: string) {
     ) as any;
     const kps = parseKps(lockfile.scope);
     if (kps.src !== "kbi") {
-        konsole.dbg(`Invoking aliased (${kps.cmd}) uninstallation command.`);
+        konsole.dbg(
+            `Invoking aliased uninstallation command (${ALIASED_CMDs[kps.src]["uninstall"](kps.value)}).`,
+        );
         execSync(ALIASED_CMDs[kps.src]["uninstall"](kps.value));
     }
-    konsole.dbg(`Applying rm -rf at ${removePath}.`);
+    konsole.dbg(`Removing ${removePath}.`);
     rmSync(removePath, { force: true, recursive: true });
     rmSync(LAUNCHPAD_FILE_PATH({ pkg: parseID(pkg).package!, author: m.author }), {
         force: true,

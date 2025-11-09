@@ -1,4 +1,4 @@
-import { normalize } from "@zakahacecosas/string-utils";
+import { normalize } from "strings-utils";
 import { join } from "path";
 import { homedir } from "os";
 import { getPlatform } from "./api/platform";

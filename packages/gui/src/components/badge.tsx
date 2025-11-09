@@ -11,7 +11,7 @@ export default function Badge({
 }) {
     return (
         <div
-            className="px-3 py-2 font-mono text-sm font-medium rounded-sm w-fit"
+            className="px-3 py-2 font-mono text-sm font-medium  w-fit"
             style={{ backgroundColor: color, color: text }}
         >
             {children}

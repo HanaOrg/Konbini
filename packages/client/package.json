@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "@zakahacecosas/number-utils": "catalog:",
-        "@zakahacecosas/string-utils": "catalog:",
+        "strings-utils": "catalog:",
         "openpgp": "^6.2.2",
         "shared": "workspace:*"
     }

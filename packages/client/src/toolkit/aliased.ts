@@ -11,7 +11,7 @@ import {
     type KONBINI_PARSED_SCOPE,
     type KONBINI_PKG_SCOPE,
 } from "shared/types/manifest";
-import { normalize, validateAgainst } from "@zakahacecosas/string-utils";
+import { normalize, validateAgainst } from "strings-utils";
 import { constructKps, parseKps } from "shared/api/manifest";
 import { getPlatform } from "shared/api/platform";
 import type { KONBINI_LOCKFILE } from "shared/types/files";

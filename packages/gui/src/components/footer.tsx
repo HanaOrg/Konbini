@@ -56,7 +56,7 @@ export default function Footer() {
                     <a href="/privacy" className="text-lg font-medium">
                         Privacy Policy
                     </a>
-                    <div className="bg-[#FFCF574D] flex flex-col gap-2 p-4 rounded-xl border-2 border-[#FFFFFF33]">
+                    <div className="bg-[#FFCF574D] flex flex-col gap-2 p-4 border-2 border-[#FFFFFF33]">
                         <h3 className="text-xl font-semibold text-[#FFCC96]">
                             This is alpha software.
                         </h3>

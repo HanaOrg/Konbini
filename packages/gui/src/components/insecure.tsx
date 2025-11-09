@@ -33,7 +33,7 @@ export default function InsecurePackage({
                 the latest scan, this package did not pass all checks, so we've blocked it.
             </p>
             <h3 className="text-2xl font-bold text-white">Security checks</h3>
-            <div className="p-4 rounded-lg bg-[#00000070] font-mono flex flex-col gap-2">
+            <div className="p-4  bg-[#00000070] font-mono flex flex-col gap-2">
                 {res.results.authentic ? (
                     <p>
                         <b>Package is authentic.</b> All signatures match.

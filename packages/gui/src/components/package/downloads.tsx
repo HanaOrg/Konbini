@@ -23,7 +23,7 @@ export default function DownloadChart({ downloads }: { downloads: DownloadData }
                     <b className="text-red-400">red chunk</b> would be visible in the graph.
                 </p>
             )}
-            <div className="flex flex-row w-full rounded-md overflow-hidden">
+            <div className="flex flex-row w-full  overflow-hidden">
                 <div
                     className="bg-teal-300 h-5 grid place-items-center"
                     style={{ width: `${installPercentage}%` }}

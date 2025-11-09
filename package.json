@@ -10,9 +10,9 @@
         ],
         "catalog": {
             "@zakahacecosas/number-utils": "npm:@jsr/zakahacecosas__number-utils@latest",
-            "@zakahacecosas/string-utils": "npm:@jsr/zakahacecosas__string-utils@latest",
+            "strings-utils": "4.0.0",
             "typescript": "latest",
-            "@types/bun": "latest"
+            "@types/bun": "1.3.1"
         }
     },
     "contributors": [
@@ -35,10 +35,10 @@
         "launch:api": "cd packages/data && vercel --prod"
     },
     "dependencies": {
-        "vercel": "^48.4.0"
+        "vercel": "^48.8.0"
     },
     "devDependencies": {
-        "eslint": "^9.37.0",
+        "eslint": "^9.39.0",
         "prettier": "^3.6.2"
     },
     "trustedDependencies": [

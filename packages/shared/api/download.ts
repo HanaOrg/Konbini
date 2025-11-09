@@ -1,4 +1,4 @@
-import { validate } from "@zakahacecosas/string-utils";
+import { validate } from "strings-utils";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 
 export async function downloadHandler(params: {

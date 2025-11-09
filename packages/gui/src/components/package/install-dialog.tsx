@@ -12,7 +12,7 @@ export default function InstallDialog({
     return (
         <dialog
             id="install_dialog"
-            className="p-8 bg-[#0000000F] rounded-3xl backdrop-blur-[40px] border-1 border-[#FFFFFF2E] top-[50%] left-[50%] translate-[-50%]"
+            className="p-8 bg-[#0000000F]  backdrop-blur-[40px] border-1 border-[#FFFFFF2E] top-[50%] left-[50%] translate-[-50%]"
         >
             <div className="flex flex-row items-start justify-between mb-4">
                 <div className="flex flex-col">
@@ -37,7 +37,7 @@ export default function InstallDialog({
                         }
                         (m as HTMLDialogElement).close();
                     }}
-                    className="w-14 h-14 rounded-lg"
+                    className="w-14 h-14 "
                     style={{
                         backgroundColor: "transparent",
                     }}
@@ -55,7 +55,7 @@ export default function InstallDialog({
                 )}
                 , run this:
             </p>
-            <code className="ml-4 p-3 rounded-lg bg-[#FFFFFF19] font-mono font-light text-sm">
+            <code className="ml-4 p-3  bg-[#FFFFFF19] font-mono font-light text-sm">
                 ${" "}
                 {getDesktopPlatform().plat === "Windows"
                     ? 'powershell -c "irm konbini.vercel.app/dl.ps1 | iex"'
@@ -63,7 +63,7 @@ export default function InstallDialog({
             </code>
             <h3 className="mt-4 text-lg text-white font-bold">2. Install {appName}</h3>
             <p className="ml-4 mb-2">Once Konbini installs, restart your terminal and run this:</p>
-            <code className="ml-4 p-3 rounded-lg bg-[#FFFFFF19] font-mono font-light text-sm">
+            <code className="ml-4 p-3  bg-[#FFFFFF19] font-mono font-light text-sm">
                 $ kbi install {appId}
             </code>
         </dialog>

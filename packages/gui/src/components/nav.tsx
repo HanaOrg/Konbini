@@ -20,7 +20,7 @@ export default function Nav() {
 
             <form
                 action={"/search"}
-                className="border-1 border-[#FFFFFF17] hover:bg-[#FFFFFF1F] focus:bg-[#FFFFFF2F] bg-[#FFFFFF14] focus:border-1 focus:border-[#FFFFFF5A] rounded-xl flex flex-row items-center pl-4"
+                className="border-1 border-[#FFFFFF17] hover:bg-[#FFFFFF1F] focus:bg-[#FFFFFF2F] bg-[#FFFFFF14] focus:border-1 focus:border-[#FFFFFF5A]  flex flex-row items-center pl-4"
             >
                 <PiMagnifyingGlass size={25} color="#FFFFFF5A" />{" "}
                 <input

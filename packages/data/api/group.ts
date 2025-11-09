@@ -1,8 +1,9 @@
-const { validate, isValidOrigin } = require("../utils.js");
+const { isValidOrigin } = require("../utils.js");
 const KDATA_PER_AUTHOR_ID = require("./kdata_per_author_id.json");
 const KDATA_PER_DOWNLOADS = require("./kdata_per_downloads.json");
 const KDATA_PER_RELEASES = require("./kdata_per_releases.json");
 const KDATA_PER_CATEGORY = require("./kdata_per_category.json");
+const { validate } = require("strings-utils");
 
 /** @type {import('@vercel/node').VercelRequest} */
 let req;

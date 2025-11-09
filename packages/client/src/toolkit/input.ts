@@ -1,5 +1,5 @@
 import { stdin as input, stdout as output } from "node:process";
-import { validate, validateAgainst } from "@zakahacecosas/string-utils";
+import { validate, validateAgainst } from "strings-utils";
 import { konsole } from "shared/client";
 import { createInterface } from "node:readline/promises";
 import { type KONBINI_PKG_SCOPE, isKps } from "shared/types/manifest";

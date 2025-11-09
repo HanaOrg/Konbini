@@ -1,4 +1,4 @@
-import { validate, validateAgainst, type UnknownString } from "@zakahacecosas/string-utils";
+import { validate, validateAgainst, type UnknownString } from "strings-utils";
 import {
     type KONBINI_PKG_SCOPE,
     type PARSED_KPS,

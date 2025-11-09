@@ -122,7 +122,6 @@ h1 {
 }
 
 button {
-    border-radius: 8px;
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
@@ -279,7 +278,6 @@ dialog::backdrop {
     width: auto;
     margin-top: -32px;
     max-width: 60px;
-    border-radius: 10px;
     padding: 20px;
     max-height: 60px;
     text-align: center;
@@ -316,7 +314,6 @@ dialog::backdrop {
     background-color: #151515;
     border: 2px solid #2a2a2a;
     font-size: 12px;
-    border-radius: 10px;
     padding: 8px 12px;
     position: absolute;
     top: 0;
@@ -328,7 +325,6 @@ dialog::backdrop {
     height: 15px;
     width: 15px;
     background-color: #3a2a3a;
-    border-radius: 50%;
     display: inline-block;
     -webkit-transition: background-color 0.6s ease;
     -o-transition: background-color 0.6s ease;
@@ -350,7 +346,6 @@ dialog::backdrop {
     margin-right: auto;
     -o-object-fit: contain;
     object-fit: contain;
-    border-radius: 10px;
     -webkit-animation: fade 1s;
     animation: fade 1s;
 }
@@ -517,9 +512,4 @@ dialog {
 
 span {
     color: #c23282;
-}
-
-/* test */
-* {
-    border-radius: 0px !important;
 }

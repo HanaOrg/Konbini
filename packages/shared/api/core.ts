@@ -1,4 +1,4 @@
-import { validateAgainst } from "@zakahacecosas/string-utils";
+import { validateAgainst } from "strings-utils";
 import { fetchAPI } from "./network.ts";
 import { normalizer } from "../constants.ts";
 import { isValidManifest } from "../types/manifest.ts";

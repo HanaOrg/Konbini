@@ -22,7 +22,7 @@ export default function MaintainersList({
                                     href={`https://github.com/${m.github}`}
                                     rel="noopener noreferrer"
                                     target="_blank"
-                                    className="py-2 px-4 rounded-xl bg-[#00000020] w-auto hover:bg-[#00000090]"
+                                    className="py-2 px-4  bg-[#00000020] w-auto hover:bg-[#00000090]"
                                 >
                                     {m.github} on GitHub
                                 </a>
@@ -32,7 +32,7 @@ export default function MaintainersList({
                                     href={m.link}
                                     rel="noopener noreferrer"
                                     target="_blank"
-                                    className="py-2 px-4 rounded-xl bg-[#00000020] w-auto hover:bg-[#00000090]"
+                                    className="py-2 px-4  bg-[#00000020] w-auto hover:bg-[#00000090]"
                                 >
                                     {m.link}
                                 </a>

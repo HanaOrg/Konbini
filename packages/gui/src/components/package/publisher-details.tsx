@@ -1,6 +1,6 @@
 import { isOrganization, type KONBINI_AUTHOR, type KONBINI_ID_USR } from "shared/types/author";
 import Badge from "../badge";
-import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
+import { toUpperCaseFirst } from "strings-utils";
 import Detail from "../detail";
 import { locateUsr } from "shared/api/core";
 import type { KDATA_FILE_PKG } from "shared/types/kdata";
@@ -104,7 +104,7 @@ export default function PublisherDetails({
                                 }
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="py-2 px-4 bg-[#00000030] rounded-xl hover:bg-[#00000060]"
+                                className="py-2 px-4 bg-[#00000030]  hover:bg-[#00000060]"
                             >
                                 {toUpperCaseFirst(e[0])} @{e[1]}
                             </a>

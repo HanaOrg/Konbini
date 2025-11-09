@@ -1,4 +1,4 @@
-import { validateAgainst } from "@zakahacecosas/string-utils";
+import { validateAgainst } from "strings-utils";
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
 import type { KPS_SOURCE } from "shared/types/manifest";

@@ -43,25 +43,25 @@ export default function Credits() {
                 <div className="flex flex-row w-full gap-2">
                     <div
                         onClick={() => (window.location.href = "https://vercel.com")}
-                        className="cursor-pointer text-[#fff] font-bold text-2xl text-center p-4 w-full rounded-xl bg-[#000] hover:bg-[#222]"
+                        className="cursor-pointer text-[#fff] font-bold text-2xl text-center p-4 w-full  bg-[#000] hover:bg-[#222]"
                     >
                         Vercel
                     </div>
                     <div
                         onClick={() => (window.location.href = "https://upstash.com")}
-                        className="cursor-pointer text-[#000] font-bold text-2xl text-center p-4 w-full rounded-xl bg-[#6ee7b7] hover:bg-[#499a7a]"
+                        className="cursor-pointer text-[#000] font-bold text-2xl text-center p-4 w-full  bg-[#6ee7b7] hover:bg-[#499a7a]"
                     >
                         Upstash
                     </div>
                     <div
                         onClick={() => (window.location.href = "https://bun.sh")}
-                        className="cursor-pointer text-[#000] font-bold text-2xl text-center p-4 w-full rounded-xl bg-[#f9f1e1] hover:bg-[#aca69b]"
+                        className="cursor-pointer text-[#000] font-bold text-2xl text-center p-4 w-full  bg-[#f9f1e1] hover:bg-[#aca69b]"
                     >
                         BunJS
                     </div>
                     <div
                         onClick={() => (window.location.href = "https://www.clamav.net")}
-                        className="cursor-pointer text-[#000] font-bold text-2xl text-center p-4 w-full rounded-xl bg-[#ef3e42] hover:bg-[#a22a2c]"
+                        className="cursor-pointer text-[#000] font-bold text-2xl text-center p-4 w-full  bg-[#ef3e42] hover:bg-[#a22a2c]"
                     >
                         ClamAV
                     </div>
@@ -69,7 +69,7 @@ export default function Credits() {
                         onClick={() =>
                             (window.location.href = "https://github.com/features/actions")
                         }
-                        className="cursor-pointer text-[#fff] font-bold text-2xl text-center p-4 w-full rounded-xl bg-[#000] hover:bg-[#222]"
+                        className="cursor-pointer text-[#fff] font-bold text-2xl text-center p-4 w-full  bg-[#000] hover:bg-[#222]"
                     >
                         GitHub Actions
                     </div>

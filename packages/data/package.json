@@ -4,11 +4,12 @@
     "type": "commonjs",
     "dependencies": {
         "@upstash/redis": "^1.35.6",
-        "@vercel/node": "^5.4.0",
-        "geoip-lite": "^1.4.10"
+        "@vercel/node": "^5.5.4",
+        "geoip-lite": "^1.4.10",
+        "strings-utils": "^4.0.0"
     },
     "devDependencies": {
         "@types/geoip-lite": "^1.4.4",
-        "@types/node": "^24.8.1"
+        "@types/node": "^24.10.0"
     }
 }

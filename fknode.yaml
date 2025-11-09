@@ -16,3 +16,4 @@ buildCmd:
     - $bld:cli
 launchCmd:
     - $;;run:web
+cleanerShortCircuit: true

@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import { spawn } from "child_process";
-import { validate } from "@zakahacecosas/string-utils";
+import { validate } from "strings-utils";
 
 export async function selfUpdate() {
     const platform = getPlatform();

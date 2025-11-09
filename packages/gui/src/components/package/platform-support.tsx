@@ -3,7 +3,7 @@ import IconMac from "../../assets/mac";
 import IconTux from "../../assets/tux";
 import IconWin from "../../assets/win";
 import { parseKps } from "shared/api/manifest";
-import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
+import { toUpperCaseFirst } from "strings-utils";
 
 export default function PlatformSupport({
     platforms,
@@ -73,7 +73,7 @@ export default function PlatformSupport({
                                   ? `This package is not supported for ${p.plat}${p.arch}. How sad :(`
                                   : `This package can be installed for ${p.plat}${p.arch} through Konbini! How cool.`
                         }
-                        className={`h-45 p-6 border-1 border-[#303030] rounded${p.plat === "Linux" && p.arch === "64" ? "-l-2xl" : p.plat === "Windows" ? "-r-2xl" : "-0"} bg-[#151515] hover:bg-[#1F1F1F] relative overflow-hidden`}
+                        className="h-45 p-6 border-1 border-[#303030] bg-[#151515] hover:bg-[#1F1F1F] relative overflow-hidden"
                     >
                         <p className="text-3xl text-white font-semibold">{p.plat}</p>
                         <p className="text-xl text-white font-light opacity-[0.7]">{p.arch}</p>

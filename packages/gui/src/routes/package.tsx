@@ -9,7 +9,7 @@ import Nav from "../components/nav";
 import Footer from "../components/footer";
 import InstallDialog from "../components/package/install-dialog";
 import Badge from "../components/badge";
-import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
+import { toUpperCaseFirst } from "strings-utils";
 import { type KONBINI_AUTHOR, type KONBINI_ID_PKG } from "shared/types/author";
 import PublisherDetails from "../components/package/publisher-details";
 import ScreenshotSlideshow from "../components/package/screenshots";
@@ -163,7 +163,7 @@ export default function PackagePage() {
                 <div className="flex flex-row">
                     {app.icon && (
                         <img
-                            className="w-24 h-24 rounded-2xl mr-4"
+                            className="w-24 h-24  mr-4"
                             src={app.icon}
                             alt={`${app.name}'s icon.`}
                         />

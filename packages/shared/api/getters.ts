@@ -13,8 +13,7 @@ import {
 import { downloadHandler } from "./download.ts";
 import { locateUsr } from "./core.ts";
 import { parseKps } from "./manifest.ts";
-import { replace } from "@zakahacecosas/string-utils";
-import { validateAgainst } from "../../data/utils.ts";
+import { replace, validateAgainst } from "strings-utils";
 
 /** Given a package manifest and the desired KPS, returns the absolute URL to its downloadable file.
  *

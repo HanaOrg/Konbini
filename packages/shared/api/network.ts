@@ -1,4 +1,4 @@
-import { validate } from "@zakahacecosas/string-utils";
+import { validate } from "strings-utils";
 
 /**
 no bearer exists in production; every user has his own per-IP rate limit anyway

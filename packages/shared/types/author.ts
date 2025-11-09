@@ -1,4 +1,4 @@
-import { validate, validateAgainst } from "@zakahacecosas/string-utils";
+import { validate, validateAgainst } from "strings-utils";
 
 /** Properties common to persons and organizations. */
 interface COMMON_PROFILE {

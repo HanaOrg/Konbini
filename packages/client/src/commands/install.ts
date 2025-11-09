@@ -17,6 +17,7 @@ import { assertIntegritySHA, assertIntegrityPGP } from "shared/security";
 import { Unpack } from "../../../konpak/src/unpack";
 import { logAction, scanPackage } from "shared/api/kdata";
 import { isPkgId } from "shared/types/author";
+import { listPackages } from "./list";
 
 async function assertSafety(
     pkgDir: string,
@@ -209,6 +210,26 @@ export async function installPackage(
     const pkgDir = PKG_PATH({ pkg: pkgId, author: manifest.author });
 
     if (packageExists(platform, manifest.author)) {
+        if (!listPackages("SILENT").some((i) => i.pkg_id === manifest.id)) {
+            writeLockfile(
+                {
+                    pkg_id: manifest.id,
+                    scope: platform,
+                    timestamp: new Date().toString(),
+                    version: "unknown",
+                    remote_url: "unknown",
+                    installation_hash: "unknown",
+                },
+                manifest.id,
+                manifest.author,
+            );
+            konsole.dbg(
+                "Somehow, this was installed but we didn't have a lockfile.\nOne was generated right now (values are 'unknown', heads up).",
+            );
+            konsole.dbg(
+                "Reinstalling may better populate said lockfile (not really needed though).",
+            );
+        }
         if (method === "install") {
             const conf = konsole.ask(`${pkgId} is already installed. Reinstall?`);
             if (!conf) {

@@ -1,6 +1,7 @@
-const { validate, isValidOrigin } = require("../utils.js");
+const { isValidOrigin } = require("../utils.js");
 const geoip = require("geoip-lite");
 const { Redis } = require("@upstash/redis");
+const { validate } = require("strings-utils");
 
 /** @type {import('@vercel/node').VercelRequest} */
 let req;

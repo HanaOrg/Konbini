@@ -1,9 +1,4 @@
-import {
-    isValidEmail,
-    isValidHexColor,
-    validate,
-    validateAgainst,
-} from "@zakahacecosas/string-utils";
+import { isValidEmail, isValidHexColor, validate, validateAgainst } from "strings-utils";
 import { parseKps } from "../api/manifest.ts";
 import type { KONBINI_ID_USR } from "./author.ts";
 

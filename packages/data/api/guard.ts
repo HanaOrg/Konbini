@@ -1,5 +1,6 @@
-const { validate, validateAgainst, isValidOrigin } = require("../utils.js");
+const { isValidOrigin } = require("../utils.js");
 const KDATA = require("./guard_res.json");
+const { validate, validateAgainst } = require("strings-utils");
 
 /** @type {import('@vercel/node').VercelRequest} */
 let req;

@@ -4,7 +4,7 @@ import { IntegrateApp, type WindowsParams } from "./integrate";
 import { PKG_PATH } from "shared/client";
 import type { KONBINI_MANIFEST } from "shared/types/manifest";
 import { join } from "path";
-import { toUpperCaseFirst } from "@zakahacecosas/string-utils";
+import { toUpperCaseFirst } from "strings-utils";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { FILENAMES } from "shared/constants";
 import { KPAK_INT_FILENAMES } from "../constants";

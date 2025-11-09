@@ -17,7 +17,7 @@ import { updatePackages } from "./commands/update";
 import { generatePkgManifest } from "./commands/manifest-pkg";
 import { generateUsrManifest } from "./commands/manifest-usr";
 import { about } from "./commands/about";
-import { validateAgainst } from "@zakahacecosas/string-utils";
+import { validateAgainst } from "strings-utils";
 import { sign } from "./commands/sign";
 import { getPlatform } from "shared/api/platform";
 import { konbiniHash } from "shared/security";

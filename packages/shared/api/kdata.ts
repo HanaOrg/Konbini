@@ -1,5 +1,5 @@
 import { getPlatform } from "./platform";
-import { normalize } from "@zakahacecosas/string-utils";
+import { normalize } from "strings-utils";
 import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "../types/author";
 import { fetchAPI } from "./network";
 import type { KDATA_ENTRY_PKG, KDATA_FILE_PKG, KDATA_ENTRY_USR } from "../types/kdata";

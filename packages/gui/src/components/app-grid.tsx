@@ -21,7 +21,7 @@ export default function AppGrid({
                     <a
                         style={{ backgroundColor: app.accent ? app.accent + "2F" : "#FFFFFF14" }}
                         href={`/package/${app.id}`}
-                        className="overflow-hidden hover:opacity-[0.9] active:scale-[0.95] active:opacity-[0.8] duration-100 rounded-xl p-6 border-1 border-[#FFFFFF17] flex flex-col gap-2 relative"
+                        className="overflow-hidden hover:opacity-[0.9] active:scale-[0.95] active:opacity-[0.8] duration-100 p-6 border-1 border-[#FFFFFF17] flex flex-col gap-2 relative"
                     >
                         {app.icon && (
                             <img
@@ -37,7 +37,7 @@ export default function AppGrid({
                         <div className="flex flex-row items-center gap-2">
                             {app.icon && (
                                 <img
-                                    className="w-10 h-10 rounded-sm"
+                                    className="w-10 h-10 "
                                     src={app.icon}
                                     alt={`${app.name}'s icon`}
                                 />
