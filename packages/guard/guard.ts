@@ -72,7 +72,8 @@ async function fetchElement(url: string): Promise<Element[]> {
     console.log("[<<<] fetching element", url);
     const res = await fetchAPI(url);
     if (!res.ok) {
-        console.error("[XXX]", await res.json())
+        console.error("[XXX]", await res.json());
+        console.error("[!!!] being limited to", res.headers.get("X-Ratelimit-Limit"));
         throw `GitHub fetch failed: ${res.status} ${res.statusText}`;
     }
     return (await res.json()) as Element[];
