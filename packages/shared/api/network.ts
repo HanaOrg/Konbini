@@ -43,13 +43,21 @@ export async function fetchAPI(_url: string, method: "GET" | "POST" = "GET"): Pr
     const match = await cache.match(url);
     if (match && isNotTooOld(match)) return match;
 
+    const useBearer = validate(bearer) && url.startsWith("https://api.github");
+
+    // TODO: remove once fixed
+    console.debug(
+        useBearer ? "using bearer" : "not using bearer",
+        "import.meta.env['BEARER'] =",
+        bearer,
+    );
+
     const res = await fetch(url, {
-        headers:
-            validate(bearer) && url.startsWith("https://api.github")
-                ? {
-                      Authorization: bearer,
-                  }
-                : undefined,
+        headers: useBearer
+            ? {
+                  Authorization: bearer,
+              }
+            : undefined,
         method,
     });
 
