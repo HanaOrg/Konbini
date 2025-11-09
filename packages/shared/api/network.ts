@@ -43,21 +43,17 @@ export async function fetchAPI(_url: string, method: "GET" | "POST" = "GET"): Pr
     const match = await cache.match(url);
     if (match && isNotTooOld(match)) return match;
 
-    const useBearer = validate(bearer) && url.startsWith("https://api.github");
-
-    // TODO: remove once fixed
-    console.debug(
-        useBearer ? "using bearer" : "not using bearer",
-        "import.meta.env['BEARER'] =",
-        bearer ? bearer.slice(0, 4) : "(not there)",
-    );
-
     const res = await fetch(url, {
-        headers: useBearer
-            ? {
-                  Authorization: bearer,
-              }
-            : undefined,
+        headers:
+            validate(bearer) && url.startsWith("https://api.github")
+                ? {
+                      // sometimes the admin (me) is stupid and forgets to write the 'Bearer ' thing
+                      // which apparently breaks the KGuard API
+                      Authorization: bearer.startsWith("Bearer ")
+                          ? bearer
+                          : "Bearer " + bearer.trim(),
+                  }
+                : undefined,
         method,
     });
 

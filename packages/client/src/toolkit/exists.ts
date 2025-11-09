@@ -5,7 +5,6 @@ import type { SUPPORTED_PKG_MGR_CMD } from "shared/types/manifest";
 /** Checks if anything is locally installed (and invocable via PATH). */
 export function exists(what: SUPPORTED_PKG_MGR_CMD): boolean {
     const cmd = getPlatform() === "win64" ? `powershell where.exe ${what}` : `command -v ${what}`;
-    console.log(what);
     try {
         // OPTION A (default)
         execSync(cmd, { stdio: "ignore" });
