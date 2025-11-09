@@ -5,8 +5,7 @@
     "dependencies": {
         "@upstash/redis": "^1.35.6",
         "@vercel/node": "^5.5.4",
-        "geoip-lite": "^1.4.10",
-        "strings-utils": "^4.0.0"
+        "geoip-lite": "^1.4.10"
     },
     "devDependencies": {
         "@types/geoip-lite": "^1.4.4",
