@@ -49,7 +49,7 @@ export async function fetchAPI(_url: string, method: "GET" | "POST" = "GET"): Pr
     console.debug(
         useBearer ? "using bearer" : "not using bearer",
         "import.meta.env['BEARER'] =",
-        bearer,
+        bearer ? bearer.slice(0, 4) : "(not there)",
     );
 
     const res = await fetch(url, {
