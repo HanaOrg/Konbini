@@ -140,8 +140,8 @@ async function main() {
             await ensureSecurity();
             break;
         case "sign":
-            if (!validateAgainst(subcommand, ["new", "apply"]))
-                throw `No action specified. Available options are 'new' (to make a new signature) or 'apply' (to sign an executable).\nTo learn further, run 'learn sign'`;
+            if (!validateAgainst(subcommand, ["new", "apply", "list"]))
+                throw `No action specified. Available options are 'new', 'apply' or 'list'.\nTo learn further, run 'learn sign'`;
             await sign(subcommand);
             break;
         case "manifest":

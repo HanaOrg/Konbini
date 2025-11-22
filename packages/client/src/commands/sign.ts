@@ -3,7 +3,15 @@ import { isValidEmail, validate } from "strings-utils";
 import { konsole, SIGNATURE_DIR } from "shared/client";
 import { isAuthorId } from "shared/types/author";
 import { join } from "path";
-import { existsSync, mkdirSync, readFileSync, realpathSync, statSync, writeFileSync } from "fs";
+import {
+    existsSync,
+    mkdirSync,
+    readdirSync,
+    readFileSync,
+    realpathSync,
+    statSync,
+    writeFileSync,
+} from "fs";
 import { assertIntegrityPGP, genSignature, useSignature } from "shared/security";
 
 async function newSignature() {
@@ -26,15 +34,15 @@ async function newSignature() {
         isValidEmail,
         "Enter a valid email address.",
     )) as `${string}@${string}.${string}`;
-    const passphrase_component = await prompt(
-        "Write as much random stuff as you can, then hit Enter. Generating truly random noise will help keep your key hard to break.",
-        (s) => validate(s) && s.length > 30,
-        "Enter a valid string. Make it at least 30 characters.",
-    );
     const author = await prompt(
         "Now, enter the Konbini author ID (usr.* or org.*) you want to link this signature to.",
         isAuthorId,
         "Enter a valid author ID.",
+    );
+    const passphrase_component = await prompt(
+        "Finally, type random stuff (2 lines of characters are enough), then hit Enter. By using truly random 'noise' your key will be harder to break.",
+        (s) => validate(s) && s.length > 30,
+        "Enter a valid string. Make it at least 30 characters.",
     );
     const signature = await genSignature({
         signer_name,
@@ -128,7 +136,19 @@ async function applySignature() {
     konsole.suc("Wrote file signature to", newSignaturePath, "successfully!");
 }
 
-export async function sign(cmd: "new" | "apply") {
+function listSignatures() {
+    const signs = readdirSync(SIGNATURE_DIR);
+    if (!signs.length) {
+        konsole.adv("No signatures!");
+        return;
+    }
+    signs.forEach((d) => konsole.adv(d));
+}
+
+export async function sign(cmd: "new" | "apply" | "list") {
+    if (!existsSync(SIGNATURE_DIR)) mkdirSync(SIGNATURE_DIR);
+
     if (cmd === "new") await newSignature();
-    else await applySignature();
+    else if (cmd === "apply") await applySignature();
+    else listSignatures();
 }
