@@ -3,7 +3,7 @@ import { normalize } from "strings-utils";
 import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "../types/author";
 import { fetchAPI } from "./network";
 import type { KDATA_ENTRY_PKG, KDATA_FILE_PKG, KDATA_ENTRY_USR } from "../types/kdata";
-import type { SUPPORTED_PLATFORMS } from "../types/manifest";
+import type { CATEGORY, SUPPORTED_PLATFORMS } from "../types/manifest";
 
 export type KONBINI_LOCAL_SCAN = {
     isSafe: boolean;
@@ -41,7 +41,15 @@ export async function getPkg(pkg: KONBINI_ID_PKG): Promise<KDATA_ENTRY_PKG> {
     return json;
 }
 
-export async function getPkgs(sorting: "d" | "r", entries?: number): Promise<KDATA_FILE_PKG> {
+export async function getPkgs(
+    sorting: "c",
+    entries?: number,
+): Promise<Record<CATEGORY, KDATA_FILE_PKG>>;
+export async function getPkgs(sorting: "d" | "r", entries?: number): Promise<KDATA_FILE_PKG>;
+export async function getPkgs(
+    sorting: "d" | "r" | "c",
+    entries?: number,
+): Promise<KDATA_FILE_PKG | Record<CATEGORY, KDATA_FILE_PKG>> {
     const res = await fetchAPI(
         `https://konbini-data.vercel.app/api/group?sorting=${sorting}${entries ? `&entries=${entries}` : ""}`,
     );

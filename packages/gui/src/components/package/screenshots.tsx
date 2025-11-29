@@ -34,22 +34,28 @@ export default function ScreenshotSlideshow({
                         <div className="w-[80%] text-base min-h-18 mx-auto flex items-center justify-center text-center">
                             {s.text}
                         </div>
-                        <div className="flex flex-row gap-1 items-center justify-center">
-                            {ss.map((_, i) => (
-                                <div
-                                    className={i == slideIndex ? "dot active" : "dot"}
-                                    onClick={() => moveSlideIndex(i)}
-                                ></div>
-                            ))}
-                        </div>
+                        {ss.length > 1 && (
+                            <div className="flex flex-row gap-1 items-center justify-center">
+                                {ss.map((_, i) => (
+                                    <div
+                                        className={i == slideIndex ? "dot active" : "dot"}
+                                        onClick={() => moveSlideIndex(i)}
+                                    ></div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 ))}
-                <a className="prev" onClick={() => moveSlideIndex(slideIndex - 1)}>
-                    &#10094;
-                </a>
-                <a className="next" onClick={() => moveSlideIndex(slideIndex + 1)}>
-                    &#10095;
-                </a>
+                {ss.length > 1 && (
+                    <>
+                        <a className="prev" onClick={() => moveSlideIndex(slideIndex - 1)}>
+                            &#10094;
+                        </a>
+                        <a className="next" onClick={() => moveSlideIndex(slideIndex + 1)}>
+                            &#10095;
+                        </a>
+                    </>
+                )}
             </div>
         </>
     );
