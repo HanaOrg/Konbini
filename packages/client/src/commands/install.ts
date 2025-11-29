@@ -90,7 +90,7 @@ async function installSingleExecutable(params: {
     return {
         version: remote.version,
         remote_url: remote.asset,
-        timestamp: new Date().toString(),
+        timestamp: Date.now(),
     };
 }
 
@@ -215,7 +215,7 @@ export async function installPackage(
                 {
                     pkg_id: manifest.id,
                     scope: platform,
-                    timestamp: new Date().toString(),
+                    timestamp: Date.now(),
                     version: "unknown",
                     remote_url: "unknown",
                     installation_hash: "unknown",

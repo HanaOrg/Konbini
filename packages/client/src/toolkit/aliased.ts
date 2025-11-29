@@ -159,7 +159,7 @@ export async function installAliasedPackage(params: {
     const lockfile: KONBINI_LOCKFILE = {
         pkg_id: pkgId,
         scope: scope as Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>,
-        timestamp: new Date().toString(),
+        timestamp: Date.now(),
     };
     writeLockfile(lockfile, pkgId, manifest.author);
     konsole.dbg("Lockfile written.");

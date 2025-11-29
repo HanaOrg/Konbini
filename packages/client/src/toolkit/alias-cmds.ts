@@ -8,10 +8,15 @@ const brew = (s: string) =>
 
 export const ALIASED_CMDs: Record<
     Exclude<KPS_SOURCE, "kbi">,
-    Record<
-        "check" | "install" | "reinstall" | "update" | "exists" | "uninstall",
-        (pkg: string) => string
-    >
+    {
+        check: (_: string) => string;
+        list?: string;
+        uninstall: (pkg: string) => string;
+        install: (pkg: string) => string;
+        reinstall: (pkg: string) => string;
+        exists: (pkg: string) => string;
+        update: (pkg: string) => string;
+    }
 > = {
     "apt": {
         install: (pkg) => `sudo apt install -y ${pkg}`,
@@ -75,6 +80,7 @@ export const ALIASED_CMDs: Record<
         exists: (pkg) => `flatpak list | grep -w ${pkg}`,
         uninstall: (pkg) => `flatpak uninstall -y ${pkg}`,
         check: (_) => "echo n | flatpak update",
+        list: "flatpak list --app  --columns=application,version",
     },
 
     "scp": {

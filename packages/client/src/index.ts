@@ -29,6 +29,7 @@ import { ensureSecurity } from "./commands/secure";
 import { selfUpdate } from "./commands/self-update";
 import { getTpmList, trustPackageManager, untrustPackageManager } from "./toolkit/tpm";
 import { isKpsSource } from "shared/types/manifest";
+import { find } from "./commands/find";
 
 const p = getPlatform();
 const platformString =
@@ -55,6 +56,7 @@ async function main() {
                 `> unpack <path>          ${konsole.clr("grey", "// manually installs a Konpak")}`,
                 `> info <pkg | user>      ${konsole.clr("grey", "// shows info for a specific package or publisher")}`,
                 `> list [-v]              ${konsole.clr("grey", "// lists all installed packages")}`,
+                `> find                   ${konsole.clr("grey", "// (ONLY FLATPAK) finds programs you already installed for Konbini to recognize them")}`,
                 `> tpm [option] [mgr]     ${konsole.clr("grey", "// shows trusted managers and lets you modify trusts")}`,
                 `> learn <item>           ${konsole.clr("grey", "// shows helpful info about something specific")}`,
                 `> where                  ${konsole.clr("grey", "// shows where all program files are stored")}`,
@@ -148,6 +150,9 @@ async function main() {
             if (subcommand === "usr") await generateUsrManifest();
             else if (subcommand === "pkg") await generatePkgManifest();
             else konsole.err("Invalid manifest type, either 'usr' or 'pkg'.");
+            break;
+        case "find":
+            await find();
             break;
         case "konpak":
             if (!subcommand)

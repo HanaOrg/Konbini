@@ -88,7 +88,7 @@ export function Unpack(filepath: string | Buffer): void {
 
     const lock: KONBINI_LOCKFILE = {
         pkg: appId,
-        timestamp: new Date().toString(),
+        timestamp: Date.now(),
         // @ts-expect-error uhm if we change the type to be `kbi:${string}` | "KPAK" too much errors...
         scope: `KPAK`,
         version,

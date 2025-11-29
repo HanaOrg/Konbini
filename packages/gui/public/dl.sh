@@ -148,6 +148,13 @@ add_to_path() {
     fi
 }
 
+find_installed() {
+    echo "[ i ] Analyzing already installed packages"
+    echo "      (as of now this works with Flatpak only)"
+    $PACKAGES_DIR/kbi find
+    echo "[ i ] Done searching"
+}
+
 # installer itself
 installer() {
     echo "[ > ] Hi! We'll install Konbini ($ARCH edition) for you. Just a sec!\n"
@@ -160,6 +167,7 @@ installer() {
     add_to_path $PACKAGES_DIR
     add_to_path $LAUNCHPAD_DIR
     setup_cronjob
+    find_installed
     echo "[ > ] Installed successfully! Restart your terminal, then run 'kbi' to get started."
     echo "Thank you and welcome to Konbini!"
 }
