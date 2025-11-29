@@ -450,6 +450,7 @@ async function main() {
     writeFileSync("../data/api/kdata_per_category.json", JSON.stringify(groupedByCategories));
     writeFileSync("../data/api/kdata_per_releases.json", JSON.stringify(sortedByLastUpdate));
     writeFileSync("../data/api/kdata_authors.json", JSON.stringify(sortedAuthors));
+    writeFileSync("../data/api/kdata_names.json", JSON.stringify(Object.keys(sortedByLastUpdate)));
     writeFileSync("../data/api/guard_res.json", JSON.stringify(guardJson));
 
     logBlock("コンビニ GUARD // KDATA // SUCCESSFULLY ENDS");
