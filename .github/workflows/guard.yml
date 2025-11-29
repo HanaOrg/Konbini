@@ -22,7 +22,7 @@ jobs:
 
             - name: Install ClamAV
               run: |
-                  sudo rm /var/lib/man-db/auto-update
+                  sudo rm -f /var/lib/man-db/auto-update || true
                   sudo apt-get update
                   sudo apt-get install -y --no-install-recommends clamav clamav-base libclamav12
 
