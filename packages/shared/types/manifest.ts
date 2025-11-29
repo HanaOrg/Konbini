@@ -196,6 +196,8 @@ export interface KONBINI_MANIFEST {
         /** 64-bit Microsoft Windows KPS. */
         win64: null | KONBINI_PKG_SCOPE;
     };
+    /** If true, it means the package was bootstrapped (added by Konbini or a 3rd party and not by the maintainer). */
+    bs?: boolean;
     /** Package name, as displayed in the Konbini UI. */
     name: string;
     /** Package slogan, as displayed in the Konbini UI and the Konbini CLI. */

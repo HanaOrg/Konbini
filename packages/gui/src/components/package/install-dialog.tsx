@@ -12,7 +12,7 @@ export default function InstallDialog({
     return (
         <dialog
             id="install_dialog"
-            className="p-8 bg-[#0000000F]  backdrop-blur-[40px] border-1 border-[#FFFFFF2E] top-[50%] left-[50%] translate-[-50%]"
+            className="p-8 bg-[#0000000F]  backdrop-blur-2xl border border-[#FFFFFF2E] top-[50%] left-[50%] translate-[-50%]"
         >
             <div className="flex flex-row items-start justify-between mb-4">
                 <div className="flex flex-col">

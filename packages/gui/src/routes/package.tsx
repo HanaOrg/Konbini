@@ -75,9 +75,9 @@ export default function PackagePage() {
     if ((!app || !author) && loading)
         return (
             <>
-                <div className="bg-[#8800FF] w-128 h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-50px] z-[-1]" />
-                <div className="bg-[#FF07EA] w-128 h-128 blur-[300px] opacity-[0.65] absolute bottom-[50px] right-[-300px] z-[-1]" />
-                <div className="bg-[#C23282] w-128 h-128 blur-[300px] opacity-[0.50] absolute top-[-150px] right-[-150px] z-[-1]" />
+                <div className="bg-[#8800FF] w-lg h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-50px] z-[-1]" />
+                <div className="bg-[#FF07EA] w-lg h-128 blur-[300px] opacity-[0.65] absolute bottom-[50px] right-[-300px] z-[-1]" />
+                <div className="bg-[#C23282] w-lg h-128 blur-[300px] opacity-[0.50] absolute top-[-150px] right-[-150px] z-[-1]" />
                 <h1>Loading package "{route}"...</h1>
             </>
         );
@@ -146,9 +146,9 @@ export default function PackagePage() {
                 ![secure.results.authentic, secure.results.integral, secure.results.safe].every(
                     (v) => v == true,
                 ) && <InsecurePackage res={secure} app={app} />}
-            <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.6] absolute top-[-150px] right-[-150px] z-[-1]" />
-            <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.7] absolute top-[650px] left-[-150px] z-[-1]" />
-            <div className="bg-[var(--k)] w-128 h-128 blur-[300px] opacity-[0.4] absolute bottom-[50px] right-[-300px] z-[-1]" />
+            <div className="bg-(--k) w-lg h-128 blur-[300px] opacity-[0.6] absolute top-[-150px] right-[-150px] z-[-1]" />
+            <div className="bg-(--k) w-lg h-128 blur-[300px] opacity-[0.7] absolute top-[650px] left-[-150px] z-[-1]" />
+            <div className="bg-(--k) w-lg h-128 blur-[300px] opacity-[0.4] absolute bottom-[50px] right-[-300px] z-[-1]" />
             <Nav />
             <InstallDialog
                 appName={app.name}
@@ -183,6 +183,7 @@ export default function PackagePage() {
                                     {app.author}
                                 </a>
                             </Badge>
+                            {app.bs && <Badge color="var(--k-dimmed)">Bootstrapped package</Badge>}
                             {author.verified && (
                                 <Badge color="var(--k)" text={getContrastingTextColor(accent)}>
                                     [√] Verified

@@ -90,6 +90,7 @@ export default function PublisherDetails({
                 ) : (
                     <Badge color="#ff30301a">Not currently {org ? "hiring" : "for hire"}</Badge>
                 )}
+                {usr.bs && <Badge color="var(--k-dimmed)">Bootstrapped package</Badge>}
             </div>
             {usr.socials && (
                 <>

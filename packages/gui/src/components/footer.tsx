@@ -2,7 +2,7 @@ export default function Footer() {
     return (
         <>
             <footer className="p-10 bg-[#00000035] flex flex-row items-start justify-between overflow-hidden relative h-120">
-                <div className="bg-[#FF0088] w-128 h-128 blur-[200px] absolute top-[-50px] left-[-150px] opacity-[0.4] z-[-1]" />
+                <div className="bg-[#FF0088] w-lg h-128 blur-[200px] absolute top-[-50px] left-[-150px] opacity-[0.4] z-[-1]" />
                 <div className="flex flex-col items-start justify-start">
                     <a href="/">
                         <img

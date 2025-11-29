@@ -13,7 +13,7 @@ export default function MaintainersList({
             <p className="mb-4">besides {author}</p>
             <div className="flex flex-row gap-4 flex-wrap">
                 {maintainers!.map((m) => (
-                    <div className="flex flex-col gap-1 flex-grow-1">
+                    <div className="flex flex-col gap-1 grow">
                         <h3 className="text-xl font-semibold text-white">{m.name}</h3>
                         {m.email && <a href={`mailto:${m.email}`}>{m.email}</a>}
                         <div className="flex flex-row gap-2">

@@ -22,7 +22,7 @@ export default function InsecurePackage({
                 been reported as unsafe!
             </h2>
             <p>
-                <a href="/" className="!text-white">
+                <a href="/" className="text-white!">
                     Click here to go back home.
                 </a>{" "}
                 Keep reading for more info, if you want to.

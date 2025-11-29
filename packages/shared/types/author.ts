@@ -2,6 +2,8 @@ import { validate, validateAgainst } from "strings-utils";
 
 /** Properties common to persons and organizations. */
 interface COMMON_PROFILE {
+    /** If true, it means the author profile (and therefore at least one package) were bootstrapped (added by Konbini or a 3rd party and not by the profile itself). */
+    bs?: boolean;
     /** Name of the person or organization.
      *
      * For persons it should be real, but doesn't have to, a username or pseudonym works.
