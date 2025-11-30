@@ -44,6 +44,7 @@ export const ALIASED_CMDs: Record<
         exists: (pkg) => `snap list | grep -w ${pkg}`,
         uninstall: (pkg) => `sudo snap remove ${pkg}`,
         check: (_) => "snap refresh --list",
+        list: "snap list --all --color=never --unicode=never",
     },
 
     "brew": {
@@ -53,6 +54,7 @@ export const ALIASED_CMDs: Record<
         exists: (pkg) => brew(`list --formula | grep -w ${pkg}`),
         uninstall: (pkg) => brew(`uninstall ${pkg}`),
         check: () => brew(`outdated`),
+        list: "brew list -v --versions",
     },
 
     "brew-k": {
@@ -62,6 +64,7 @@ export const ALIASED_CMDs: Record<
         exists: (pkg) => brew(`list --cask | grep -w ${pkg}`),
         uninstall: (pkg) => brew(`uninstall --cask ${pkg}`),
         check: () => brew(`outdated --cask`),
+        list: "brew list -v --versions",
     },
 
     "wget": {
