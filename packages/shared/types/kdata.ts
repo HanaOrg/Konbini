@@ -7,6 +7,7 @@ interface DownloadEntry {
     sys: SUPPORTED_PLATFORMS;
     country: string;
     timestamp: number;
+    from: string;
 }
 export interface DownloadData {
     installs: DownloadEntry[];

@@ -1,11 +1,21 @@
 const { isValidOrigin, validate } = require("../utils.js");
 const geoip = require("geoip-lite");
 const { Redis } = require("@upstash/redis");
+const crypto = require("crypto");
 
 /** @type {import('@vercel/node').VercelRequest} */
 let req;
 /** @type {import('@vercel/node').VercelResponse} */
 let res;
+
+interface DownloadEntry {
+    app: string;
+    version: string;
+    sys: "linux64" | "linuxArm" | "mac64" | "macArm" | "win64";
+    country: string;
+    timestamp: number;
+    from: string;
+}
 
 module.exports = async function handler(reqParam: any, resParam: any) {
     req = reqParam;
@@ -21,6 +31,10 @@ module.exports = async function handler(reqParam: any, resParam: any) {
         if (req.method !== "POST") {
             res.status(405).send("Only POST allowed");
             return;
+        }
+
+        if (!req.body || typeof req.body !== "object") {
+            return res.status(400).json({ error: "Invalid request body" });
         }
 
         const { app, version, sys, action } = req.body;
@@ -59,16 +73,34 @@ module.exports = async function handler(reqParam: any, resParam: any) {
             : req.connection.remoteAddress;
         const geo = geoip.lookup(ip || "0.0.0.0");
         const country = (geo || { country: "unknown" }).country;
+        if (!process.env["HMAC"]) throw new Error("Missing HMAC env variable! Cannot operate.");
+        const from = crypto.createHmac("sha256", process.env["HMAC"]).update(ip).digest("base64");
 
-        const data = {
+        const data: DownloadEntry = {
             app,
             version,
             sys,
             country,
             timestamp: Date.now(),
+            from,
         };
 
         if (action === "download") {
+            const installs: DownloadEntry[] = (await db.lrange("downloads", 0, -1))
+                .filter((i: DownloadEntry) => i.app == app)
+                .map((s: DownloadEntry) => (typeof s === "object" ? s : JSON.parse(s)));
+            const removals: DownloadEntry[] = (await db.lrange("removals", 0, -1))
+                .filter((i: DownloadEntry) => i.app == app)
+                .map((s: DownloadEntry) => (typeof s === "object" ? s : JSON.parse(s)));
+            if (
+                installs.map((i) => i.from + i.app).includes(data.from + data.app) &&
+                !removals.map((i) => i.from + i.app).includes(data.from + data.app)
+            ) {
+                res.status(400).json({
+                    error: "It says here you already downloaded this from this device and haven't removed it.",
+                });
+                return;
+            }
             await db.rpush("downloads", JSON.stringify(data));
         } else {
             await db.rpush("removals", JSON.stringify(data));
