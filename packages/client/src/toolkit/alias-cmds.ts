@@ -80,10 +80,10 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `flatpak install -y flathub ${pkg}`,
         reinstall: (pkg) => `flatpak install -y --reinstall flathub ${pkg}`,
         update: (pkg) => `flatpak update -y ${pkg}`,
-        exists: (pkg) => `flatpak list | grep -w ${pkg}`,
+        exists: (pkg) => `flatpak list --app --columns=application,version | grep -w ${pkg}`,
         uninstall: (pkg) => `flatpak uninstall -y ${pkg}`,
         check: (_) => "echo n | flatpak update",
-        list: "flatpak list --app  --columns=application,version",
+        list: "flatpak list --app --columns=application,version",
     },
 
     "scp": {

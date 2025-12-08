@@ -6,5 +6,6 @@ export default defineConfig([
             "semi": "error",
             "prefer-const": "error",
         },
+        ignores: ["packages/gui/dist/**", "**/node_modules/**"],
     },
 ]);

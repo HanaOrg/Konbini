@@ -197,7 +197,7 @@ export async function installPackage(
         process.exit(1);
     }
     // if not Kbi, ver and hash and all of that won't even be used
-    // but we need it to prevent typeerror & to avoid scanning the package
+    // but we need it to prevent type error & to avoid scanning the package
     // (non-Kbi = not hosted by us = not scanned = scanPackage throws = thing breaks = user sad)
     const kGuardResponse = isKbiScope(platform)
         ? await scanPackage(`${pkgId}@${platformName}`)
@@ -209,25 +209,21 @@ export async function installPackage(
     const usrDir = USR_PATH({ author: manifest.author });
     const pkgDir = PKG_PATH({ pkg: pkgId, author: manifest.author });
 
-    if (packageExists(platform, manifest.author)) {
+    const exists = packageExists(platform, manifest.author);
+    if (exists !== false) {
         if (!listPackages("SILENT").some((i) => i.pkg_id === manifest.id)) {
             writeLockfile(
                 {
                     pkg_id: manifest.id,
                     scope: platform,
                     timestamp: Date.now(),
-                    version: "unknown",
-                    remote_url: "unknown",
-                    installation_hash: "unknown",
-                },
+                    version: exists.version,
+                } as any,
                 manifest.id,
                 manifest.author,
             );
             konsole.dbg(
-                "Somehow, this was installed but we didn't have a lockfile.\nOne was generated right now (values are 'unknown', heads up).",
-            );
-            konsole.dbg(
-                "Reinstalling may better populate said lockfile (not really needed though).",
+                "Somehow, this was installed but we didn't have a lockfile, we just generated one.",
             );
         }
         if (method === "install") {

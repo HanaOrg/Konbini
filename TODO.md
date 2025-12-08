@@ -8,6 +8,7 @@
 
 Items with a **!** must be done before release.
 
+- [ ] **!** Version and lockfile handling "work" but are messy and not properly tested. They should be carefully reviewed.
 - [ ] Cache everything; cache locally too.
     - [ ] In exchange, perhaps lower cache duration? Now it doesn't depend on the GitHub API so...
 - [ ] Support things other than standalone executables.

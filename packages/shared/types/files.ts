@@ -8,6 +8,8 @@ interface KONBINI_ALI_LOCKFILE {
     timestamp: number;
     /** Package scope. */
     scope: Exclude<KONBINI_PKG_SCOPE, `kbi:${string}`>;
+    /** Version of the package. */
+    version?: string;
 }
 
 interface KONBINI_KBI_LOCKFILE extends Omit<KONBINI_ALI_LOCKFILE, "scope"> {

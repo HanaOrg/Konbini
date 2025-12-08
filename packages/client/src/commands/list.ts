@@ -9,6 +9,7 @@ import { parseKps } from "shared/api/manifest";
 import { isKbiScope } from "../../../shared/types/manifest";
 import { parseID } from "shared/api/core";
 import type { KONBINI_ID_PKG } from "shared/types/author";
+import { logAction } from "shared/api/kdata";
 
 function findLockFiles(dir: string, filename: string = FILENAMES.lockfile): string[] {
     const results: string[] = [];
@@ -56,6 +57,11 @@ export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTE
                     lockfile.pkg_id,
                     "no longer is installed. Removed its lockfile.",
                 );
+                logAction({
+                    app: lockfile.pkg_id,
+                    version: lockfile.timestamp.toString(),
+                    action: "remove",
+                }).catch(konsole.err);
                 rmSync(join(lockfile.path, "../"), { recursive: true, force: true });
             } else {
                 pkgsToList.push(lockfile);
@@ -76,6 +82,8 @@ export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTE
     for (const pkg of pkgsToList) {
         const stuff = [
             pkg.pkg_id.replace("kbi.grabbed.", ""),
+            konsole.clr("grey", pkg.pkg_id.startsWith("kbi.grabbed.") ? "grabbed from" : "ver"),
+            konsole.clr("cyan", (pkg.version as any) ?? "(unknown?)"),
             konsole.clr(
                 "grey",
                 pkg.pkg_id.startsWith("kbi.grabbed.") ? "grabbed from" : "installed from",

@@ -3,7 +3,7 @@ import { execSync } from "child_process";
 import { writeLaunchpadShortcut, writeLockfile } from "./write";
 import { ALIASED_CMDs } from "./alias-cmds";
 import { PKG_PATH } from "shared/client";
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import {
     isSpecificParsedKps,
@@ -20,6 +20,8 @@ import { exists } from "./exists";
 import type { KONBINI_ID_PKG, KONBINI_ID_USR } from "shared/types/author";
 import { isTpm, trustPackageManager } from "./tpm";
 import { logAction } from "shared/api/kdata";
+import { FILENAMES } from "shared/constants";
+import { getAliasedPackageVersion } from "./alias-utils";
 
 /** true if it IS up to date, false if it NEEDS to update */
 function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
@@ -184,13 +186,25 @@ export async function installAliasedPackage(params: {
     return "installedOrUpdated";
 }
 
-export function packageExists(pkg: KONBINI_PKG_SCOPE, author?: KONBINI_ID_USR): boolean {
+export function packageExists(
+    pkg: KONBINI_PKG_SCOPE,
+    author?: KONBINI_ID_USR,
+):
+    | {
+          version: string;
+      }
+    | false {
     const kps = parseKps(pkg);
     if (kps.src === "kbi") {
         if (!author)
             throw "Internal error: Attempt to check for existence of Konbini package without USR ID.";
         const pkgPath = PKG_PATH({ author, pkg });
-        return existsSync(join(pkgPath, kps.value));
+        if (!existsSync(join(pkgPath, kps.value, FILENAMES.lockfile))) return false;
+        return (
+            Bun.YAML.parse(
+                readFileSync(join(pkgPath, kps.value, FILENAMES.lockfile), { encoding: "utf-8" }),
+            ) as KONBINI_LOCKFILE as any
+        ).version;
     }
     const cmd = ALIASED_CMDs[kps.src]["exists"](kps.value);
     let out: string;
@@ -206,6 +220,6 @@ export function packageExists(pkg: KONBINI_PKG_SCOPE, author?: KONBINI_ID_USR): 
     // I BELIEVE all packages do it the same way (tested it a while ago)
     // if konbini starts messing around with whether a package is installed or not, maybe the solution
     // is to add here a diff behavior for a specific pkg manager
-    if (out.includes(kps.value)) return true;
+    if (out.includes(kps.value)) return { version: getAliasedPackageVersion(kps) };
     return false;
 }
