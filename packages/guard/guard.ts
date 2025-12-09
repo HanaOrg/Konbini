@@ -398,14 +398,18 @@ async function main() {
     const groupedByCategories: Partial<Record<CATEGORY, KDATA_FILE_PKG>> = Object.fromEntries(
         CATEGORIES.map(createCategoryGroup),
     );
-    Object.entries(kdata).forEach((e) =>
+    Object.entries(kdata).forEach((e) => {
+        if (!Array.isArray(e[1].categories) && e[1].categories !== undefined) {
+            err("categories are being fucked up here", e[0], e[1].categories);
+            return;
+        }
         (e[1].categories || []).forEach((cat) => {
             if (!groupedByCategories[cat]) {
                 groupedByCategories[cat] = {};
             }
             groupedByCategories[cat][e[0] as KONBINI_ID_PKG] = e[1];
-        }),
-    );
+        });
+    });
     const sortedByLastUpdate = fromSorting(kdata, sortByLastUpdate);
     const sortedAuthors: Record<KONBINI_ID_USR, KONBINI_AUTHOR> = Object.fromEntries(
         authors.map((a) => [a.id, a]),
