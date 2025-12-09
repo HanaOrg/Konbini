@@ -1,6 +1,6 @@
-コンビニ | KGuard Sun Nov 30 2025 14:05:08 GMT+0000 (Coordinated Universal Time) | Keeping Konbini safe
-org.fuckingnode.fuckingnode@5.1.1@mac64@AfxVeKpE9wU7yakgJQP5FvwqyIHXFJmNdcc8jHCt0oqzD0BS4aY3ONp4aiP0lfhtrYiGLxqgOjDxcthd6VY6VA=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@5.1.1@win64@dBfbv8DzaroXVDmV54FqIHVSd0Ef9wg11-Q7rnuH2SfBdSccGw5uhQkD2wf_4NjpAQ9Qp8mK6TKQg3WKLyBouA=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@5.1.1@linuxArm@LP55A8fjbk_F5ow9zJbLMbpceqVyjBFttX1MLtO0jUx3mQG1ltyMVyjfnVpn2WUKZsfrjShxvMjlj6nml6uoxQ=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@5.1.1@linux64@8OlcvnK6J0tGlkKVMtrtFuzF8ybybySbhvIkgmdmg8XTZnRaJEjto9NvTqYW_gZTUTQZRIj1hhFlJx6XkeeNWA=SAFE|AUTHENTIC|INTEGRAL
-org.fuckingnode.fuckingnode@5.1.1@macArm@KrFKD4Yx3RBETzYL78oepoZVYzAQiGMqSfUgZAsYksq8E-I0gqCkv1RZz4SBAft_fGm54mUnCmMAZTYvaruQzw=SAFE|AUTHENTIC|INTEGRAL
+コンビニ | KGuard Tue Dec 09 2025 15:21:01 GMT+0000 (Coordinated Universal Time) | Keeping Konbini safe
+org.fuckingnode.fuckingnode@5.1.2@linuxArm@dz-8OGPnxjv6IxJAwVnsPEh1AmhbAcWRSkKZG1Jk__2Zn8t4k4hIE_sDLKvDeKVc2QH8etm1S4AuWRI8QHuX_g=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@5.1.2@macArm@fYHNY4g_Ye3qVKVjjJcKJpf0uX-vctBhapySppj-xqZ6NX02gGIAaCGff4S8FHUA54TlXW3EiB-Yq8GedlwDcg=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@5.1.2@linux64@uenvDqSReD1UH2N15wMdhTg2uL5JGgtAP6k2dh34ad2R1OV12V17jnt7C2CxpKUWSD2dFUgKJzi3hXM34WpC9Q=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@5.1.2@mac64@N2TgE9lW3t22ERS1WZqxPUUT9T7LyeR5M7SXKnmQlb6qqSQMqHJPzAHCk_gqtbLEWnztTyyLv4AynMSE5KrN5g=SAFE|AUTHENTIC|INTEGRAL
+org.fuckingnode.fuckingnode@5.1.2@win64@uSLCfCxF_zgsUaOhXMtQP219ShKzJJj5OBAeAtfuhF7Jdiu8O2c_jLh9M8WREeeM9JDz_Fg4-82Pl6nyPJozug=SAFE|AUTHENTIC|INTEGRAL
