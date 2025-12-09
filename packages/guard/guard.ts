@@ -38,10 +38,10 @@ function err(...a: any[]): void {
 function yamlParse(a: any): unknown {
     try {
         return Bun.YAML.parse(a);
-    } catch (error) {
-        err("[ERR]", error);
+    } catch (e) {
+        err("[ERR]", e);
         err(">>>ERRORING YAML>>>\n", a);
-        throw error;
+        throw e;
     }
 }
 
@@ -230,12 +230,12 @@ async function main() {
                         remoteUrl: scope.file(branch, "CHANGELOG.md"),
                         filePath: `./build/${manifest.id}.changes.md`,
                     });
-                } catch (error) {
-                    if (String(error).includes("404")) {
+                } catch (e) {
+                    if (String(e).includes("404")) {
                         writeFileSync(`./build/${manifest.id}.changes.md`, "# No");
                         log(`[ / ] No CHANGELOG file for ${manifest.id}`);
                     } else {
-                        log(`[ ! ] Error seeking CHANGELOG for ${manifest.id}: ${error}`);
+                        log(`[ ! ] Error seeking CHANGELOG for ${manifest.id}: ${e}`);
                     }
                 }
             }
@@ -246,8 +246,8 @@ async function main() {
                         `./build/${manifest.id}.downloads.yaml`,
                         Bun.YAML.stringify(await getDownloads(manifest.id)),
                     );
-                } catch (error) {
-                    log(`[ ! ] Error seeking downloads for ${manifest.id}: ${error}`);
+                } catch (e) {
+                    log(`[ ! ] Error seeking downloads for ${manifest.id}: ${e}`);
                 }
             }
 
@@ -287,16 +287,16 @@ async function main() {
                     writeFileSync("./build/" + manifest.id + ".pa.txt", remotes.pkgReleaseDate);
                     // latest-tag
                     writeFileSync("./build/" + manifest.id + ".lt.txt", remotes.pkgVersion);
-                } catch (error) {
-                    err("[XXX] Error downloading assets", error);
+                } catch (e) {
+                    err("[XXX] Error downloading assets", e);
                 }
             }
 
             try {
                 // ik promise.all() exists, but it kinda gives problems here
                 for (const toFetch of fetches) await fetchIfNotExists(toFetch[0], toFetch[1]);
-            } catch (error) {
-                err("[XXX] Error downloading assets", error);
+            } catch (e) {
+                err("[XXX] Error downloading assets", e);
             }
 
             if (!files) {

@@ -66,8 +66,8 @@ export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTE
             } else {
                 pkgsToList.push(lockfile);
             }
-        } catch (error) {
-            konsole.dbg("Failed to list an item because of error:", error);
+        } catch (e) {
+            konsole.dbg("Failed to list an item because of error:", e);
             continue;
         }
     }

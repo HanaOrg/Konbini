@@ -170,8 +170,8 @@ async function main() {
                     },
                 }).values;
                 await konpakFromDir(subcommand, platform, id, binary, ver, icon, sfx);
-            } catch (error) {
-                konsole.err(Error.isError(error) ? error.message + "." : error);
+            } catch (e) {
+                konsole.err(Error.isError(e) ? e.message + "." : e);
             }
             break;
         case "tpm":

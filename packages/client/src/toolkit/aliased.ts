@@ -30,8 +30,8 @@ function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
     let out: string[];
     try {
         out = execSync(ALIASED_CMDs[scope.src]["check"](scope.value)).toString().split("\n");
-    } catch (error) {
-        out = new TextDecoder().decode((error as any).stdout ?? String(error)).split("\n");
+    } catch (e) {
+        out = new TextDecoder().decode((e as any).stdout ?? String(e)).split("\n");
     }
     // foobar 7.0.0 < 7.0.1
     if (scope.src === "nix") return !out.includes("<");
@@ -93,8 +93,8 @@ export async function installAliasedPackage(params: {
                 "Installed. Now restart your terminal, then re-run 'kbi install' and it should work!",
             );
             process.exit(0);
-        } catch (error) {
-            throw `Error installing ${kps.name}`;
+        } catch (e) {
+            throw `Error installing ${kps.name}: ${e}`;
         }
     }
 
@@ -134,8 +134,8 @@ export async function installAliasedPackage(params: {
         try {
             const exec = cmd(kps.at.name ?? "", kps.at.url ?? "");
             execSync(normalize(exec));
-        } catch (error) {
-            konsole.err("Error adding srcset for this package:", error);
+        } catch (e) {
+            konsole.err("Error adding srcset for this package:", e);
             process.exit(1);
         }
     }
@@ -147,8 +147,8 @@ export async function installAliasedPackage(params: {
             // so the user see's what's up
             stdio: "inherit",
         });
-    } catch (error) {
-        throw `Error installing package '${kps.value}' with ${kps.name}: ${error}`;
+    } catch (e) {
+        throw `Error installing package '${kps.value}' with ${kps.name}: ${e}`;
     }
 
     konsole.dbg(
@@ -211,8 +211,8 @@ export function packageExists(
 
     try {
         out = execSync(cmd).toString();
-    } catch (error) {
-        out = new TextDecoder().decode((error as any).stdout ?? String(error));
+    } catch (e) {
+        out = new TextDecoder().decode((e as any).stdout ?? String(e));
     }
 
     // NOTE - be sure to test all pkg managers to ensure behavior is consistent

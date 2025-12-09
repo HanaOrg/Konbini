@@ -119,8 +119,10 @@ export async function getPkgManifest(packageName: string): Promise<KDATA_ENTRY_P
     }
 
     const json = await response.json();
-    if (!isValidManifest(json)) {
-        throw `The manifest for ${packageName} was invalidated. Its author made a mistake somewhere. Notify them.`;
+    try {
+        isValidManifest(json);
+    } catch (error) {
+        throw `The manifest for ${packageName} was invalidated (${error}).\nPlease raise an issue in GitHub (HanaOrg/KonbiniPkgs).`;
     }
     return json as KDATA_ENTRY_PKG;
 }

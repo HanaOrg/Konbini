@@ -108,8 +108,8 @@ module.exports = async function handler(reqParam: any, resParam: any) {
 
         res.status(200).json({ success: true });
         return;
-    } catch (error) {
-        res.status(500).json({ message: "Internal error: " + String(error) });
+    } catch (e) {
+        res.status(500).json({ message: "Internal error: " + String(e) });
         return;
     }
 };

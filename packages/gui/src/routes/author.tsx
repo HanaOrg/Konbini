@@ -18,13 +18,13 @@ export default function AuthorPage() {
                 const pkgAuthor = await getAuthor(route as KONBINI_ID_USR);
                 setAuthor(pkgAuthor);
                 setLoading(false);
-            } catch (error) {
-                if (String(error).includes("does NOT exist")) {
+            } catch (e) {
+                if (String(e).includes("does NOT exist")) {
                     window.location.pathname = "/404";
                     return;
                 }
-                console.error(error);
-                throw error;
+                console.error(e);
+                throw e;
             }
         }
         getAuthorAndApps();

@@ -300,7 +300,7 @@ export function isSpecificParsedKps(
 
 export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     if (typeof manifest !== "object" || manifest === null) {
-        return false;
+        throw "Not an object";
     }
 
     const m = manifest as Partial<KONBINI_MANIFEST>;
@@ -380,24 +380,22 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const validHomepage = isURL(m.homepage) || m.homepage === undefined;
 
     const validDocs = isURL(m.docs) || m.docs === undefined;
-
-    return [
-        validPlatforms,
-        validStrings,
-        validRepository,
-        validLicense,
-        validIcon,
-        validMaintainers,
-        validAuthorId,
-        validSysReq,
-        validScreenshots,
-        validCategories,
-        validAgeRating,
-        validHomepage,
-        validDocs,
-        validType,
-        validAccent,
-    ].every((i) => i == true);
+    if (!validPlatforms) throw "Invalid platforms";
+    if (!validStrings) throw "Invalid strings";
+    if (!validRepository) throw "Invalid repository";
+    if (!validLicense) throw "Invalid license";
+    if (!validIcon) throw "Invalid icon";
+    if (!validMaintainers) throw "Invalid maintainers";
+    if (!validAuthorId) throw "Invalid author ID";
+    if (!validSysReq) throw "Invalid system requirements";
+    if (!validScreenshots) throw "Invalid screenshots";
+    if (!validCategories) throw "Invalid categories";
+    if (!validAgeRating) throw "Invalid age rating";
+    if (!validHomepage) throw "Invalid homepage";
+    if (!validDocs) throw "Invalid docs";
+    if (!validType) throw "Invalid type";
+    if (!validAccent) throw "Invalid accent color.";
+    return true;
 }
 
 /** Returns a string indicating the age rating of an app.

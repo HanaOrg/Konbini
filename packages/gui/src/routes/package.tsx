@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { getAgeRating, isValidManifest } from "shared/types/manifest";
+import { getAgeRating } from "shared/types/manifest";
 import { locatePkg } from "shared/api/core";
 import { micromark } from "micromark";
 import DOMPurify from "dompurify";
@@ -29,6 +29,9 @@ export default function PackagePage() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [secure, setSecure] = useState<KONBINI_LOCAL_SCAN | null>(null);
+    const [isSupported, setIsSupported] = useState<boolean>(false);
+    const [isPossiblySupported, setIsPossiblySupported] = useState<boolean>(false);
+    const [age, setAge] = useState<"everyone" | "mid" | "high" | "very_high">("mid");
 
     const route = window.location.pathname.split("/package/").filter(Boolean)[0] as KONBINI_ID_PKG;
     const plat = getDesktopPlatform();
@@ -58,21 +61,50 @@ export default function PackagePage() {
                 setSecure(isSecure);
                 setAuthor(pkgAuthor);
                 setApp(manifest);
-                setLoading(false);
-            } catch (error) {
+                accentPage(manifest.accent);
+                setIsSupported(
+                    manifest.platforms
+                        ? (plat.plat == "Windows" &&
+                              typeof manifest.platforms.win64 === "string") ||
+                              (plat.plat == "macOS" &&
+                                  plat.arch == "64" &&
+                                  typeof manifest.platforms.mac64 === "string") ||
+                              (plat.plat == "macOS" &&
+                                  plat.arch == "ARM" &&
+                                  typeof manifest.platforms.macArm === "string") ||
+                              (plat.plat == "Linux" &&
+                                  plat.arch == "64" &&
+                                  typeof manifest.platforms.linux64 === "string") ||
+                              (plat.plat == "Linux" &&
+                                  plat.arch == "ARM" &&
+                                  typeof manifest.platforms.linuxArm === "string") ||
+                              false
+                        : false,
+                );
+                /** for when we don't know the arch but know the OS */
+                setIsPossiblySupported(
+                    (plat.plat == "macOS" &&
+                        (typeof manifest.platforms.mac64 === "string" ||
+                            typeof manifest.platforms.macArm === "string")) ||
+                        (plat.plat == "Linux" &&
+                            (typeof manifest.platforms.linux64 === "string" ||
+                                typeof manifest.platforms.linuxArm === "string")),
+                );
+                setAge(getAgeRating(manifest.age_rating));
+            } catch (e) {
                 if (String(error).includes("does NOT exist")) {
                     window.location.pathname = "/404";
                     return;
                 }
                 setError(String(error));
-                throw error;
+            } finally {
+                setLoading(false);
             }
         }
         getApp();
     }, []);
 
-    if (error) return <h1>Error: {error}</h1>;
-    if ((!app || !author) && loading)
+    if (loading) {
         return (
             <>
                 <div className="bg-[#8800FF] w-lg h-128 blur-[300px] opacity-[0.75] absolute top-[650px] left-[-50px] z-[-1]" />
@@ -81,24 +113,19 @@ export default function PackagePage() {
                 <h1>Loading package "{route}"...</h1>
             </>
         );
-    if (!app) return <h1>Error loading {route}. Failed to load app.</h1>;
-    if (!author)
-        return <h1>Error loading {route}. The app itself loaded, but its author's data didn't.</h1>;
-    if (!isValidManifest(app))
+    }
+    if (!app || !author)
         return (
             <>
-                <h1>Invalid manifest</h1>
+                <h1>Oops! An error happened</h1>
                 <p>
-                    This app has an improper manifest. Tell his developer to check it.
+                    {error ??
+                        "An unknown error prevented the app from loading. That's all we know."}
                     <br />
                     <a href="/">Go back.</a>
                 </p>
             </>
         );
-
-    useEffect(() => {
-        accentPage(app.accent);
-    }, []);
 
     const [accent, setAccent] = useState(document.documentElement.style.getPropertyValue("--k"));
 
@@ -116,18 +143,6 @@ export default function PackagePage() {
         return () => obs.disconnect();
     }, []);
 
-    const isSupported = app.platforms
-        ? (plat.plat == "Windows" && app.platforms.win64) ||
-          (plat.plat == "macOS" && plat.arch == "64" && app.platforms.mac64) ||
-          (plat.plat == "macOS" && plat.arch == "ARM" && app.platforms.macArm) ||
-          (plat.plat == "Linux" && plat.arch == "64" && app.platforms.linux64) ||
-          (plat.plat == "Linux" && plat.arch == "ARM" && app.platforms.linuxArm)
-        : false;
-    /** for when we don't know the arch but know the OS */
-    const isPossiblySupported =
-        (plat.plat == "macOS" && (app.platforms.mac64 || app.platforms.macArm)) ||
-        (plat.plat == "Linux" && (app.platforms.linux64 || app.platforms.linuxArm));
-
     const supportString = isSupported
         ? "Works on your device"
         : isPossiblySupported
@@ -138,7 +153,6 @@ export default function PackagePage() {
         : isPossiblySupported
           ? "#FF7C65"
           : "#FF3863";
-    const age = getAgeRating(app.age_rating);
 
     return (
         <>
@@ -153,11 +167,7 @@ export default function PackagePage() {
             <InstallDialog
                 appName={app.name}
                 appId={route}
-                supported={
-                    typeof isSupported === "string" ||
-                    typeof isPossiblySupported === "string" ||
-                    false
-                }
+                supported={isSupported || isPossiblySupported}
             />
             <div className="app-main-cont">
                 <div className="flex flex-row">
