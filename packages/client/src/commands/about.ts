@@ -5,7 +5,7 @@ export function about() {
     konsole.adv(str + "\n" + "=".repeat(str.length));
     konsole.que("What is Konbini?");
     konsole.suc(
-        '"Your convenience store", which is, by the way, what "konbini" stands for in japanese.',
+        '"Your convenience store", which is, by the way, what "konbini" stands for in Japanese.',
     );
     konsole.adv(
         "It's a *store* for software packages made for *convenience*, with the easiest to use app,\nnon-bureaucratic publishing, actually beautiful TUI and GUI, and multi-platform support.",

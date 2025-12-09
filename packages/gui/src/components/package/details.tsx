@@ -21,7 +21,13 @@ export default function PackageDetails({
     app: KDATA_ENTRY_PKG;
     manifestUrl: string;
 }) {
-    const repo = app.repository ? parseRepositoryScope(app.repository) : null;
+    const repo = app.repository
+        ? app.repository.startsWith("url:")
+            ? {
+                  public: app.repository.slice(4),
+              }
+            : parseRepositoryScope(app.repository)
+        : null;
     const _p = getDesktopPlatform();
     const platform =
         _p.plat === "Windows" && _p.arch === "64"

@@ -360,25 +360,29 @@ async function main() {
         }
         const contents = readFileSync(path, "utf-8");
         log("Storing data for", pkg, "from", file.name);
-        if (file.name.endsWith(".downloads.yaml")) {
-            if (!kdata[pkg]) kdata[pkg] = {} as any;
-            kdata[pkg]!["downloads"] = yamlParse(contents) as DownloadData;
-        } else if (file.name.endsWith(".pa.txt")) {
-            if (!kdata[pkg]) kdata[pkg] = {} as any;
-            kdata[pkg]!["last_release_at"] = contents;
-        } else if (file.name.endsWith(".changes.md") && contents.trim() !== "# No") {
-            if (!kdata[pkg]) kdata[pkg] = {} as any;
-            const log = parseKAChangelog(contents);
-            if (log) kdata[pkg]!["changelog"] = log;
-        } else if (file.name.endsWith(".lt.txt")) {
-            if (!kdata[pkg]) kdata[pkg] = {} as any;
-            kdata[pkg]!["latest_release"] = contents;
-        } else if (file.name === `${pkg}.yaml`) {
-            if (!kdata[pkg]) kdata[pkg] = {} as any;
-            kdata[pkg] = {
-                ...kdata[pkg],
-                ...(yamlParse(contents) as KDATA_ENTRY_PKG),
-            };
+        try {
+            if (file.name.endsWith(".downloads.yaml")) {
+                if (!kdata[pkg]) kdata[pkg] = {} as any;
+                kdata[pkg]!["downloads"] = yamlParse(contents) as DownloadData;
+            } else if (file.name.endsWith(".pa.txt")) {
+                if (!kdata[pkg]) kdata[pkg] = {} as any;
+                kdata[pkg]!["last_release_at"] = contents;
+            } else if (file.name.endsWith(".changes.md") && contents.trim() !== "# No") {
+                if (!kdata[pkg]) kdata[pkg] = {} as any;
+                const log = parseKAChangelog(contents);
+                if (log) kdata[pkg]!["changelog"] = log;
+            } else if (file.name.endsWith(".lt.txt")) {
+                if (!kdata[pkg]) kdata[pkg] = {} as any;
+                kdata[pkg]!["latest_release"] = contents;
+            } else if (file.name === `${pkg}.yaml`) {
+                if (!kdata[pkg]) kdata[pkg] = {} as any;
+                kdata[pkg] = {
+                    ...kdata[pkg],
+                    ...(yamlParse(contents) as KDATA_ENTRY_PKG),
+                };
+            }
+        } catch (e) {
+            err("Couldn't store data for", pkg, e);
         }
     }
 

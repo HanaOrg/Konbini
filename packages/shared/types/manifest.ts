@@ -3,18 +3,24 @@ import { parseKps } from "../api/manifest.ts";
 import type { KONBINI_ID_USR } from "./author.ts";
 
 export const CATEGORIES = [
-    "SYSTEM_UTIL",
+    "SYSTEM",
     "PERSONAL",
+    "UTILITY",
     "PRODUCTIVITY",
     "PRODUCTION",
     "EFFICIENCY",
     "DEVELOPMENT",
+    "NETWORK",
     "GAMING",
     "OFFICE",
     "ENTERTAINMENT",
     "COMMUNICATION",
     "EDUCATION",
     "CUSTOMIZATION",
+    "MULTIMEDIA",
+    "GRAPHICS",
+    "SCIENCE",
+    "TRAVEL",
 ] as const;
 
 export type CATEGORY = (typeof CATEGORIES)[number];
@@ -175,12 +181,19 @@ export interface AGE_RATING {
     violence: boolean;
 }
 
+type IMG_URL = `${string}.${"webp" | "png" | "jpg" | "svg"}`;
+
+export type APP_IMAGES = {
+    text: string;
+    link: IMG_URL;
+}[];
+
 /** A Konbini package manifest. */
 export interface KONBINI_MANIFEST {
     /** GitHub, GitLab, or CodeBerg repository where the package _itself_ is stored.
      * Can be null, because of closed-source software.
      */
-    repository: REPOSITORY_SCOPE | null;
+    repository: REPOSITORY_SCOPE | `url:${string}` | null;
     /** Whether the app is a CLI, a graphical app, or has support for both things. */
     type: "cli" | "gui" | "both";
     /** Supported platforms for the package, with their Konbini Package Scope (KPS). */
@@ -208,25 +221,25 @@ export interface KONBINI_MANIFEST {
     license: LICENSE | null;
     /** Author's unique identifier. */
     author: KONBINI_ID_USR;
-    /** Package's logo, to be displayed in the Konbini UI. Only WEBP or PNG are allowed. */
-    icon?: `https://${string}.${"webp" | "png"}` | null;
+    /** Package's logo, to be displayed in the Konbini UI. Only WEBP, PNG, JPG, or SVG are allowed. */
+    icon?: IMG_URL | null;
     /** A list of persons who have contributed to the development of this package. */
     maintainers?: {
         name: string;
         email?: string;
         /** One website (any) they want to link to. */
-        link?: `https://${string}`;
+        link?: string;
         /** GitHub username. */
         github?: string;
     }[];
     /** Main website of the package, if any. */
-    homepage?: `https://${string}`;
+    homepage?: string;
     /** Documentation website of the package, if any. */
-    docs?: `https://${string}`;
+    docs?: string;
     /** Privacy policy of the package, if any. */
-    privacy?: `https://${string}`;
+    privacy?: string;
     /** Terms and conditions of the package, if any. */
-    terms?: `https://${string}`;
+    terms?: string;
     /** System requirements, if any. */
     requirements?: {
         /** Minimal OS version, if any. */
@@ -241,10 +254,7 @@ export interface KONBINI_MANIFEST {
         disk_mb?: number;
     };
     /** App screenshots to be displayed in the Konbini UI. Only WEBP is supported. */
-    images?: {
-        text: string;
-        link: `https://${string}.${"webp" | "png"}`;
-    }[];
+    images?: APP_IMAGES;
     /**
      * A category that represents the type of tool or software the app is meant to be.
      * - `SYSTEM_UTIL`: Tools for system management (e.g., disk cleaner, sys info viewer).
@@ -307,8 +317,9 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const is = (i: any): i is NonNullable<any> => i !== null && i !== undefined;
     const isPlatform = (p: any) => !p || isKps(p);
-    const isURL = (s?: any) => validate(s) && s.startsWith("https://");
-    const isImageURL = (s?: any) => validate(s) && s.startsWith("https://");
+    const isURL = (s?: any) => validate(s) && s.split(".").length > 1;
+    const isImageURL = (s?: any) =>
+        validate(s) && ["png", "webp", "jpg", "svg"].includes(s.split(".")[-1] ?? "");
 
     const validPlatforms =
         typeof m.platforms === "object" &&
@@ -429,7 +440,7 @@ export function isRepositoryScope(scope: any): scope is REPOSITORY_SCOPE {
     return true;
 }
 
-export function parseRepositoryScope(scope: REPOSITORY_SCOPE): {
+export function parseRepositoryScope(scope: REPOSITORY_SCOPE | `url:${string}`): {
     /** Source of the repo. */
     source: "gh" | "gl" | "cb";
     /** Main REST API URL. Returns repo details. */

@@ -82,8 +82,8 @@ async function installSingleExecutable(params: {
 
     if (out === "TimeOut") {
         konsole.war("Download took too long to complete (timeout'd after 4 minutes).");
-        // easter egg
-        if (Math.random() < 0.2) konsole.war("hope no one's DDoS-ing us");
+        // funny
+        if (Math.random() < 0.2) konsole.war("We hope no one's DDoS-ing us...");
         process.exit(1);
     }
 

@@ -1,13 +1,7 @@
 import { useState } from "preact/hooks";
+import type { APP_IMAGES } from "shared/types/manifest";
 
-export default function ScreenshotSlideshow({
-    ss,
-}: {
-    ss: {
-        text: string;
-        link: `https://${string}.${"webp" | "png"}`;
-    }[];
-}) {
+export default function ScreenshotSlideshow({ ss }: { ss: APP_IMAGES }) {
     const [slideIndex, setSlideIndex] = useState<number>(0);
 
     function moveSlideIndex(n: number) {
