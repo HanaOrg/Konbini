@@ -174,7 +174,7 @@ export default function PackagePage() {
                     {app.icon && (
                         <img
                             className="w-24 h-24  mr-4"
-                            src={app.icon}
+                            src={"https://" + app.icon}
                             alt={`${app.name}'s icon.`}
                         />
                     )}
@@ -271,7 +271,11 @@ export default function PackagePage() {
                 <div
                     className="markdown"
                     dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(micromark(app.desc.replaceAll("\\n", "\n"))),
+                        // since we get to review every manifest that shows up in the store, we can keep this unsanitized because of the flathub API returning HTML
+                        // TODO - update usage of the API so it returns markdown, so we can change this *just in case*
+                        __html: micromark(app.desc.replaceAll("\\n", "\n"), {
+                            allowDangerousHtml: true,
+                        }),
                     }}
                 />
                 {app.changelog && (

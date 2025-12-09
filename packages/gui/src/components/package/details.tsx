@@ -62,7 +62,11 @@ export default function PackageDetails({
                     <Detail>
                         <PiLockFill size={35} />
                         <div className="flex flex-col">
-                            <a href={app.privacy} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={"https://" + app.privacy}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 Privacy Policy
                             </a>
                             <p className="text-xs font-light">{app.privacy}</p>
@@ -74,7 +78,11 @@ export default function PackageDetails({
                         <PiArticleFill size={35} />
 
                         <div className="flex flex-col">
-                            <a href={app.terms} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={"https://" + app.terms}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 Terms of Use
                             </a>
                             <p className="text-xs font-light">{app.terms}</p>
@@ -96,7 +104,11 @@ export default function PackageDetails({
                         <PiGlobeFill size={35} />
 
                         <div className="flex flex-col">
-                            <a href={app.homepage} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={"https://" + app.homepage}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 Package's website
                             </a>
                             <p className="text-xs font-light">{app.homepage}</p>
@@ -107,7 +119,11 @@ export default function PackageDetails({
                     <Detail>
                         <PiBookBookmarkFill size={35} />
                         <div className="flex flex-col">
-                            <a href={app.docs} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={"https://" + app.docs}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 Learn to use it
                             </a>
                             <p className="text-xs font-light">{app.docs}</p>

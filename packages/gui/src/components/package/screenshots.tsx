@@ -24,7 +24,7 @@ export default function ScreenshotSlideshow({ ss }: { ss: APP_IMAGES }) {
                 {ss.map((s, i) => (
                     <div className={`slides ${i === slideIndex ? "flex" : "hidden"}`}>
                         <div className="number-text">{i + 1 + "/" + ss.length}</div>
-                        <img src={s.link} alt={s.text} />
+                        <img src={"https://" + s.link} alt={s.text} />
                         <div className="w-[80%] text-base min-h-18 mx-auto flex items-center justify-center text-center">
                             {s.text}
                         </div>

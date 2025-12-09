@@ -26,7 +26,7 @@ export default function AppGrid({
                         {app.icon && (
                             <img
                                 className="w-24 h-24 absolute bottom-[-5px] right-[-5px] blur-[60px]"
-                                src={app.icon}
+                                src={"https://" + app.icon}
                                 alt={`${app.name}'s icon`}
                             />
                         )}
@@ -38,7 +38,7 @@ export default function AppGrid({
                             {app.icon && (
                                 <img
                                     className="w-10 h-10 "
-                                    src={app.icon}
+                                    src={"https://" + app.icon}
                                     alt={`${app.name}'s icon`}
                                 />
                             )}
