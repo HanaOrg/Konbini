@@ -197,6 +197,12 @@ Function Register-Konpak {
     Set-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\\konpak\\shell\\open\\command" -Name "(default)" -Value "`"$KBI_PATH`" unpack `"%1`""
 }
 
+Function Find-Installed {
+    Write-Host "[ i ] Analyzing already installed packages"
+    & "$KBI_PATH\\kbi.exe" find
+    Write-Host "[ i ] Done searching"
+}
+
 Function Installer {
     try {
         Write-Host "[ > ] Hi! We'll install Konbini for you. Just a sec!\n"
@@ -208,6 +214,7 @@ Function Installer {
         Add-ToPath $LAUNCHPAD_DIR
         Register-Konpak
         Register-CronJob
+        Find-Installed
         Write-Host "[ > ] Installed successfully! Restart your terminal for it to work."
         Write-Host "Welcome to Konbini!"
     }

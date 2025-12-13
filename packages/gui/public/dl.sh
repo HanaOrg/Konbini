@@ -150,7 +150,6 @@ add_to_path() {
 
 find_installed() {
     echo "[ i ] Analyzing already installed packages"
-    echo "      (as of now this works with Flatpak only)"
     $PACKAGES_DIR/kbi find
     echo "[ i ] Done searching"
 }
