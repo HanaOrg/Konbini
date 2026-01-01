@@ -8,7 +8,7 @@ import { validate } from "strings-utils";
 export async function selfUpdate() {
     const platform = getPlatform();
     const suffix = platform === "win64" ? ".ps1" : ".sh";
-    const res = await fetch(`https://fuckingnode.github.io/install${suffix}`);
+    const res = await fetch(`https://konbini.vercel.app/dl${suffix}`);
     const path = join(tmpdir(), "kbi-updater-" + Date.now() + suffix);
     writeFileSync(path, await res.bytes());
     spawn(

@@ -1,3 +1,4 @@
+# borrowed from https://fuckingnode.github.io/install.ps1
 $ErrorActionPreference = "Stop"
 
 $ROOT_DIR = Join-Path -Path $Env:USERPROFILE -ChildPath "kbi"
@@ -16,7 +17,7 @@ Function Remove-IfNeeded() {
 Function Get-LatestReleaseUrl {
     try {
         Write-Host "Fetching latest release from GitHub..."
-        $response = Invoke-RestMethod -Uri "https://api.github.com/repos/FuckingNode/FuckingNode/releases/latest"
+        $response = Invoke-RestMethod -Uri "https://api.github.com/repos/HanaOrg/Konbini/releases/latest"
         $asset = $response.assets | Where-Object { $_.name -notlike "*.asc" -and $_.name -like "*.exe" }
         if (-not $asset) {
             Throw "No .exe file found in the latest release."
