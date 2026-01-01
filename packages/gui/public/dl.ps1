@@ -18,7 +18,7 @@ Function Get-LatestReleaseUrl {
     try {
         Write-Host "Fetching latest release from GitHub..."
         $response = Invoke-RestMethod -Uri "https://api.github.com/repos/HanaOrg/Konbini/releases/latest"
-        $asset = $response.assets | Where-Object { $_.name -notlike "*.asc" -and $_.name -like "*.exe" }
+        $asset = $response.assets | Where-Object { $_.name -notlike "*.asc" -and $_.name -like "*.exe" -and $_.name -notlike "kpak*" }
         if (-not $asset) {
             Throw "No .exe file found in the latest release."
         }
