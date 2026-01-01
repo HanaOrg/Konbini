@@ -58,8 +58,8 @@ export default function InstallDialog({
             <code className="ml-4 p-3  bg-[#FFFFFF19] font-mono font-light text-sm">
                 ${" "}
                 {getDesktopPlatform().plat === "Windows"
-                    ? 'powershell -c "irm konbini.vercel.app/dl.ps1 | iex"'
-                    : "curl -fsSL konbini.vercel.app/dl.sh | bash"}
+                    ? 'powershell -c "irm https://konbini.vercel.app/dl.ps1 | iex"'
+                    : "curl -fsSL https://konbini.vercel.app/dl.sh | bash"}
             </code>
             <h3 className="mt-4 text-lg text-white font-bold">2. Install {appName}</h3>
             <p className="ml-4 mb-2">Once Konbini installs, restart your terminal and run this:</p>

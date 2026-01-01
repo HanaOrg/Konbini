@@ -206,7 +206,7 @@ Function Find-Installed {
 
 Function Installer {
     try {
-        Write-Host "[ > ] Hi! We'll install Konbini for you. Just a sec!\n"
+        Write-Host "[ > ] Hi! We'll install Konbini for you. Just a sec!"
         Write-Host "[ ! ] This script will create a privileged scheduled task, so you might need to run it as administrator if it fails."
         Write-Host "[ i ] Also, please be sure to not delete this scheduled task later on."
         Remove-IfNeeded
