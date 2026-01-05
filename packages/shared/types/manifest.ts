@@ -29,6 +29,7 @@ export const KPS_SOURCES = [
     "wget",
     "apt",
     "snap",
+    "snap-c",
     "nix",
     "brew",
     "brew-k",

@@ -12,18 +12,19 @@ Where the `source:value` component is required, and the `srcset#srcname` (joint 
 
 The `SOURCE` (prefix to the scope) can be any of these strings:
 
-| Source   | Meaning                               | Supports source setting |
-| -------- | ------------------------------------- | ----------------------- |
-| `kbi`    | **Konbini**                           | Not needed              |
-| `apt`    | DPKG                                  | Only PPAs               |
-| `nix`    | Nix                                   | No                      |
-| `brew`   | Homebrew                              | Yes                     |
-| `brew-k` | Homebrew, packages that need `--cask` | Yes                     |
-| `fpak`   | Flatpak                               | Yes                     |
-| `wget`   | WinGet                                | No                      |
-| `scp`    | Scoop                                 | Yes                     |
-| `cho`    | Chocolatey                            | Yes                     |
-| `snap`   | SnapCraft                             | No                      |
+| Source   | Meaning                                   | Supports source setting |
+| -------- | ----------------------------------------- | ----------------------- |
+| `kbi`    | **Konbini**                               | Not needed              |
+| `apt`    | DPKG                                      | Only PPAs               |
+| `nix`    | Nix                                       | No                      |
+| `brew`   | Homebrew                                  | Yes                     |
+| `brew-k` | Homebrew, packages that need `--cask`     | Yes                     |
+| `fpak`   | Flatpak                                   | Yes                     |
+| `wget`   | WinGet                                    | No                      |
+| `scp`    | Scoop                                     | Yes                     |
+| `cho`    | Chocolatey                                | Yes                     |
+| `snap`   | SnapCraft                                 | No                      |
+| `snap-c` | SnapCraft, packages that need `--classic` | Yes                     |
 
 ## KPS Package Value (`value`)
 

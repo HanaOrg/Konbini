@@ -37,7 +37,7 @@ export function parseKps(scope: UnknownString): PARSED_KPS | PARSED_SPECIFIC_KPS
                     ? "winget"
                     : src === "fpak"
                       ? "flatpak"
-                      : src === "snap"
+                      : src === "snap" || src === "snap-c"
                         ? "snap"
                         : src === "cho"
                           ? "choco"

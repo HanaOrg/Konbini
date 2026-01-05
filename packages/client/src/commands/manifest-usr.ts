@@ -1,6 +1,6 @@
 import { cwd } from "node:process";
 import { konsole } from "shared/client";
-import { isValidEmail, normalize, validate, validateAgainst } from "strings-utils";
+import { isValidEmail, isValidURL, normalize, validate, validateAgainst } from "strings-utils";
 import { isBetween } from "@zakahacecosas/number-utils";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -28,8 +28,7 @@ async function personManifest(): Promise<KONBINI_AUTHOR> {
 
     const website = await prompt(
         "Got a personal website address? This is optional, but recommended.\nIf you lack one, your GitHub (or similar) profile page will do.",
-        // TODO: add to string-utils a URL validator
-        (val) => !validate(val) || validate(val),
+        (val) => !validate(val) || isValidURL(val),
         "Whoops, that website URL is not valid.",
     );
     konsole.suc(website ? "Nice website." : "No website, that's ok.");
@@ -94,8 +93,8 @@ async function orgManifest(): Promise<KONBINI_AUTHOR> {
 
     const website = await prompt(
         "Got a website address? This is optional, but recommended.\nIf you lack one, your GitHub (or similar) profile page will do.",
-        // TODO: add to string-utils a URL validator
-        (val) => !validate(val) || validate(val),
+
+        (val) => !validate(val) || isValidURL(val),
         "Whoops, that website URL is not valid.",
     );
     konsole.suc(website ? "Nice website." : "No website, that's ok.");

@@ -25,6 +25,7 @@ export const ALIASED_CMDs: Record<
         exists: (pkg) => `sudo apt list | grep -w ${pkg}`,
         uninstall: (pkg) => `sudo apt remove -y ${pkg}`,
         check: (_) => "apt list --upgradable",
+        list: "apt list --installed",
     },
 
     "nix": {
@@ -37,7 +38,16 @@ export const ALIASED_CMDs: Record<
     },
 
     "snap": {
-        // TODO: allow disabling classic snaps
+        install: (pkg) => `sudo snap install ${pkg} --classic`,
+        reinstall: (pkg) => `sudo snap remove ${pkg} && sudo snap install ${pkg} --classic`,
+        update: (pkg) => `sudo snap refresh ${pkg}`,
+        exists: (pkg) => `snap list | grep -w ${pkg}`,
+        uninstall: (pkg) => `sudo snap remove ${pkg}`,
+        check: (_) => "snap refresh --list",
+        list: "snap list --all --color=never --unicode=never",
+    },
+
+    "snap-c": {
         install: (pkg) => `sudo snap install ${pkg} --classic`,
         reinstall: (pkg) => `sudo snap remove ${pkg} && sudo snap install ${pkg} --classic`,
         update: (pkg) => `sudo snap refresh ${pkg}`,
@@ -99,7 +109,7 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `choco install ${pkg} -y`,
         reinstall: (pkg) => `choco install ${pkg} --force -y`,
         update: (pkg) => `choco upgrade ${pkg} -y`,
-        // * see aliased.ts/installAliasedPackage() right after return "needsPkgMgr"
+        // * see aliased.ts->installAliasedPackage() right after return "needsPkgMgr"
         exists: (pkg) => `choco list --exact ${pkg}"`,
         uninstall: (pkg) => `choco uninstall ${pkg} -y`,
         check: (_) => "choco outdated",

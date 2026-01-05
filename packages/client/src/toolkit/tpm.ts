@@ -14,6 +14,7 @@ export function getTpmList(): Partial<Record<KPS_SOURCE, boolean>> {
         "nix": false,
         "scp": false,
         "snap": false,
+        "snap-c": false,
         "wget": false,
     };
     const path = join(CFG_DIR, "tpm.yaml");

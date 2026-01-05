@@ -36,7 +36,7 @@ export function installPkgMgr(mgr: KPS_SOURCE): "noop" | "edge" | "success" {
         e("echo >> ~/.bashrc");
         e(`echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc`);
         return "success";
-    } else if (mgr === "snap") {
+    } else if (mgr === "snap" || mgr === "snap-c") {
         // hell
         // worst is people doesn't like snap anyway :sob:
         const id_like = getIdLike();
