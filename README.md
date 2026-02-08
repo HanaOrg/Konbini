@@ -1,5 +1,5 @@
 > [!CAUTION]
-> **THIS IS NOT RELEASE READY.** If we happen to upload any release, do not download it, it's probably not expected to work properly.
+> **THIS IS NOT RELEASE READY YET.** If we happen to upload any release, do not download it, it's probably not expected to work properly.
 >
 > We'll remove this banner and reset the repo's commit history once ready to go live.
 

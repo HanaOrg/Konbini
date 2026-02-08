@@ -38,8 +38,8 @@
         "vercel": "^48.12.1"
     },
     "devDependencies": {
-        "eslint": "^9.39.1",
-        "prettier": "^3.7.4"
+        "eslint": "^9.39.2",
+        "prettier": "^3.8.1"
     },
     "trustedDependencies": [
         "@tailwindcss/oxide",

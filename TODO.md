@@ -34,8 +34,8 @@ Items with a **!** must be done before release.
     - [ ] Add the option to make GUI installers.
     - [ ] Make Konbini able to handle SFX Konpaks as regular ones.
 - [ ] Rewrite the entire thing to native code (dear hell...)
-      I am keeping this for the mid-long term as I need to learn how to do that (I'm currently learning C++ for this purpose).
-      The JS-based version will keep being iterated until the API, file formats, etc... are considered "good" and a few "beta" releases are made and tested, after which a separate branch will be created to begin this rewrite.
+      This will be done using C# for the CLI and maybe Golang for the KPAK system.
+      **The JS-based version will keep being iterated before this** until the API, file formats, etc... are considered "good" and a few "beta" releases are made and tested, after which a separate branch will be created to begin this rewrite.
 
 ## LONG TERM / Low priority
 
