@@ -305,7 +305,11 @@ export default function PackagePage() {
                 {app.images && app.images.length > 0 && <ScreenshotSlideshow ss={app.images} />}
                 <hr className="mt-6" />
                 <h2 className="mt-12 mb-2 text-3xl text-white font-semibold">Platform support</h2>
-                <h3 className="mb-4 text-lg">Note that this refers to platforms where a Konbini install is supported. The package just might be available for platforms not shown here, via a distribution method not supported by Konbini.</h3>
+                <h3 className="mb-4 text-lg">
+                    Note that this refers to platforms where a Konbini install is supported. The
+                    package just might be available for platforms not shown here, via a distribution
+                    method not supported by Konbini.
+                </h3>
                 <PlatformSupport platforms={app.platforms} />
                 <PackageDetails app={app} manifestUrl={locatePkg(route).manifestPub} />
                 {app.requirements && <SystemRequirementsTable requirements={app.requirements} />}

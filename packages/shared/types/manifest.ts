@@ -320,7 +320,9 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const isPlatform = (p: any) => !p || isKps(p);
     const isURL = (s?: any) => validate(s) && s.split(".").length > 1;
     const isImageURL = (s?: any) =>
-        validate(s) && !s.includes("://") && ["png", "webp", "jpg", "svg"].includes(s.split(".").pop() ?? "");
+        validate(s) &&
+        !s.includes("://") &&
+        ["png", "webp", "jpg", "svg"].includes(s.split(".").pop() ?? "");
 
     const validPlatforms =
         typeof m.platforms === "object" &&

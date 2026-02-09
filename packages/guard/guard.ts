@@ -45,10 +45,6 @@ function yamlParse(a: any): unknown {
     }
 }
 
-type Element =
-    | { type: "dir"; url: string; download_url: null }
-    | { type: "file"; url: string; download_url: string };
-
 function logSection(title: string) {
     log("=".repeat(5), title.toUpperCase(), "=".repeat(5));
 }
@@ -68,49 +64,39 @@ function buildFilenames(scope: KONBINI_PKG_SCOPE, id: KONBINI_ID_PKG, version: s
     };
 }
 
-async function fetchElement(url: string): Promise<Element[]> {
-    console.log("[<<<] fetching element", url);
-    const res = await fetchAPI(url);
-    if (!res.ok)
-        throw `GitHub fetch failed: ${res.status} ${res.statusText}\nrate limit is ${res.headers.get("X-Ratelimit-Limit")}\n${await res.json()}`;
-    return (await res.json()) as Element[];
-}
-
 async function fetchAllManifests(kind: "Pkgs"): Promise<MANIFEST_WITH_ID[]>;
 async function fetchAllManifests(kind: "Authors"): Promise<(KONBINI_AUTHOR & { id: string })[]>;
-async function fetchAllManifests(
-    kind: "Pkgs" | "Authors",
-): Promise<MANIFEST_WITH_ID[] | (KONBINI_AUTHOR & { id: string })[]> {
-    const root = await fetchElement(`https://api.github.com/repos/HanaOrg/Konbini${kind}/contents`);
-    const firstLevel = await Promise.all(
-        root.filter((e) => e.type === "dir").map((d) => fetchElement(d.url)),
+async function fetchAllManifests(kind: "Pkgs" | "Authors") {
+    const repo = `HanaOrg/Konbini${kind}`;
+    const branch = "main";
+
+    const treeRes = await fetchAPI(
+        `https://api.github.com/repos/${repo}/git/trees/${branch}?recursive=1`,
     );
-    const secondLevel = await Promise.all(
-        firstLevel
-            .flat()
-            .filter((e) => e.type === "dir")
-            .map((d) => fetchElement(d.url)),
+    if (!treeRes.ok) throw "Tree fetch failed";
+
+    const tree = (await treeRes.json()).tree as { path: string; url: string }[];
+
+    const yamls = tree.filter((e) => e.path.endsWith(".yaml") && !e.path.endsWith(".asc"));
+
+    const manifests = await Promise.all(
+        yamls.map(async (e) => {
+            const r = await fetchAPI(
+                `https://raw.githubusercontent.com/${repo}/${branch}/${e.path}`,
+            );
+            const text = await r.text();
+            const data = yamlParse(text) as any;
+
+            data.id =
+                kind === "Pkgs"
+                    ? e.path.replace(".yaml", "").replace(/\//g, ".")
+                    : e.path.split("/").slice(-2).join(".").replace(".yaml", "");
+
+            return data;
+        }),
     );
-    const finalLevel = await Promise.all(
-        secondLevel
-            .flat()
-            .filter((e) => e.type === "file")
-            .filter((e) => !e.download_url.includes(".asc"))
-            .map((e) => fetch(e.download_url)),
-    );
-    const promises: [Promise<string>, string][] = finalLevel.map((r) => [
-        r.text(),
-        `\nid: "${
-            kind === "Pkgs"
-                ? r.url.split("/").slice(-2).join(".").replace(".yaml", "")
-                : `${r.url.split("/").slice(-3)[0]}.${r.url.split("/").slice(-3)[2]!.replace(".yaml", "")}`
-        }"`,
-    ]);
-    const regularManifests = await Promise.all(promises.map((i) => i[0]!));
-    const manifestsWithId = regularManifests.map(
-        (s) => s + promises[regularManifests.indexOf(s)]![1],
-    );
-    return manifestsWithId.map((s) => yamlParse(s) as MANIFEST_WITH_ID);
+
+    return manifests;
 }
 
 async function fetchIfNotExists(filename: string, assetUrl: string) {
@@ -120,6 +106,11 @@ async function fetchIfNotExists(filename: string, assetUrl: string) {
     if (!response.ok) throw `Failed to fetch ${assetUrl}: ${response.statusText}`;
     const arrayBuffer = await response.arrayBuffer();
     writeFileSync(filename, new Uint8Array(arrayBuffer));
+}
+
+async function existsRemote(url: string) {
+    const r = await fetchAPI(url, "HEAD");
+    return r.ok;
 }
 
 async function scanFiles() {
@@ -208,6 +199,15 @@ async function main() {
 
     logBlock("コンビニ GUARD // MANIFEST LOOP // BEGINS");
 
+    const remotesCache = new Map<string, any>();
+
+    function getRemotesCached(key: string, fn: () => Promise<any>) {
+        if (!remotesCache.has(key)) {
+            remotesCache.set(key, fn());
+        }
+        return remotesCache.get(key)!;
+    }
+
     for (const manifest of manifests) {
         try {
             log("[WRK] Fetching", manifest.name);
@@ -226,10 +226,13 @@ async function main() {
                         "on branch",
                         branch,
                     );
-                    await downloadHandler({
-                        remoteUrl: scope.file(branch, "CHANGELOG.md"),
-                        filePath: `./build/${manifest.id}.changes.md`,
-                    });
+                    const filePath = `./build/${manifest.id}.changes.md`;
+                    const changelogUrl = scope.file(branch, "CHANGELOG.md");
+                    if (await existsRemote(changelogUrl)) {
+                        await downloadHandler({ remoteUrl: changelogUrl, filePath });
+                    } else {
+                        writeFileSync(filePath, "# No");
+                    }
                 } catch (e) {
                     if (String(e).includes("404")) {
                         writeFileSync(`./build/${manifest.id}.changes.md`, "# No");
@@ -275,7 +278,10 @@ async function main() {
                 log("[>>>] ASSET", plat, "ON SCOPE", scope);
 
                 try {
-                    remotes = await getPkgRemotes(scope, manifest, 0);
+                    const cacheKey = `${manifest.id}:${scope}`;
+                    remotes = await getRemotesCached(cacheKey, () =>
+                        getPkgRemotes(scope, manifest, 0),
+                    );
                     files = buildFilenames(scope, manifest.id, remotes.pkgVersion, plat[0]);
 
                     log("[>>>] REMOTE", remotes);
