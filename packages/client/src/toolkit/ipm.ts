@@ -2,7 +2,7 @@ import { validateAgainst } from "strings-utils";
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
 import type { KPS_SOURCE } from "shared/types/manifest";
-import { runElevatedScript } from "../../../konpak/src/integrate";
+import { runElevatedScript, runPwshScript } from "../../../konpak/src/integrate";
 import { konsole } from "shared/client";
 
 const e = (arg: string) =>
@@ -106,15 +106,16 @@ export function installPkgMgr(mgr: KPS_SOURCE): "noop" | "edge" | "success" {
         return "success";
     } else if (mgr === "cho") {
         const out = runElevatedScript(
-            `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))`,
+            "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))",
         );
-        if (out === false) throw `Unable to run (elevated) installation script for Chocolatey!`;
+        if (out === false) throw "Unable to run (elevated) installation script for Chocolatey!";
         return "success";
     } else {
-        const out = runElevatedScript(
+        // TODO: doesn't work
+        const out = runPwshScript(
             "Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression",
         );
-        if (out === false) throw `Unable to run (elevated) installation script for Chocolatey!`;
+        if (out === false) throw "Unable to run (elevated) installation script for Scoop!";
         return "success";
     }
 }

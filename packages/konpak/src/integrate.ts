@@ -18,15 +18,13 @@ export function runElevatedScript(scriptContent: string): boolean {
 
     writeFileSync(tmpFile, scriptContent);
 
-    const command = `
-try {
+    const command = `try {
     $p = Start-Process powershell -Verb runAs -Wait -PassThru -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','${tmpFile}'
     if ($null -eq $p) { exit 1 }  # process never started (UAC rejected)
     exit $p.ExitCode
 } catch {
     exit 1
-}
-`;
+}`;
 
     const out = spawnSync("powershell", ["-NoProfile", "-Command", command], { stdio: "inherit" });
 
@@ -36,8 +34,25 @@ try {
         } catch {}
     }, 1500);
 
-    if (out.status !== 0) return false;
-    return true;
+    return out.status === 0;
+}
+
+export function runPwshScript(scriptContent: string): boolean {
+    const tmpFile = normalize(join(tmpdir(), `temp_script_${Date.now()}.ps1`));
+
+    writeFileSync(tmpFile, scriptContent);
+
+    const command = `try { $p = Start-Process powershell -Wait -PassThru -ArgumentList '-NoProfile','-ExecutionPolicy','RemoteSigned','-File','${tmpFile}'; if ($null -eq $p) { exit 1 }; exit $p.ExitCode; } catch { exit 1 }`;
+
+    try{
+      setTimeout(() => {
+        try {
+            unlinkSync(tmpFile);
+        } catch {}
+    }, 1500);
+     execSync("powershell -NoProfile -Command " + command, { stdio: "inherit" });
+     return true;
+    } catch {return false;}
 }
 
 interface Params {
