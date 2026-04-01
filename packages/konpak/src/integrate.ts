@@ -44,15 +44,17 @@ export function runPwshScript(scriptContent: string): boolean {
 
     const command = `try { $p = Start-Process powershell -Wait -PassThru -ArgumentList '-NoProfile','-ExecutionPolicy','RemoteSigned','-File','${tmpFile}'; if ($null -eq $p) { exit 1 }; exit $p.ExitCode; } catch { exit 1 }`;
 
-    try{
-      setTimeout(() => {
-        try {
-            unlinkSync(tmpFile);
-        } catch {}
-    }, 1500);
-     execSync("powershell -NoProfile -Command " + command, { stdio: "inherit" });
-     return true;
-    } catch {return false;}
+    try {
+        setTimeout(() => {
+            try {
+                unlinkSync(tmpFile);
+            } catch {}
+        }, 1500);
+        execSync("powershell -NoProfile -Command " + command, { stdio: "inherit" });
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 interface Params {
@@ -144,7 +146,7 @@ Remove-Item -Path "${installPath}" -Recurse -Force
 @echo off
 :: launch the actual uninstaller in (elevated) powershell session
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
-  "Start-Process PowerShell -ArgumentList '-ExecutionPolicy Bypass -File \"${uninstallerScriptFilePath}\"' -Verb RunAs"
+  "Start-Process PowerShell -ArgumentList '-ExecutionPolicy Bypass -File "${uninstallerScriptFilePath}"' -Verb RunAs"
 `,
     );
 

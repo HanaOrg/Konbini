@@ -1,8 +1,8 @@
 {
     "name": "shared",
     "private": true,
-    "main": "index.ts",
     "type": "module",
+    "main": "index.ts",
     "module": "index.ts",
     "dependencies": {
         "strings-utils": "catalog:"

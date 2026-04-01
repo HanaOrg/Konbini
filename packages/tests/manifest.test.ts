@@ -319,7 +319,7 @@ describe("validates manifests", () => {
                 author: "org.hana",
                 telemetry: true,
                 age_rating: { money: false, social: false, substances: false, violence: false },
-                icon: "https://hana-org.vercel.app/konbini.png",
+                icon: "hana-org.vercel.app/konbini.png",
                 maintainers: [
                     {
                         name: "Zaka",
@@ -362,7 +362,7 @@ describe("validates manifests", () => {
                 author: "org.hana",
                 telemetry: true,
                 age_rating: { money: false, social: false, substances: false, violence: false },
-                icon: "https://hana-org.vercel.app/konbini.png",
+                icon: "hana-org.vercel.app/konbini.png",
                 maintainers: [
                     {
                         name: "Zaka",
@@ -392,7 +392,7 @@ describe("validates manifests", () => {
     });
 
     test("recognizes invalid ones", () => {
-        expect(
+        expect(() =>
             isValidManifest({
                 repository: "gh:HanaOrg/Konbini",
                 platforms: {
@@ -410,9 +410,9 @@ describe("validates manifests", () => {
                 author: "org.hana",
                 telemetry: true,
             }),
-        ).toEqual(false);
+        ).toThrow();
 
-        expect(
+        expect(() =>
             isValidManifest({
                 repository: "gh:HanaOrg/Konbini",
                 platforms: {
@@ -429,9 +429,9 @@ describe("validates manifests", () => {
                 telemetry: true,
                 age_rating: { money: false, social: false, substances: false, violence: false },
             }),
-        ).toEqual(false);
+        ).toThrow();
 
-        expect(
+        expect(() =>
             isValidManifest({
                 repository: "gh:HanaOrg/Konbini",
                 platforms: {
@@ -445,9 +445,9 @@ describe("validates manifests", () => {
                 telemetry: true,
                 age_rating: { money: false, social: false, substances: false, violence: false },
             }),
-        ).toEqual(false);
+        ).toThrow();
 
-        expect(
+        expect(() =>
             isValidManifest({
                 repository: "agh:HanaOrg/Konbini",
                 platforms: {
@@ -466,7 +466,7 @@ describe("validates manifests", () => {
                 telemetry: true,
                 age_rating: { money: false, social: false, substances: false, violence: false },
             }),
-        ).toEqual(false);
+        ).toThrow();
     });
 });
 

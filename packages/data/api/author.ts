@@ -35,7 +35,7 @@ module.exports = async function handler(reqParam: any, resParam: any) {
         res.status(200).json({
             ...KDATA_USRs[id],
             packages: {
-                ...(KDATA_PKGs[id] || {}),
+                ...KDATA_PKGs[id],
             },
         });
         return;

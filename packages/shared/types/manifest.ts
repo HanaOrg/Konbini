@@ -26,6 +26,7 @@ export const CATEGORIES = [
 export type CATEGORY = (typeof CATEGORIES)[number];
 
 export const KPS_SOURCES = [
+    "zyp",
     "wget",
     "apt",
     "snap",
@@ -512,4 +513,5 @@ const managers = [
     "snap",
     "choco",
     "scoop",
+    "zypper",
 ] as const;

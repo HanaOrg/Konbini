@@ -92,11 +92,11 @@ export default function PackagePage() {
                 );
                 setAge(getAgeRating(manifest.age_rating));
             } catch (e) {
-                if (String(error).includes("does NOT exist")) {
+                if (String(e).includes("does NOT exist")) {
                     window.location.pathname = "/404";
                     return;
                 }
-                setError(String(error));
+                setError(String(e));
             } finally {
                 setLoading(false);
             }

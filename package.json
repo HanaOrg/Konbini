@@ -1,9 +1,14 @@
 {
     "name": "konbini",
-    "description": "Your convenience store.",
     "version": "0.0.1",
     "private": true,
-    "type": "module",
+    "description": "Your convenience store.",
+    "contributors": [
+        {
+            "name": "ZakaHaceCosas",
+            "url": "https://zakahacecosas.github.io/"
+        }
+    ],
     "workspaces": {
         "packages": [
             "packages/*"
@@ -15,15 +20,10 @@
             "@types/bun": "1.3.1"
         }
     },
-    "contributors": [
-        {
-            "name": "ZakaHaceCosas",
-            "url": "https://zakahacecosas.github.io/"
-        }
-    ],
+    "type": "module",
     "scripts": {
         "pretty": "prettier --w .",
-        "lint": "eslint . --cache --fix && tsc --noEmit",
+        "lint": "oxlint . --fix",
         "precommit": "bun run pretty && bun run lint",
         "run:cli": "bun packages/client/src/index.ts",
         "run:upd": "bun packages/update/src/index.ts",
@@ -39,6 +39,7 @@
     },
     "devDependencies": {
         "eslint": "^9.39.2",
+        "oxlint": "^1.57.0",
         "prettier": "^3.8.1"
     },
     "trustedDependencies": [

@@ -1,0 +1,14 @@
+{
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "jsxSingleQuote": false,
+    "useTabs": false,
+    "tabWidth": 4,
+    "trailingComma": "all",
+    "singleQuote": false,
+    "semi": true,
+    "quoteProps": "consistent",
+    "printWidth": 100,
+    "sortPackageJson": false,
+    "ignorePatterns": ["packages/guard/build/**", "packages/data/api/*.json"]
+}

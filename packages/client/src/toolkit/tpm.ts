@@ -13,6 +13,7 @@ export function getTpmList(): Partial<Record<KPS_SOURCE, boolean>> {
         "fpak": false,
         "nix": false,
         "scp": false,
+        "zyp": false,
         "snap": false,
         "snap-c": false,
         "wget": false,

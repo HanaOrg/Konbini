@@ -4,7 +4,7 @@ import type { KPS_SOURCE } from "shared/types/manifest";
 const microsoft = "--accept-package-agreements --accept-source-agreements";
 /** damn... */
 const brew = (s: string) =>
-    `bash -c 'eval "\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew ${s}'`;
+    `bash -c 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && brew ${s}'`;
 
 export const ALIASED_CMDs: Record<
     Exclude<KPS_SOURCE, "kbi">,
@@ -22,7 +22,7 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `sudo apt install -y ${pkg}`,
         reinstall: (pkg) => `sudo apt install -y --reinstall ${pkg}`,
         update: (pkg) => `sudo apt upgrade -y ${pkg}`,
-        exists: (pkg) => `sudo apt list | grep -w ${pkg}`,
+        exists: (pkg) => `sudo apt list | grep -E '(^| )${pkg}( |$)'`,
         uninstall: (pkg) => `sudo apt remove -y ${pkg}`,
         check: (_) => "apt list --upgradable",
         list: "apt list --installed",
@@ -32,7 +32,7 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `nix-env -iA nixpkgs.${pkg}`,
         reinstall: (pkg) => `nix-env -e ${pkg} && nix-env -iA nixpkgs.${pkg}`,
         update: (pkg) => `nix-env -uA nixpkgs.${pkg}`,
-        exists: (pkg) => `nix-env -q | grep -w ${pkg}`,
+        exists: (pkg) => `nix-env -q | grep -E '(^| )${pkg}( |$)'`,
         uninstall: (pkg) => `nix-env -e ${pkg}`,
         check: (_) => `nix-channel --update && nix-env -q ${_} --compare-versions`,
     },
@@ -41,7 +41,7 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `sudo snap install ${pkg} --classic`,
         reinstall: (pkg) => `sudo snap remove ${pkg} && sudo snap install ${pkg} --classic`,
         update: (pkg) => `sudo snap refresh ${pkg}`,
-        exists: (pkg) => `snap list | grep -w ${pkg}`,
+        exists: (pkg) => `snap list | grep -E '(^| )${pkg}( |$)'`,
         uninstall: (pkg) => `sudo snap remove ${pkg}`,
         check: (_) => "snap refresh --list",
         list: "snap list --all --color=never --unicode=never",
@@ -51,7 +51,7 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `sudo snap install ${pkg} --classic`,
         reinstall: (pkg) => `sudo snap remove ${pkg} && sudo snap install ${pkg} --classic`,
         update: (pkg) => `sudo snap refresh ${pkg}`,
-        exists: (pkg) => `snap list | grep -w ${pkg}`,
+        exists: (pkg) => `snap list | grep -E '(^| )${pkg}( |$)'`,
         uninstall: (pkg) => `sudo snap remove ${pkg}`,
         check: (_) => "snap refresh --list",
         list: "snap list --all --color=never --unicode=never",
@@ -61,7 +61,7 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => brew(`install ${pkg}`),
         reinstall: (pkg) => brew(`reinstall ${pkg}`),
         update: (pkg) => brew(`upgrade ${pkg}`),
-        exists: (pkg) => brew(`list --formula | grep -w ${pkg}`),
+        exists: (pkg) => brew(`list --formula | grep -E '(^| )${pkg}( |$)'`),
         uninstall: (pkg) => brew(`uninstall ${pkg}`),
         check: () => brew(`outdated`),
         list: "brew list -v --versions",
@@ -71,7 +71,7 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => brew(`install --cask ${pkg}`),
         reinstall: (pkg) => brew(`reinstall --cask ${pkg}`),
         update: (pkg) => brew(`upgrade --cask ${pkg}`),
-        exists: (pkg) => brew(`list --cask | grep -w ${pkg}`),
+        exists: (pkg) => brew(`list --cask | grep -E '(^| )${pkg}( |$)'`),
         uninstall: (pkg) => brew(`uninstall --cask ${pkg}`),
         check: () => brew(`outdated --cask`),
         list: "brew list -v --versions",
@@ -90,7 +90,8 @@ export const ALIASED_CMDs: Record<
         install: (pkg) => `flatpak install -y flathub ${pkg}`,
         reinstall: (pkg) => `flatpak install -y --reinstall flathub ${pkg}`,
         update: (pkg) => `flatpak update -y ${pkg}`,
-        exists: (pkg) => `flatpak list --app --columns=application,version | grep -w ${pkg}`,
+        exists: (pkg) =>
+            `flatpak list --app --columns=application,version | grep -E '(^| )${pkg}( |$)'`,
         uninstall: (pkg) => `flatpak uninstall -y ${pkg}`,
         check: (_) => "echo n | flatpak update",
         list: "flatpak list --app --columns=application,version",
@@ -103,6 +104,16 @@ export const ALIASED_CMDs: Record<
         exists: (pkg) => `scoop list ${pkg}`,
         uninstall: (pkg) => `scoop uninstall ${pkg}`,
         check: (_) => "scoop update && scoop status",
+    },
+
+    "zyp": {
+        install: (pkg) => `zypper in ${pkg}`,
+        reinstall: (pkg) => `zypper in ${pkg} --force`,
+        update: (pkg) => `zypper up ${pkg}`,
+        exists: (pkg) => `rpm -qa --qf "%{NAME}\n" | grep -E '(^| )${pkg}( |$)'`,
+        uninstall: (pkg) => `zypper rm ${pkg}`,
+        check: (_) => "zypper list-patches", // TODO: unsure
+        list: "zypper ls",
     },
 
     "cho": {

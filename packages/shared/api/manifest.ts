@@ -41,7 +41,9 @@ export function parseKps(scope: UnknownString): PARSED_KPS | PARSED_SPECIFIC_KPS
                         ? "snap"
                         : src === "cho"
                           ? "choco"
-                          : "scoop";
+                          : src === "zyp"
+                            ? "zypper"
+                            : "scoop";
     const name =
         src === "cho"
             ? "Chocolatey"
@@ -59,7 +61,9 @@ export function parseKps(scope: UnknownString): PARSED_KPS | PARSED_SPECIFIC_KPS
                         ? "DPKG"
                         : src === "nix"
                           ? "Nix"
-                          : "SnapCraft";
+                          : src === "zyp"
+                            ? "Zypper"
+                            : "SnapCraft";
     if (!value.includes("@")) {
         if (src === "kbi")
             return {

@@ -127,7 +127,7 @@ async function scanFiles() {
         )
             continue;
         log("[???]", file);
-        const [pkg, ver, plat] = file.split("/")[2]?.split(PKG_FILENAME_SEPARATOR) as [
+        const [pkg, ver, plat] = file.split("/")[2]!.split(PKG_FILENAME_SEPARATOR) as [
             string,
             string,
             keyof KONBINI_HASHFILE,

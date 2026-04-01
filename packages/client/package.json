@@ -1,19 +1,19 @@
 {
     "name": "konbini-cli",
     "version": "0.0.1",
-    "module": "./src/index.ts",
-    "type": "module",
     "private": true,
+    "type": "module",
+    "module": "./src/index.ts",
+    "dependencies": {
+        "@zakahacecosas/number-utils": "catalog:",
+        "openpgp": "^6.2.2",
+        "shared": "workspace:*",
+        "strings-utils": "catalog:"
+    },
     "devDependencies": {
         "@types/bun": "catalog:"
     },
     "peerDependencies": {
         "typescript": "catalog:"
-    },
-    "dependencies": {
-        "@zakahacecosas/number-utils": "catalog:",
-        "strings-utils": "catalog:",
-        "openpgp": "^6.2.2",
-        "shared": "workspace:*"
     }
 }
