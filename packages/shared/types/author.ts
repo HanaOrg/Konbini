@@ -1,4 +1,4 @@
-import { validate, validateAgainst } from "strings-utils";
+import { validate, validateAgainst } from "@zhc.js/string-utils";
 
 /** Properties common to persons and organizations. */
 interface COMMON_PROFILE {

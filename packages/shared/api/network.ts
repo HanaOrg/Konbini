@@ -1,4 +1,4 @@
-import { validate } from "strings-utils";
+import { validate } from "@zhc.js/string-utils";
 
 /**
 no bearer exists in production; every user has his own per-IP rate limit anyway

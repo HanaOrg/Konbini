@@ -1,4 +1,4 @@
-import { validate } from "strings-utils";
+import { validate } from "@zhc.js/string-utils";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 
 export async function downloadHandler(params: {

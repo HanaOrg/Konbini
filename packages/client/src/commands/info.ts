@@ -1,7 +1,7 @@
 import { PKG_PATH } from "shared/client";
 import { konsole } from "shared/client";
 import { existsSync } from "fs";
-import { truncate } from "strings-utils";
+import { truncate } from "@zhc.js/string-utils";
 import { getPkgManifest, getUsrManifest } from "shared/api/core";
 import { isOrganization } from "shared/types/author";
 import { humanLicense } from "shared/types/manifest";

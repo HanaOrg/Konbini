@@ -1,6 +1,12 @@
 import { cwd } from "node:process";
 import { konsole } from "shared/client";
-import { isValidEmail, isValidURL, normalize, validate, validateAgainst } from "strings-utils";
+import {
+    isValidEmail,
+    isValidURL,
+    normalize,
+    validate,
+    validateAgainst,
+} from "@zhc.js/string-utils";
 import { isBetween } from "@zakahacecosas/number-utils";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";

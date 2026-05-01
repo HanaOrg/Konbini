@@ -1,4 +1,4 @@
-import { validate, validateAgainst, type UnknownString } from "strings-utils";
+import { validate, validateAgainst, type UnknownString } from "@zhc.js/string-utils";
 import {
     type KONBINI_PKG_SCOPE,
     type PARSED_KPS,

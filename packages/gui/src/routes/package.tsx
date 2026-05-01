@@ -9,7 +9,7 @@ import Nav from "../components/nav";
 import Footer from "../components/footer";
 import InstallDialog from "../components/package/install-dialog";
 import Badge from "../components/badge";
-import { toUpperCaseFirst } from "strings-utils";
+import { toUpperCaseFirst } from "@zhc.js/string-utils";
 import { type KONBINI_AUTHOR, type KONBINI_ID_PKG } from "shared/types/author";
 import PublisherDetails from "../components/package/publisher-details";
 import ScreenshotSlideshow from "../components/package/screenshots";
@@ -184,7 +184,7 @@ export default function PackagePage() {
                             {app.slogan}
                         </h2>
                         <h2 className="text-lg text-white opacity-[0.5] mb-2">
-                            {app.downloads.active} active installs (est.)
+                            {app.downloads.active} active installs (est., Konbini only)
                         </h2>
                         <div className="flex flex-row gap-1">
                             <Badge color="var(--k-dimmed)">

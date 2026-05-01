@@ -124,6 +124,7 @@ h1 {
 button {
     padding: 0.6em 1.2em;
     font-size: 1em;
+    border-radius: 8px;
     font-weight: 500;
     font-family: inherit;
     background-color: var(--k);
@@ -183,7 +184,6 @@ button.button-unsupported {
     width: 100vw;
     min-height: 100vh;
     overflow-x: hidden;
-    overflow-y: visible;
     position: relative;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -409,16 +409,6 @@ dialog::backdrop {
 .mt-auto.flex.flex-row.gap-2.items-center svg {
     width: 25px;
     height: 25px;
-}
-
-@media only screen and (min-width: 2000px) {
-    #app {
-        overflow: visible;
-    }
-
-    footer {
-        border-radius: 50px 50px 0px 0px;
-    }
 }
 
 @-webkit-keyframes fadeInDialog {

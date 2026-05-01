@@ -3,7 +3,7 @@ import IconMac from "../../assets/mac";
 import IconTux from "../../assets/tux";
 import IconWin from "../../assets/win";
 import { parseKps } from "shared/api/manifest";
-import { toUpperCaseFirst } from "strings-utils";
+import { toUpperCaseFirst } from "@zhc.js/string-utils";
 
 export default function PlatformSupport({
     platforms,

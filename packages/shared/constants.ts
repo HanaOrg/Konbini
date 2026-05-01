@@ -1,4 +1,4 @@
-import { normalize } from "strings-utils";
+import { normalize } from "@zhc.js/string-utils";
 
 /** Repeated filenames. Exported so you don't mess them up. */
 export const FILENAMES = {

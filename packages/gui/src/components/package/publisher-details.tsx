@@ -1,6 +1,6 @@
 import { isOrganization, type KONBINI_AUTHOR, type KONBINI_ID_USR } from "shared/types/author";
 import Badge from "../badge";
-import { toUpperCaseFirst } from "strings-utils";
+import { toUpperCaseFirst } from "@zhc.js/string-utils";
 import Detail from "../detail";
 import { locateUsr } from "shared/api/core";
 import type { KDATA_FILE_PKG } from "shared/types/kdata";

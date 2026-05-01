@@ -1,6 +1,6 @@
 import { cwd } from "node:process";
 import { konsole } from "shared/client";
-import { validate, validateAgainst } from "strings-utils";
+import { validate, validateAgainst } from "@zhc.js/string-utils";
 import { isBetween } from "@zakahacecosas/number-utils";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";

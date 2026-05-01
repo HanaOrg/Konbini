@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
 import { ALIASED_CMDs } from "../toolkit/alias-cmds";
 import { konsole } from "shared/client";
-import { normalize } from "strings-utils";
+import { normalize } from "@zhc.js/string-utils";
 import { writeLockfile } from "../toolkit/write";
 import { getPkgManifest } from "shared/api/core";
 import type { KONBINI_ID_PKG } from "shared/types/author";

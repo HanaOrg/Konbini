@@ -8,7 +8,7 @@
         "@zakahacecosas/number-utils": "catalog:",
         "openpgp": "^6.2.2",
         "shared": "workspace:*",
-        "strings-utils": "catalog:"
+        "@zhc.js/string-utils": "catalog:"
     },
     "devDependencies": {
         "@types/bun": "catalog:"

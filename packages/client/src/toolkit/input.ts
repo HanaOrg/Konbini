@@ -1,5 +1,5 @@
 import { stdin as input, stdout as output } from "node:process";
-import { validate, validateAgainst } from "strings-utils";
+import { validate, validateAgainst } from "@zhc.js/string-utils";
 import { konsole } from "shared/client";
 import { createInterface } from "node:readline/promises";
 import { type KONBINI_PKG_SCOPE, isKps } from "shared/types/manifest";

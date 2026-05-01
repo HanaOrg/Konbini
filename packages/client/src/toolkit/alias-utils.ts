@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
 import { ALIASED_CMDs } from "./alias-cmds";
 import type { PARSED_KPS } from "shared/types/manifest";
-import { normalize } from "strings-utils";
+import { normalize } from "@zhc.js/string-utils";
 
 /** Gets the installed version of a package from an aliased package manager.
  *

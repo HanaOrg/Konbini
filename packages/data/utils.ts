@@ -1,4 +1,4 @@
-// things from strings-utils that because of NodeJS and CJS we can't just use here
+// things from @zhc.js/string-utils that because of NodeJS and CJS we can't just use here
 
 function normalize(str: any): string {
     if (str === undefined || str === null || typeof str !== "string" || str.trim() == "") return "";

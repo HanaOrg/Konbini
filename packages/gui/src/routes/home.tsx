@@ -28,7 +28,7 @@ export default function Home() {
     return (
         <>
             <Nav />
-            <div className="app-main-cont" style={{ backgroundColor: "#121212" }}>
+            <div className="app-main-cont">
                 <h1 style={{ color: "#fff", fontSize: "3em" }}>
                     Get some cool{" "}
                     <div class="rotating-words">

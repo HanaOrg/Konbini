@@ -5,6 +5,6 @@
     "main": "index.ts",
     "module": "index.ts",
     "dependencies": {
-        "strings-utils": "catalog:"
+        "@zhc.js/string-utils": "catalog:"
     }
 }

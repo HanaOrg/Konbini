@@ -1,5 +1,5 @@
 import { prompt } from "../toolkit/input";
-import { isValidEmail, validate } from "strings-utils";
+import { isValidEmail, validate } from "@zhc.js/string-utils";
 import { konsole, SIGNATURE_DIR } from "shared/client";
 import { isAuthorId } from "shared/types/author";
 import { join } from "path";

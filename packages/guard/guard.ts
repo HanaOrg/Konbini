@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
-import { normalize } from "strings-utils";
+import { normalize } from "@zhc.js/string-utils";
 import {
     CATEGORIES,
     isKbiScope,

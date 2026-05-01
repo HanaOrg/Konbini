@@ -1,4 +1,4 @@
-import { normalize } from "strings-utils";
+import { normalize } from "@zhc.js/string-utils";
 import { join } from "path";
 import { homedir } from "os";
 import { getPlatform } from "./api/platform";

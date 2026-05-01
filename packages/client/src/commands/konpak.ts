@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import { Konpak } from "../../../konpak/src/pack";
-import { toUpperCaseFirst, validate, validateAgainst } from "strings-utils";
+import { toUpperCaseFirst, validate, validateAgainst } from "@zhc.js/string-utils";
 import { konsole } from "shared/client";
 import { cwd } from "node:process";
 import { getKonpakSfx } from "../../../konpak/src/sfx";

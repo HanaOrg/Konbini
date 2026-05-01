@@ -1,4 +1,4 @@
-import { isValidEmail, isValidHexColor, validate, validateAgainst } from "strings-utils";
+import { isValidEmail, isValidHexColor, validate, validateAgainst } from "@zhc.js/string-utils";
 import { parseKps } from "../api/manifest.ts";
 import type { KONBINI_ID_USR } from "./author.ts";
 
