@@ -1,6 +1,6 @@
 import { konsole } from "shared/client";
 import { konbiniHash } from "shared/security";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from "node:url";
 
 export function learn(subcommand: string | undefined) {
     if (subcommand === "hash") {

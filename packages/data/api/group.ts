@@ -32,7 +32,7 @@ module.exports = async function handler(reqParam: any, resParam: any) {
         if (!["a", "c", "d", "r"].includes(sorting))
             return res.status(400).json({ error: "Bad request: Invalid sorting method." });
 
-        const num = isNaN(Number(entries)) ? undefined : Number(entries);
+        const num = Number.isNaN(Number(entries)) ? undefined : Number(entries);
         const delivery = Object.fromEntries(
             Object.entries(
                 sorting === "a"
@@ -47,8 +47,8 @@ module.exports = async function handler(reqParam: any, resParam: any) {
 
         res.status(200).json(delivery);
         return;
-    } catch (e) {
-        res.status(500).json({ message: "Internal error: " + String(e) });
+    } catch (error) {
+        res.status(500).json({ message: "Internal error: " + String(error) });
         return;
     }
 };

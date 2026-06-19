@@ -7,7 +7,7 @@ import {
     validate,
     validateAgainst,
 } from "@zhc.js/string-utils";
-import { isBetween } from "@zakahacecosas/number-utils";
+import { isBetween } from "@zhc.js/number-utils";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { prompt, promptBinary } from "../toolkit/input";

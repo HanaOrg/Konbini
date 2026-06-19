@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import { ALIASED_CMDs } from "./alias-cmds";
 import type { PARSED_KPS } from "shared/types/manifest";
 import { normalize } from "@zhc.js/string-utils";
@@ -11,5 +11,5 @@ import { normalize } from "@zhc.js/string-utils";
 export function getAliasedPackageVersion(target: PARSED_KPS): string {
     if (target.src === "kbi") throw "Illegal: passed KBI scope to alias-only function.";
     const out = execSync(ALIASED_CMDs[target.src].list!).toString();
-    return normalize(out, { preserveCase: true }).split(" ")[1]!;
+    return normalize(out, { preserveCase: true }).split(" ", 2)[1]!;
 }

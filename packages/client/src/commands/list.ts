@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync, rmSync } from "fs";
-import { join } from "path";
+import { readdirSync, readFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
 import { PACKAGES_DIR } from "shared/client";
 import { konsole } from "shared/client";
 import { packageExists } from "../toolkit/aliased";
@@ -66,8 +66,8 @@ export function listPackages(verbosity: "VERBOSE" | "STANDARD" | "SILENT"): EXTE
             } else {
                 pkgsToList.push(lockfile);
             }
-        } catch (e) {
-            konsole.dbg("Failed to list an item because of error:", e);
+        } catch (error) {
+            konsole.dbg("Failed to list an item because of error:", error);
             continue;
         }
     }

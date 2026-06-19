@@ -5,7 +5,7 @@
     "type": "module",
     "module": "./src/index.ts",
     "dependencies": {
-        "@zakahacecosas/number-utils": "catalog:",
+        "@zhc.js/number-utils": "catalog:",
         "openpgp": "^6.2.2",
         "shared": "workspace:*",
         "@zhc.js/string-utils": "catalog:"

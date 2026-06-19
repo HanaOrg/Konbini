@@ -53,23 +53,21 @@ export function parseKps(scope: UnknownString): PARSED_KPS | PARSED_SPECIFIC_KPS
                 ? "Flatpak"
                 : src === "wget"
                   ? "WinGet"
-                  : src === "brew"
+                  : src === "brew" || src === "brew-k"
                     ? "Homebrew"
-                    : src === "brew-k"
-                      ? "Homebrew"
-                      : src === "apt"
-                        ? "DPKG"
-                        : src === "nix"
-                          ? "Nix"
-                          : src === "zyp"
-                            ? "Zypper"
-                            : "SnapCraft";
+                    : src === "apt"
+                      ? "DPKG"
+                      : src === "nix"
+                        ? "Nix"
+                        : src === "zyp"
+                          ? "Zypper"
+                          : "SnapCraft";
     if (!value.includes("@")) {
         if (src === "kbi")
             return {
                 src,
                 value,
-                cmd: null,
+                cmd: undefined,
                 name: "Konbini",
             };
         return {
@@ -79,7 +77,7 @@ export function parseKps(scope: UnknownString): PARSED_KPS | PARSED_SPECIFIC_KPS
             name,
         };
     }
-    const srcset = scope.split("@")[1];
+    const srcset = scope.split("@", 2)[1];
     if (!validate(srcset)) throw `Invalid KPS (w/srcset) (Invalid string): ${srcset}`;
     const splitSrcset = srcset.split("#");
     const srcUrl = splitSrcset[0];
@@ -88,12 +86,12 @@ export function parseKps(scope: UnknownString): PARSED_KPS | PARSED_SPECIFIC_KPS
     if (!validate(srcName) && src !== "apt") throw `Invalid KPS (w/srcset) (no suffix): ${srcset}`;
     return {
         src,
-        value: value.split("@")[0]!,
+        value: value.split("@", 1)[0]!,
         cmd,
         name,
         at: {
-            url: srcUrl === "-" ? null : (srcUrl ?? null),
-            name: srcName ?? null,
+            url: srcUrl === "-" ? undefined : (srcUrl ?? undefined),
+            name: srcName ?? undefined,
         },
     };
 }

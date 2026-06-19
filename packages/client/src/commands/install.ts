@@ -1,7 +1,7 @@
 import { PKG_PATH, USR_PATH } from "shared/client";
-import { existsSync, readFileSync, mkdirSync, statSync, chmodSync } from "fs";
+import { existsSync, readFileSync, mkdirSync, statSync, chmodSync } from "node:fs";
 import { konsole } from "shared/client";
-import { join } from "path";
+import { join } from "node:path";
 import { destroyPkg } from "../toolkit/remove";
 import { installAliasedPackage, packageExists } from "../toolkit/aliased";
 import { writeLaunchpadShortcut, writeLockfile } from "../toolkit/write";
@@ -211,7 +211,7 @@ export async function installPackage(
 
     const exists = packageExists(platform, manifest.author);
     if (exists !== false) {
-        if (!listPackages("SILENT").some((i) => i.pkg_id === manifest.id)) {
+        if (listPackages("SILENT").every((i) => i.pkg_id !== manifest.id)) {
             writeLockfile(
                 {
                     pkg_id: manifest.id,
@@ -228,13 +228,13 @@ export async function installPackage(
         }
         if (method === "install") {
             const conf = konsole.ask(`${pkgId} is already installed. Reinstall?`);
-            if (!conf) {
-                konsole.suc("Got it. No actions taken.");
-                return;
-            } else {
+            if (conf) {
                 konsole.suc("At your order, captain. Reinstalling this package.");
                 // mutate this so it works when doing aliased install
                 method = "reinstall";
+            } else {
+                konsole.suc("Got it. No actions taken.");
+                return;
             }
         } else {
             konsole.adv("Updating package", pkgId);
@@ -274,13 +274,13 @@ export async function installPackage(
             }
             if (method === "install") {
                 const conf = konsole.ask(`${pkgId} is already installed. Reinstall?`);
-                if (!conf) {
-                    konsole.suc("Got it. No actions taken.");
-                    return;
-                } else {
+                if (conf) {
                     konsole.suc("At your order, captain. Reinstalling this package.");
                     // mutate this so it works when doing aliased install
                     method = "reinstall";
+                } else {
+                    konsole.suc("Got it. No actions taken.");
+                    return;
                 }
             }
         }

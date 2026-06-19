@@ -24,7 +24,7 @@ describe("KPS system works", () => {
         expect(parseKps("kbi:something")).toEqual({
             src: "kbi",
             value: "something",
-            cmd: null,
+            cmd: undefined,
             name: "Konbini",
         });
 
@@ -51,7 +51,7 @@ describe("KPS system works", () => {
             name: "DPKG",
             at: {
                 url: "hi/bro",
-                name: null,
+                name: undefined,
             },
         });
 
@@ -72,7 +72,7 @@ describe("KPS system works", () => {
             cmd: "scoop",
             name: "Scoop",
             at: {
-                url: null,
+                url: undefined,
                 name: "bucket-name",
             },
         });
@@ -100,7 +100,7 @@ describe("KPS constructing works", () => {
                 name: "DPKG",
                 at: {
                     url: "some/ppa",
-                    name: null,
+                    name: undefined,
                 },
             }),
         ).toEqual("apt:something@some/ppa");
@@ -126,7 +126,7 @@ describe("KPS constructing works", () => {
                 value: "something",
                 name: "Scoop",
                 at: {
-                    url: null,
+                    url: undefined,
                     name: "extras",
                 },
             }),
@@ -173,47 +173,49 @@ describe("validates and handles IDs", () => {
 });
 describe("handles repository scopes", () => {
     test("github", () => {
-        const res = parseRepositoryScope("gh:HanaOrg/Konbini");
-        expect(res.source).toEqual("gh");
-        expect(res.main).toEqual("https://api.github.com/repos/HanaOrg/Konbini");
-        expect(res.public).toEqual("https://github.com/HanaOrg/Konbini");
-        expect(res.all_releases).toEqual("https://api.github.com/repos/HanaOrg/Konbini/releases");
-        expect(res.release("1.0.0")).toEqual(
+        const response = parseRepositoryScope("gh:HanaOrg/Konbini");
+        expect(response.source).toEqual("gh");
+        expect(response.main).toEqual("https://api.github.com/repos/HanaOrg/Konbini");
+        expect(response.public).toEqual("https://github.com/HanaOrg/Konbini");
+        expect(response.all_releases).toEqual(
+            "https://api.github.com/repos/HanaOrg/Konbini/releases",
+        );
+        expect(response.release("1.0.0")).toEqual(
             "https://api.github.com/repos/HanaOrg/Konbini/releases/tags/1.0.0",
         );
-        expect(res.file("main", "foobar")).toEqual(
+        expect(response.file("main", "foobar")).toEqual(
             "https://raw.githubusercontent.com/HanaOrg/Konbini/main/foobar",
         );
     });
 
     test("codeberg", () => {
-        const res = parseRepositoryScope("cb:HanaOrg/Konbini");
-        expect(res.source).toEqual("cb");
-        expect(res.main).toEqual("https://codeberg.org/api/v1/repos/HanaOrg/Konbini");
-        expect(res.public).toEqual("https://codeberg.org/HanaOrg/Konbini");
-        expect(res.all_releases).toEqual(
+        const response = parseRepositoryScope("cb:HanaOrg/Konbini");
+        expect(response.source).toEqual("cb");
+        expect(response.main).toEqual("https://codeberg.org/api/v1/repos/HanaOrg/Konbini");
+        expect(response.public).toEqual("https://codeberg.org/HanaOrg/Konbini");
+        expect(response.all_releases).toEqual(
             "https://codeberg.org/api/v1/repos/HanaOrg/Konbini/releases",
         );
-        expect(res.release("1.0.0")).toEqual(
+        expect(response.release("1.0.0")).toEqual(
             "https://codeberg.org/api/v1/repos/HanaOrg/Konbini/releases/tags/1.0.0",
         );
-        expect(res.file("master", "foobar")).toEqual(
+        expect(response.file("master", "foobar")).toEqual(
             "https://codeberg.org/HanaOrg/Konbini/raw/master/foobar",
         );
     });
 
     test("gitlab", () => {
-        const res = parseRepositoryScope("gl:HanaOrg/Konbini");
-        expect(res.source).toEqual("gl");
-        expect(res.main).toEqual("https://gitlab.com/api/v4/projects/HanaOrg%2FKonbini");
-        expect(res.public).toEqual("https://gitlab.com/HanaOrg/Konbini");
-        expect(res.all_releases).toEqual(
+        const response = parseRepositoryScope("gl:HanaOrg/Konbini");
+        expect(response.source).toEqual("gl");
+        expect(response.main).toEqual("https://gitlab.com/api/v4/projects/HanaOrg%2FKonbini");
+        expect(response.public).toEqual("https://gitlab.com/HanaOrg/Konbini");
+        expect(response.all_releases).toEqual(
             "https://gitlab.com/api/v4/projects/HanaOrg%2FKonbini/releases",
         );
-        expect(res.release("1.0.0")).toEqual(
+        expect(response.release("1.0.0")).toEqual(
             "https://gitlab.com/api/v4/projects/HanaOrg%2FKonbini/releases/1.0.0",
         );
-        expect(res.file("master", "foobar")).toEqual(
+        expect(response.file("master", "foobar")).toEqual(
             "https://gitlab.com/HanaOrg/Konbini/-/raw/master/foobar",
         );
     });
@@ -351,7 +353,7 @@ describe("validates manifests", () => {
             isValidManifest({
                 repository: "gh:HanaOrg/Konbini",
                 platforms: {
-                    linux64: null,
+                    linux64: undefined,
                     win64: "kbi:kbi-win64.exe",
                 },
                 type: "cli",
@@ -479,9 +481,9 @@ describe("author and package IDs work", () => {
             pref: "org",
             delimiter: "fo",
             user: "foobar",
-            package: null,
+            package: undefined,
             user_id: "org.foobar",
-            package_id: null,
+            package_id: undefined,
         });
         expect(parseID("org.foobar.package")).toEqual({
             pref: "org",

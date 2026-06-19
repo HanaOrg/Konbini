@@ -1,6 +1,6 @@
 import { normalize } from "@zhc.js/string-utils";
-import { join } from "path";
-import { homedir } from "os";
+import { join } from "node:path";
+import { homedir } from "node:os";
 import { getPlatform } from "./api/platform";
 
 const ROOT = join(homedir(), ".kbi");
@@ -63,7 +63,7 @@ export function LAUNCHPAD_FILE_PATH(p: { pkg: string; author: string }): string 
     return join(LAUNCHPAD_DIR, `${normalize(p.pkg)}.${getPlatform() === "win64" ? "ps1" : "sh"}`);
 }
 
-const R = "\x1b[0m";
+const R = "\u{1B}[0m";
 
 function nl(stuff: any[]) {
     return stuff.map((s) => (typeof s === "string" ? s.replaceAll("\n", "\n      ") : s));
@@ -72,9 +72,8 @@ function nl(stuff: any[]) {
 /** Konbini's beautiful console logging. */
 export const konsole = {
     /** Colors a CLI string. */
-    clr(color: Bun.ColorInput, string: string, res: boolean = true): string {
-        return `${Bun.color(color, "ansi-16m")}${string}${res ? R : ""}`;
-    },
+    clr: (color: Bun.ColorInput, string: string, res: boolean = true): string =>
+        `${Bun.color(color, "ansi-16m")}${string}${res ? R : ""}`,
     /** Logs an error. */
     err(...stuff: any[]): void {
         console.error(this.clr("crimson", "[ X ]", false), ...nl(stuff), R);

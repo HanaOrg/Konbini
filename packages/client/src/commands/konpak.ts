@@ -38,7 +38,7 @@ export async function konpakFromDir(
     const pathToManifest = join(dir, "manifest.yaml");
     const pathToDirected = join(dir, "directed");
 
-    if (![pathToManifest, pathToBinary, pathToIcon].every((p) => existsSync(p)))
+    if ([pathToManifest, pathToBinary, pathToIcon].some((p) => !existsSync(p)))
         throw "Some required files don't exist. Check that a manifest.yaml and the given binary and icon exist.";
 
     if (!existsSync(pathToDirected)) mkdirSync(pathToDirected);

@@ -26,7 +26,7 @@ export async function scanPackage(
     const json = await res.json();
 
     if (!json.results) throw `No results object received from KGuard(@KDATA API).`;
-    if (pkg.split("@")[1]! === "0") return json;
+    if (pkg.split("@", 2)[1]! === "0") return json;
 
     return {
         ...json,

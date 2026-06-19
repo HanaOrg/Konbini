@@ -1,9 +1,9 @@
 import AdmZip from "adm-zip";
-import { existsSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { IntegrateApp, type WindowsParams } from "./integrate";
 import { PKG_PATH } from "shared/client";
 import type { KONBINI_MANIFEST } from "shared/types/manifest";
-import { join } from "path";
+import { join } from "node:path";
 import { toUpperCaseFirst } from "@zhc.js/string-utils";
 import type { KONBINI_LOCKFILE } from "shared/types/files";
 import { FILENAMES } from "shared/constants";
@@ -25,15 +25,15 @@ export function Unpack(filepath: string | Buffer): void {
     if (!_manifest) throw new Error("Konpak lacks manifest!");
     const _appId = zip.getEntries().find((e) => e.name.startsWith(KPAK_INT_FILENAMES.ID));
     if (!_appId) throw new Error("Konpak lacks app ID signaler file.");
-    const appId = _appId.getData().toString("utf-8");
+    const appId = _appId.getData().toString("utf8");
     const _appPt = zip.getEntries().find((e) => e.name.startsWith(KPAK_INT_FILENAMES.PT));
     if (!_appPt) throw new Error("Konpak lacks platform signaler file.");
-    const platform = _appPt.getData().toString("utf-8");
+    const platform = _appPt.getData().toString("utf8");
     const _appVr = zip.getEntries().find((e) => e.name.startsWith(KPAK_INT_FILENAMES.VR));
     if (!_appVr) throw new Error("Konpak lacks version signaler file.");
-    const version = _appVr.getData().toString("utf-8");
+    const version = _appVr.getData().toString("utf8");
 
-    const manifest: KONBINI_MANIFEST = Bun.YAML.parse(_manifest.getData().toString("utf-8")) as any;
+    const manifest: KONBINI_MANIFEST = Bun.YAML.parse(_manifest.getData().toString("utf8")) as any;
 
     const out = PKG_PATH({ pkg: appId, author: manifest.author });
 
@@ -46,11 +46,7 @@ export function Unpack(filepath: string | Buffer): void {
     for (const file of readdirSync(directPath)) {
         const src = join(directPath, file);
         const dst = join(out, file);
-        try {
-            renameSync(src, dst);
-        } catch (e) {
-            throw new Error(`Error moving ${src} to ${dst}: ${e}`);
-        }
+        renameSync(src, dst);
     }
 
     rmSync(directPath, { force: true, recursive: true });

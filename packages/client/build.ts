@@ -48,8 +48,8 @@ for (const [pkg, platform] of Object.entries(platforms)) {
         if (!res.success) throw res.logs.join("\n");
 
         konsole.suc(`${pkg} built successfully.`);
-    } catch (e) {
-        konsole.err(`Error building ${pkg}: ${String(e).trim()}.`);
+    } catch (error) {
+        konsole.err(`Error building ${pkg}: ${String(error).trim()}.`);
         process.exit(1);
     }
 }

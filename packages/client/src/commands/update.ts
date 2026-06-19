@@ -5,7 +5,7 @@ import { konsole } from "shared/client";
 export async function updatePackages() {
     const packages = listPackages("SILENT");
 
-    if (packages.length == 0) {
+    if (packages.length === 0) {
         konsole.adv("Uh... No packages are installed!");
         return;
     }

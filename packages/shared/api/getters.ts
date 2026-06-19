@@ -1,7 +1,7 @@
 import { fetchAPI } from "./network.ts";
 import { validatePGPSignature } from "../security.ts";
-import { existsSync } from "fs";
-import { join } from "path";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import type { RELEASE_GH_CB, RELEASE_GL } from "../types/git.ts";
 import { FILENAMES, normalizer } from "../constants.ts";
 import {
@@ -52,7 +52,7 @@ export async function getPkgRemotes(
         url.startsWith("gl") ? (release as RELEASE_GL).assets.links : release.assets
     ) as ({ url: string; name: string } | { browser_download_url: string; name: string })[];
 
-    if (!assets || assets.length == 0)
+    if (!assets || assets.length === 0)
         throw `No assets for ${manifest.name}. Does the package have any releases at all?`;
 
     const versionedName = replace(kv.value, {

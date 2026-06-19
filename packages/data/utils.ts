@@ -4,7 +4,7 @@ function normalize(str: any): string {
     if (str === undefined || str === null || typeof str !== "string" || str.trim() == "") return "";
     const normalizedStr = str
         .normalize("NFD") // normalize á, é, etc.
-        .replace(/[\u0300-\u036f]/g, "") // remove accentuation
+        .replace(/[\u0300-\u036F]/g, "") // remove accentuation
         .replace(/\s+/g, " ") // turn "my      search  query" into "my search query"
         .trim() // turn "      my search query   " into "my search query"
         .replace(/[\s\W_]/g, ""); // remove ANY special char

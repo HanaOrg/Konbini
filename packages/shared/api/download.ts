@@ -8,7 +8,7 @@ export async function downloadHandler(params: {
     const { remoteUrl, filePath } = params;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 240000); // 4 mins (240000ms)
+    const timeoutId = setTimeout(() => controller.abort(), 240_000); // 4 mins (240000ms)
 
     try {
         const res = await fetch(remoteUrl, {
@@ -27,11 +27,11 @@ export async function downloadHandler(params: {
         if (existsSync(filePath)) rmSync(filePath);
 
         writeFileSync(filePath, new Uint8Array(await res.arrayBuffer()));
-    } catch (e) {
-        if (Error.isError(e) && e.name === "AbortError") {
+    } catch (error) {
+        if (Error.isError(error) && error.name === "AbortError") {
             return "TimeOut";
         }
-        throw e;
+        throw error;
     } finally {
         clearTimeout(timeoutId);
     }

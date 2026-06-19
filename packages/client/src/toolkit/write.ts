@@ -1,5 +1,5 @@
-import { join } from "path";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { join } from "node:path";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { USR_PATH, PKG_PATH, LAUNCHPAD_FILE_PATH, konsole } from "shared/client";
 import { FILENAMES } from "shared/constants";
 import type { KONBINI_LOCKFILE } from "shared/types/files";

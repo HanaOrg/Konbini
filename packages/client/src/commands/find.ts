@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import { ALIASED_CMDs } from "../toolkit/alias-cmds";
 import { konsole } from "shared/client";
 import { normalize } from "@zhc.js/string-utils";
@@ -34,20 +34,20 @@ export async function find() {
         .slice(1)
         .map((s) => normalize(s, { preserveCase: true }).split(" ").slice(0, 2));
     const actualLocalList = listPackages("SILENT");
-    const K = Object.values(remoteList)
-        .filter(Boolean)
-        .map((s) => s!.split(":")[1]);
+    const K = new Set(
+        Object.values(remoteList)
+            .filter(Boolean)
+            .map((s) => s!.split(":", 2)[1]),
+    );
 
     for (const i of localList) {
-        if (!K.includes(i[0]!)) {
-            konsole.dbg(`Package ${i[0]} isn't on Konbini yet, skipping it for now.`);
-        } else {
+        if (K.has(i[0]!)) {
             if (actualLocalList.map((i) => i.pkg_id).includes(i[0]! as any)) {
                 konsole.dbg(`Package ${i[0]} is on Konbini and is already registered.`);
             } else {
                 konsole.adv(`Package ${i[0]} is on Konbini! Registering...`);
                 const id: KONBINI_ID_PKG | undefined = Object.entries(remoteList).find(
-                    ([_, v]) => v && v.split(":")[1] == i[0]!,
+                    ([_, v]) => v && v.split(":", 2)[1] == i[0]!,
                 )?.[0] as KONBINI_ID_PKG | undefined;
                 if (!id) throw `Package ${i} doesn't have a proper ID?`;
                 const manifest = await getPkgManifest(id);
@@ -73,6 +73,8 @@ export async function find() {
                     `Registered ${i[0]}! Note that the install date will show up as today.`,
                 );
             }
+        } else {
+            konsole.dbg(`Package ${i[0]} isn't on Konbini yet, skipping it for now.`);
         }
     }
 }

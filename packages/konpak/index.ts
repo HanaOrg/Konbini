@@ -1,6 +1,6 @@
 import { konsole } from "shared/client";
 import { Unpack } from "./src/unpack";
-import { readFileSync, statSync } from "fs";
+import { readFileSync, statSync } from "node:fs";
 
 /** ### Konpak self-extractor.
  * This file only (well, and the modules it imports) are the entire KPAK SFX module. It works like any self extracting archive, it reads itself searching for an indicator (`KPAK__SIGNALER`), takes all the data after it, and extracts it using the code before it

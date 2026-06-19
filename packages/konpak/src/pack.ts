@@ -1,6 +1,6 @@
-import { readFileSync, rmSync, writeFileSync } from "fs";
+import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import AdmZip from "adm-zip";
-import { extname } from "path";
+import { extname } from "node:path";
 import { KPAK_INT_FILENAMES } from "../constants";
 
 export function Konpak(p: {

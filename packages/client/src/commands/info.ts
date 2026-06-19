@@ -1,6 +1,6 @@
 import { PKG_PATH } from "shared/client";
 import { konsole } from "shared/client";
-import { existsSync } from "fs";
+import { existsSync } from "node:fs";
 import { truncate } from "@zhc.js/string-utils";
 import { getPkgManifest, getUsrManifest } from "shared/api/core";
 import { isOrganization } from "shared/types/author";
@@ -96,10 +96,10 @@ export async function showUserInfo(usr: string) {
     const website = author.website
         ? konsole.clr("lightblue", "https://" + author.website)
         : "(No website provided)";
-    const socials: string[] = [];
-    for (const social of Object.entries(author.socials || {})) {
-        socials.push(`${social[0]} ${konsole.clr("lightblue", `@${social[1]}`)}`);
-    }
+    const socials: string[] = Array.from(
+        Object.entries(author.socials || {}),
+        (social) => `${social[0]} ${konsole.clr("lightblue", `@${social[1]}`)}`,
+    );
     konsole.adv([name, email, website].filter(Boolean).join(" · "));
     konsole.adv(socials.filter(Boolean).join(" · "));
 

@@ -1,7 +1,7 @@
 import { konsole, LAUNCHPAD_FILE_PATH } from "shared/client";
 import { listPackages } from "./list";
 import { removePackage } from "../toolkit/remove";
-import { writeFileSync } from "fs";
+import { writeFileSync } from "node:fs";
 import { scanPackage } from "shared/api/kdata";
 import type { KONBINI_ID_PKG } from "shared/types/author";
 

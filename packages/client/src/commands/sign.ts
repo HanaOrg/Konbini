@@ -2,7 +2,7 @@ import { prompt } from "../toolkit/input";
 import { isValidEmail, validate } from "@zhc.js/string-utils";
 import { konsole, SIGNATURE_DIR } from "shared/client";
 import { isAuthorId } from "shared/types/author";
-import { join } from "path";
+import { join } from "node:path";
 import {
     existsSync,
     mkdirSync,
@@ -11,7 +11,7 @@ import {
     realpathSync,
     statSync,
     writeFileSync,
-} from "fs";
+} from "node:fs";
 import { assertIntegrityPGP, genSignature, useSignature } from "shared/security";
 
 async function newSignature() {
@@ -56,14 +56,14 @@ async function newSignature() {
         encoding: "utf-8",
     });
     writeFileSync(
-        join(signaturesPath, `${author.split(".")[1]!.toLowerCase()}.asc`),
+        join(signaturesPath, `${author.split(".", 2)[1]!.toLowerCase()}.asc`),
         signature.publicKey,
         {
             encoding: "utf-8",
         },
     );
     writeFileSync(
-        join(signaturesPath, `${author.split(".")[1]!.toLowerCase()}_PRIVATEKEY.asc`),
+        join(signaturesPath, `${author.split(".", 2)[1]!.toLowerCase()}_PRIVATEKEY.asc`),
         signature.privateKey,
         {
             encoding: "utf-8",
@@ -71,7 +71,7 @@ async function newSignature() {
     );
     konsole.out(
         "Your public signature was saved to",
-        realpathSync(join(signaturesPath, `${author.split(".")[1]}.asc`)),
+        realpathSync(join(signaturesPath, `${author.split(".", 2)[1]}.asc`)),
         "- you'll have to upload this to the author's registry together with your manifest file.",
     );
     konsole.suc("Done! Keep those signatures safe!");
@@ -98,7 +98,7 @@ async function applySignature() {
     const passphrasePath = join(signaturePath, "passphrase");
     const privateKeyPath = join(
         signaturePath,
-        `${author.split(".")[1]!.toLowerCase()}_PRIVATEKEY.asc`,
+        `${author.split(".", 2)[1]!.toLowerCase()}_PRIVATEKEY.asc`,
     );
 
     if (!existsSync(signaturePath)) throw `No signature found. Is ${author} a valid author ID?`;
@@ -128,7 +128,7 @@ async function applySignature() {
     const a = await assertIntegrityPGP({
         executableFilePath: file,
         executableAscFilePath: file + ".asc",
-        authorAscFilePath: join(signaturePath, `${author.split(".")[1]!.toLowerCase()}.asc`),
+        authorAscFilePath: join(signaturePath, `${author.split(".", 2)[1]!.toLowerCase()}.asc`),
     });
     if (a !== "valid") throw a;
     konsole.dbg("INTEGRITY ASSERTED, SIGNATURE IS READY TO GO");
@@ -138,7 +138,7 @@ async function applySignature() {
 
 function listSignatures() {
     const signs = readdirSync(SIGNATURE_DIR);
-    if (!signs.length) {
+    if (signs.length === 0) {
         konsole.adv("No signatures!");
         return;
     }

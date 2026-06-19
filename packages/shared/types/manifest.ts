@@ -84,8 +84,8 @@ export type PARSED_KPS =
           src: "kbi";
           /** Value. Filename to look for in the Konbini release. */
           value: string;
-          /** (null) */
-          cmd: null;
+          /** (undefined) */
+          cmd: undefined;
           /** (Konbini) */
           name: "Konbini";
       };
@@ -103,9 +103,9 @@ export type PARSED_SPECIFIC_KPS = {
     /** @source. */
     at: {
         /** URL of the sourced repo. */
-        url: string | null;
+        url: string | undefined;
         /** If the pkg manager requires it, name of the source. */
-        name: string | null;
+        name: string | undefined;
     };
 };
 
@@ -136,36 +136,51 @@ export type LICENSE = (typeof LICENSES)[number];
 /** Turns a license code into a readable string. */
 export function humanLicense(license: LICENSE): string {
     switch (license) {
-        case "MIT":
+        case "MIT": {
             return "MIT License";
-        case "AGPLv3":
+        }
+        case "AGPLv3": {
             return "GNU Affero General Public License v3.0";
-        case "GPLv3":
+        }
+        case "GPLv3": {
             return "GNU General Public License v3.0";
-        case "GPLv2":
+        }
+        case "GPLv2": {
             return "GNU General Public License v2.0";
-        case "Apache2":
+        }
+        case "Apache2": {
             return "Apache License 2.0";
-        case "BSD2Clause":
+        }
+        case "BSD2Clause": {
             return "BSD 2-Clause License";
-        case "BSD3Clause":
+        }
+        case "BSD3Clause": {
             return "BSD 3-Clause License";
-        case "ISC":
+        }
+        case "ISC": {
             return "ISC License";
-        case "MPLv2":
+        }
+        case "MPLv2": {
             return "Mozilla Public License 2.0";
-        case "LGPLv3":
+        }
+        case "LGPLv3": {
             return "GNU Lesser General Public License v3.0";
-        case "EPLv2":
+        }
+        case "EPLv2": {
             return "Eclipse Public License 2.0";
-        case "Unlicense":
+        }
+        case "Unlicense": {
             return "The Unlicense";
-        case "Zlib":
+        }
+        case "Zlib": {
             return "zlib License";
-        case "PublicDomain":
+        }
+        case "PublicDomain": {
             return "Public domain";
-        case "ProprietaryLicense":
+        }
+        case "ProprietaryLicense": {
             return "Proprietary license";
+        }
     }
 }
 
@@ -280,7 +295,7 @@ export interface KONBINI_MANIFEST {
      */
     age_rating: AGE_RATING;
     /** True if the app collects user data, with or without consent. */
-    telemetry: boolean;
+    hasTelemetry: boolean;
     /** An accept color for the app in the hexadecimal format.
      * If not provided, Konbini pink is used.
      */
@@ -310,6 +325,14 @@ export function isSpecificParsedKps(
     return typeof (kps as any).at === "object";
 }
 
+const isAnything = (i: any): i is NonNullable<any> => i !== null && i !== undefined;
+const isPlatform = (p: any) => !p || isKps(p);
+const isURL = (s?: any) => validate(s) && s.split(".").length > 1;
+const isImageURL = (s?: any) =>
+    validate(s) &&
+    !s.includes("://") &&
+    ["png", "webp", "jpg", "svg"].includes(s.split(".").pop() ?? "");
+
 export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     if (typeof manifest !== "object" || manifest === null) {
         throw "Not an object";
@@ -317,17 +340,9 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
 
     const m = manifest as Partial<KONBINI_MANIFEST>;
 
-    const is = (i: any): i is NonNullable<any> => i !== null && i !== undefined;
-    const isPlatform = (p: any) => !p || isKps(p);
-    const isURL = (s?: any) => validate(s) && s.split(".").length > 1;
-    const isImageURL = (s?: any) =>
-        validate(s) &&
-        !s.includes("://") &&
-        ["png", "webp", "jpg", "svg"].includes(s.split(".").pop() ?? "");
-
     const validPlatforms =
         typeof m.platforms === "object" &&
-        is(m.platforms) &&
+        isAnything(m.platforms) &&
         isPlatform(m.platforms.linux64) &&
         isPlatform(m.platforms.linuxArm) &&
         isPlatform(m.platforms.mac64) &&
@@ -346,11 +361,11 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
     const validRepository =
         !m.repository || (validate(m.repository) && isRepositoryScope(m.repository));
 
-    const validLicense = !is(m.license) || validateAgainst(m.license, LICENSES);
+    const validLicense = !isAnything(m.license) || validateAgainst(m.license, LICENSES);
 
-    const validIcon = !is(m.icon) || isImageURL(m.icon);
+    const validIcon = !isAnything(m.icon) || isImageURL(m.icon);
 
-    const validAccent = !is(m.accent) || m.accent == undefined || isValidHexColor(m.accent);
+    const validAccent = !isAnything(m.accent) || m.accent == undefined || isValidHexColor(m.accent);
 
     const validMaintainers =
         m.maintainers === undefined ||
@@ -366,8 +381,8 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
             ));
 
     const validSysReq =
-        !is(m.requirements) ||
-        (is(m.requirements) &&
+        !isAnything(m.requirements) ||
+        (isAnything(m.requirements) &&
             [m.requirements!.ram_mb, m.requirements!.disk_mb].every(
                 (s) => !s || s == undefined || typeof s == "number",
             ) &&
@@ -382,12 +397,12 @@ export function isValidManifest(manifest: any): manifest is KONBINI_MANIFEST {
         (Array.isArray(m.images) && m.images.every((i) => isImageURL(i.link) && validate(i.text)));
 
     const validCategories =
-        !is(m.categories) || (Array.isArray(m.categories) && m.categories.every(validate));
+        !isAnything(m.categories) || (Array.isArray(m.categories) && m.categories.every(validate));
 
     const ar = m.age_rating;
     const validAgeRating =
         typeof ar === "object" &&
-        is(ar) &&
+        isAnything(ar) &&
         ["money", "social", "substances", "violence"].every(
             (k) => typeof ar?.[k as keyof typeof ar] === "boolean",
         );
@@ -501,8 +516,6 @@ export function parseRepositoryScope(scope: REPOSITORY_SCOPE | `url:${string}`):
 /** Supported platforms. */
 export type SUPPORTED_PLATFORMS = "linux64" | "linuxArm" | "mac64" | "macArm" | "win64";
 
-export type SUPPORTED_PKG_MGR_CMD = (typeof managers)[number];
-
 const managers = [
     "apt",
     "nix-env",
@@ -515,3 +528,5 @@ const managers = [
     "scoop",
     "zypper",
 ] as const;
+
+export type SUPPORTED_PKG_MGR_CMD = (typeof managers)[number];

@@ -74,9 +74,7 @@ function IntegrateWindows(params: WindowsParams) {
     const regPath = `HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\${appId}`;
     const lnkPath = `${process.env["APPDATA"]}\\Microsoft\\Windows\\Start Menu\\Programs\\${appId}.lnk`;
 
-    const CMD: string[] = [];
-
-    CMD.push(`New-Item -Path "${regPath}" -Force`);
+    const CMD: string[] = [`New-Item -Path "${regPath}" -Force`];
 
     const appExePath = join(installPath, `${appId}.exe`);
     const iconFilePath = join(installPath, `${appId}.ico`);

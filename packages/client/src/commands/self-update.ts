@@ -1,8 +1,8 @@
 import { getPlatform } from "shared/api/platform";
-import { writeFileSync } from "fs";
-import { tmpdir } from "os";
-import { join } from "path";
-import { spawn } from "child_process";
+import { writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { spawn } from "node:child_process";
 import { validate } from "@zhc.js/string-utils";
 
 export async function selfUpdate() {

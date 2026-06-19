@@ -1,10 +1,10 @@
 import { konsole } from "shared/client";
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import { writeLaunchpadShortcut, writeLockfile } from "./write";
 import { ALIASED_CMDs } from "./alias-cmds";
 import { PKG_PATH } from "shared/client";
-import { existsSync, readFileSync } from "fs";
-import { join } from "path";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
     isSpecificParsedKps,
     type KONBINI_MANIFEST,
@@ -30,13 +30,13 @@ function isUpToDate(scope: KONBINI_PARSED_SCOPE): boolean {
     let out: string[];
     try {
         out = execSync(ALIASED_CMDs[scope.src]["check"](scope.value)).toString().split("\n");
-    } catch (e) {
-        out = new TextDecoder().decode((e as any).stdout ?? String(e)).split("\n");
+    } catch (error) {
+        out = new TextDecoder().decode((error as any).stdout ?? String(error)).split("\n");
     }
     // foobar 7.0.0 < 7.0.1
     if (scope.src === "nix") return !out.includes("<");
     // outdated packages: foobar (7.0.1)
-    return !out.some((line) => line.includes(scope.value));
+    return out.every((line) => !line.includes(scope.value));
 }
 
 export async function installAliasedPackage(params: {
@@ -58,16 +58,16 @@ export async function installAliasedPackage(params: {
             `Hold up: ${kps.name} is untrusted. This is because you're either\n- using it via Konbini for the 1st time\n- you've chose not to trust it last time it showed up\n- (rare) the file where we keep track of trusted managers is gone/unreadable\n`,
         );
         const out = konsole.ask(`Do you wish to trust ${kps.name}?`);
-        if (!out) {
-            konsole.suc(
-                "Alright then, installation won't proceed.\nNext time you try to install from this source, you'll see the same prompt.\nTo view trusted package managers or to trust/untrust anything anytime, run 'kbi tpm'.",
-            );
-            process.exit(0);
-        } else {
+        if (out) {
             trustPackageManager(kps.src);
             konsole.suc(
                 `Gotcha, ${kps.name} is now trusted; any package from there will just install\nTo view trusted package managers or to untrust ${kps.name} anytime, run 'kbi tpm'.`,
             );
+        } else {
+            konsole.suc(
+                "Alright then, installation won't proceed.\nNext time you try to install from this source, you'll see the same prompt.\nTo view trusted package managers or to trust/untrust anything anytime, run 'kbi tpm'.",
+            );
+            process.exit(0);
         }
     }
 
@@ -93,8 +93,8 @@ export async function installAliasedPackage(params: {
                 "Installed. Now restart your terminal, then re-run 'kbi install' and it should work!",
             );
             process.exit(0);
-        } catch (e) {
-            throw `Error installing ${kps.name}: ${e}`;
+        } catch (error) {
+            throw `Error installing ${kps.name}: ${error}`;
         }
     }
 
@@ -134,8 +134,8 @@ export async function installAliasedPackage(params: {
         try {
             const exec = cmd(kps.at.name ?? "", kps.at.url ?? "");
             execSync(normalize(exec));
-        } catch (e) {
-            konsole.err("Error adding srcset for this package:", e);
+        } catch (error) {
+            konsole.err("Error adding srcset for this package:", error);
             process.exit(1);
         }
     }
@@ -147,8 +147,8 @@ export async function installAliasedPackage(params: {
             // so the user see's what's up
             stdio: "inherit",
         });
-    } catch (e) {
-        throw `Error installing package '${kps.value}' with ${kps.name}: ${e}`;
+    } catch (error) {
+        throw `Error installing package '${kps.value}' with ${kps.name}: ${error}`;
     }
 
     konsole.dbg(
@@ -190,10 +190,10 @@ export function packageExists(
     pkg: KONBINI_PKG_SCOPE,
     author?: KONBINI_ID_USR,
 ):
+    | false
     | {
           version: string;
-      }
-    | false {
+      } {
     const kps = parseKps(pkg);
     if (kps.src === "kbi") {
         if (!author)
@@ -211,8 +211,8 @@ export function packageExists(
 
     try {
         out = execSync(cmd).toString();
-    } catch (e) {
-        out = new TextDecoder().decode((e as any).stdout ?? String(e));
+    } catch (error) {
+        out = new TextDecoder().decode((error as any).stdout ?? String(error));
     }
 
     // NOTE - be sure to test all pkg managers to ensure behavior is consistent

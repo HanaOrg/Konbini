@@ -56,7 +56,7 @@ export async function promptBinary(message: string, y: string, n: string): Promi
         (val) => validate(val) && validateAgainst(val.toLowerCase(), ["y", "n"]),
         "Type 'y' (YES) or 'n' (NO), nothing else.",
     );
-    const result = val.toLowerCase() === "y";
-    konsole.suc(result ? y : n);
-    return result;
+    const isY = val.toLowerCase() === "y";
+    konsole.suc(isY ? y : n);
+    return isY;
 }

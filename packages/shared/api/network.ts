@@ -12,9 +12,9 @@ const isWeb = typeof window !== "undefined" && typeof document !== "undefined";
 const cacheAPI = isWeb
     ? caches
     : {
-          open: async (_: string) => ({
-              match: async () => undefined,
-              put: async () => undefined,
+          open: async () => ({
+              match: async () => {},
+              put: async () => {},
           }),
       };
 
@@ -64,15 +64,15 @@ export async function fetchAPI(
     // disallowing us from .json() or .text() it after calling this function
     const clone = res.clone();
     const clone2 = res.clone();
-    const json = await clone.json().catch((e) => {
-        const err = String(e);
+    const json = await clone.json().catch((error) => {
+        const err = String(error);
         if (
             err.includes("Failed to parse JSON") ||
             err.includes("is not valid JSON") ||
             err.includes("JSON Parse error")
         )
             return {};
-        throw e;
+        throw error;
     });
 
     if (json.message && json.message.includes("rate limit exceeded")) {

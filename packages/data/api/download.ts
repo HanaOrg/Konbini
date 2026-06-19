@@ -69,7 +69,7 @@ module.exports = async function handler(reqParam: any, resParam: any) {
         const ip = forward
             ? Array.isArray(forward)
                 ? forward[0]
-                : forward.split(",")[0]
+                : forward.split(",", 1)[0]
             : req.connection.remoteAddress;
         const geo = geoip.lookup(ip || "0.0.0.0");
         const country = (geo || { country: "unknown" }).country;
@@ -108,8 +108,8 @@ module.exports = async function handler(reqParam: any, resParam: any) {
 
         res.status(200).json({ success: true });
         return;
-    } catch (e) {
-        res.status(500).json({ message: "Internal error: " + String(e) });
+    } catch (error) {
+        res.status(500).json({ message: "Internal error: " + String(error) });
         return;
     }
 };

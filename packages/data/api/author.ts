@@ -39,8 +39,8 @@ module.exports = async function handler(reqParam: any, resParam: any) {
             },
         });
         return;
-    } catch (e) {
-        res.status(500).json({ message: "Internal error: " + String(e) });
+    } catch (error) {
+        res.status(500).json({ message: "Internal error: " + String(error) });
         return;
     }
 };

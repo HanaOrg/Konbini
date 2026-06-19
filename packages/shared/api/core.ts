@@ -13,12 +13,12 @@ export function parseID(str: string): {
     delimiter: string;
     /** Author name. */
     user: string;
-    /** If this is a pkg ID, the package. Null otherwise. */
-    package: string | null;
+    /** If this is a pkg ID, the package. undefined otherwise. */
+    package: string | undefined;
     /** Author name. */
     user_id: KONBINI_ID_USR;
-    /** If this is a pkg ID, the package. Null otherwise. */
-    package_id: KONBINI_ID_PKG | null;
+    /** If this is a pkg ID, the package. undefined otherwise. */
+    package_id: KONBINI_ID_PKG | undefined;
 } {
     // split scope
     const scopes = normalizer(str).split(".");
@@ -36,9 +36,9 @@ export function parseID(str: string): {
         pref: scopes[0],
         delimiter,
         user: scopes[1],
-        package: scopes[2] ?? null,
+        package: scopes[2] ?? undefined,
         user_id: `${scopes[0]}.${scopes[1]}`,
-        package_id: scopes[2] ? `${scopes[0]}.${scopes[1]}.${scopes[2]}` : null,
+        package_id: scopes[2] ? `${scopes[0]}.${scopes[1]}.${scopes[2]}` : undefined,
     };
 }
 

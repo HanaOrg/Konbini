@@ -1,7 +1,7 @@
 import { cwd } from "node:process";
 import { konsole } from "shared/client";
 import { validate, validateAgainst } from "@zhc.js/string-utils";
-import { isBetween } from "@zakahacecosas/number-utils";
+import { isBetween } from "@zhc.js/number-utils";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { prompt, promptBinary, promptScope } from "../toolkit/input";
@@ -28,7 +28,7 @@ export async function generatePkgManifest() {
     konsole.suc("Great slogan!");
 
     const desc = await prompt(
-        "Package extended description? (markdown and linebreaks (\\n) are supported)",
+        String.raw`Package extended description? (markdown and linebreaks (\n) are supported)`,
         (val) => validate(val) && isBetween(val.length, 1, 4096),
         "Whoops, that description is not valid. Enter a valid string between 1 and 4096 characters.",
     );
@@ -48,12 +48,12 @@ export async function generatePkgManifest() {
         (val) =>
             validate(val) &&
             val.split(".").length === 2 &&
-            validateAgainst(val.split(".")[0], ["usr", "org"]),
+            validateAgainst(val.split(".", 1)[0], ["usr", "org"]),
         'Whoops, that ID is not valid. Enter a valid string starting with "usr." or "org.".',
     )) as KONBINI_ID_USR;
     konsole.suc("Nice.");
 
-    const telemetry: boolean = await promptBinary(
+    const hasTelemetry: boolean = await promptBinary(
         "Does your package or app require the user to grant or deny consent over user data treatment? (Y/N)",
         "Got it, there's consent over data privacy to be granted. This will be visible in store.",
         "Got it, no data sharing. That's actually nice!",
@@ -82,7 +82,7 @@ export async function generatePkgManifest() {
         author,
         slogan,
         desc,
-        telemetry,
+        hasTelemetry,
         age_rating: {
             money: false,
             social: false,

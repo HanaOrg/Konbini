@@ -1,8 +1,8 @@
-import { rmSync, readFileSync } from "fs";
-import { join } from "path";
+import { rmSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { LAUNCHPAD_FILE_PATH, PKG_PATH } from "shared/client";
 import { konsole } from "shared/client";
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import { ALIASED_CMDs } from "./alias-cmds";
 import { getPkgManifest, parseID } from "shared/api/core";
 import { parseKps } from "shared/api/manifest";

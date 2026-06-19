@@ -76,7 +76,7 @@ export function isAuthorId(id: any): id is KONBINI_ID_USR {
     return (
         validate(id) &&
         (id.startsWith("org.") || id.startsWith("usr.")) &&
-        validate(id.split(".")[1]) &&
+        validate(id.split(".", 2)[1]) &&
         id.split(".").length === 2
     );
 }
@@ -86,8 +86,8 @@ export function isPkgId(id: any): id is KONBINI_ID_PKG {
     return (
         validate(id) &&
         (id.startsWith("org.") || id.startsWith("usr.")) &&
-        validate(id.split(".")[1]) &&
-        validate(id.split(".")[2]) &&
+        validate(id.split(".", 2)[1]) &&
+        validate(id.split(".", 3)[2]) &&
         id.split(".").length === 3
     );
 }

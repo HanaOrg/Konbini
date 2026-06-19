@@ -8,7 +8,7 @@ import {
 } from "shared/client";
 import { konsole } from "shared/client";
 import { installPackage } from "./commands/install";
-import { existsSync, mkdirSync, realpathSync } from "fs";
+import { existsSync, mkdirSync, realpathSync } from "node:fs";
 import { listPackages } from "./commands/list";
 import { removePackage } from "./toolkit/remove";
 import { learn } from "./commands/learn";
@@ -22,7 +22,7 @@ import { sign } from "./commands/sign";
 import { getPlatform } from "shared/api/platform";
 import { konbiniHash } from "shared/security";
 import { konpakFromDir } from "./commands/konpak";
-import { parseArgs } from "util";
+import { parseArgs } from "node:util";
 import { Unpack } from "../../konpak/src/unpack";
 import { parseID } from "shared/api/core";
 import { ensureSecurity } from "./commands/secure";
@@ -80,7 +80,7 @@ async function main() {
     if (!existsSync(CFG_DIR)) mkdirSync(CFG_DIR, { recursive: true });
 
     switch (command) {
-        case "install":
+        case "install": {
             if (!subcommand) throw "No package specified.";
             if (validateAgainst(subcommand, ["konbini", "kbi"])) {
                 await selfUpdate();
@@ -88,7 +88,8 @@ async function main() {
             }
             await installPackage(subcommand);
             break;
-        case "list":
+        }
+        case "list": {
             const len = listPackages(
                 validateAgainst(subcommand, ["-v", "--verbose"]) ? "VERBOSE" : "STANDARD",
             );
@@ -100,20 +101,23 @@ async function main() {
                     len.length >= 69 ? "Isn't that a lot?" : "Nice!",
                 );
             break;
-        case "update":
+        }
+        case "update": {
             if (validateAgainst(subcommand, ["konbini", "kbi"])) {
                 await selfUpdate();
                 break;
             }
             await updatePackages();
             break;
+        }
         case "remove":
         case "delete":
-        case "goodbye":
+        case "goodbye": {
             if (!subcommand) throw "No package specified.";
             await removePackage(subcommand);
             break;
-        case "where":
+        }
+        case "where": {
             konsole.suc("Here's where we live on your PC:");
             konsole.adv("Konbini is installed at and running from", import.meta.dir);
             konsole.adv("Konbini executables overall live at", INSTALLATION_DIR);
@@ -121,12 +125,17 @@ async function main() {
             konsole.adv("Launchpad shortcuts are at", LAUNCHPAD_DIR);
             konsole.adv("Your private signatures (NEVER SHARE THEM) are stored at", SIGNATURE_DIR);
             break;
-        case "info":
+        }
+        case "info": {
             if (!subcommand) throw "No package or user specified.";
-            if (parseID(subcommand).package !== null) await showPkgInfo(subcommand);
-            else await showUserInfo(subcommand);
+            if (parseID(subcommand).package === null) {
+                await showUserInfo(subcommand);
+            } else {
+                await showPkgInfo(subcommand);
+            }
             break;
-        case "hash":
+        }
+        case "hash": {
             if (!subcommand) throw "No file specified.";
             if (args.includes("--porcelain")) {
                 console.log(konbiniHash(subcommand));
@@ -138,23 +147,28 @@ async function main() {
             );
             konsole.suc(konbiniHash(subcommand));
             break;
-        case "ensure-security":
+        }
+        case "ensure-security": {
             await ensureSecurity();
             break;
-        case "sign":
+        }
+        case "sign": {
             if (!validateAgainst(subcommand, ["new", "apply", "list"]))
                 throw `No action specified. Available options are 'new', 'apply' or 'list'.\nTo learn further, run 'learn sign'`;
             await sign(subcommand);
             break;
-        case "manifest":
+        }
+        case "manifest": {
             if (subcommand === "usr") await generateUsrManifest();
             else if (subcommand === "pkg") await generatePkgManifest();
             else konsole.err("Invalid manifest type, either 'usr' or 'pkg'.");
             break;
-        case "find":
+        }
+        case "find": {
             await find();
             break;
-        case "konpak":
+        }
+        case "konpak": {
             if (!subcommand)
                 throw "No directory specified. Specify one.\nTo learn more, run 'learn konpak'.";
             try {
@@ -170,11 +184,12 @@ async function main() {
                     },
                 }).values;
                 await konpakFromDir(subcommand, platform, id, binary, ver, icon, sfx);
-            } catch (e) {
-                konsole.err(Error.isError(e) ? e.message + "." : e);
+            } catch (error) {
+                konsole.err(Error.isError(error) ? error.message + "." : error);
             }
             break;
-        case "tpm":
+        }
+        case "tpm": {
             if (!subcommand) {
                 konsole.adv(
                     `Package manager trust list\n${Object.entries(getTpmList())
@@ -199,26 +214,29 @@ async function main() {
                 trustPackageManager(args[2]);
                 konsole.suc("Trusted.");
                 break;
-            } else {
-                if (!isKpsSource(args[2])) throw `Invalid package manager.`;
-                untrustPackageManager(args[2]);
-                konsole.suc("Untrusted.");
-                break;
             }
-        case "unpack":
+            if (!isKpsSource(args[2])) throw `Invalid package manager.`;
+            untrustPackageManager(args[2]);
+            konsole.suc("Untrusted.");
+            break;
+        }
+        case "unpack": {
             if (!subcommand) throw "No filepath specified!";
             Unpack(subcommand);
             break;
-        case "learn":
+        }
+        case "learn": {
             learn(subcommand);
             break;
-        case "about":
+        }
+        case "about": {
             about();
             break;
+        }
         case "-v":
         case "--version":
         case "version":
-        case "v":
+        case "v": {
             konsole.adv("Konbini CLI", version, "for", platformString);
             konsole.adv(
                 "Written in BunJS, version",
@@ -228,17 +246,19 @@ async function main() {
                 "of NodeJS)",
             );
             break;
-        default:
+        }
+        default: {
             konsole.err(
                 `Unknown command '${command}'. Run Konbini with no arguments to see all available commands.`,
             );
             process.exit(1);
+        }
     }
 }
 
 try {
     await main();
-} catch (e) {
-    konsole.err(e as string);
+} catch (error) {
+    konsole.err(error as string);
     process.exit(1);
 }

@@ -10,14 +10,14 @@ import { packageExists } from "../client/src/toolkit/aliased";
 
 describe.if(process.platform == "win32")("chocolatey tests", () => {
     test("exists works", async () => {
-        const res = packageExists("cho:chocolatey");
-        expect(res).toBeTruthy();
+        const result = packageExists("cho:chocolatey");
+        expect(result).toBeTruthy();
     });
 });
 
 describe.if(process.platform == "linux")("zypper tests", () => {
     test("exists works", async () => {
-        const res = packageExists("zyp:zypper");
-        expect(res).toBeTruthy();
+        const result = packageExists("zyp:zypper");
+        expect(result).toBeTruthy();
     });
 });

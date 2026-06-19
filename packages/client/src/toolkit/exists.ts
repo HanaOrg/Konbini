@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 import { getPlatform } from "shared/api/platform";
 import type { SUPPORTED_PKG_MGR_CMD } from "shared/types/manifest";
 
